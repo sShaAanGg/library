@@ -47,14 +47,14 @@ export default {
     border-top:5px green solid;
     border-left:5px green solid;
     border-right:5px green solid;
-    border-bottom: 5px green solid;
+    border-bottom:5px green solid;
 }
 .card-title {
     color: green;
     font-size: 24px;
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-left:5px;
+    padding-top:5px;
+    padding-bottom:5px;
     background-color: black;
     border-bottom: 1px green solid;
 }

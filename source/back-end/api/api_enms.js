@@ -1,13 +1,17 @@
 var net = require("net")
 
-
 module.exports = {
     /*========================================================== */
     //  tcp client
     /*========================================================== */
     send_switch_socket: function (req, res) {
+
+        console.log('[Back end] send_switch_socket');
+
         var param = req.body.data;
         var hexStr;
+
+        console.log(param);
 
         switch (param) {
             case 'light_on':
@@ -33,7 +37,7 @@ module.exports = {
             const cmdData = Uint8Array.from(Buffer.from(hexStr, 'hex'));
             // console.log(cmdData);
             client.write(cmdData);
-            
+
             msg = {status: 'success'};
         })
 
@@ -51,34 +55,11 @@ module.exports = {
         client.on("data", function (data) {
             console.log("the data of server is " + data.toString());
         })
+
         client.on('end', () => {
             console.log('[Back end]' + msg);
             res.send(msg);
             client.end();
         })
     },
-    sendPrinterSocket: function (req, res) {
-        var param = req.body.data
-
-        /* 創建TCP客户端 */
-        let client = net.Socket()
-
-        /* 設置連接的服務器 */
-        client.connect(15476, '192.168.4.10', function () {
-
-            /* 向服務器發送數據 */
-            client.write('PRINTER|'+ param.spec + '|' + param.lotNo + '|' + param.snStart + '|' + param.time)
-        })
-
-        /* 監聽服務器傳來的data數據 */
-        // client.on("data", function (data) {
-        //     console.log("the data of server is " + data.toString());
-        // })
-
-        /* 監聽end事件 */
-        client.on("end", function () {
-            res.end()
-        })
-    }
-
 }

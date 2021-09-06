@@ -10,9 +10,5 @@ var api = require('../api/api_enms')
 router.post('/send_switch_socket', function (req, res) {
     api.send_switch_socket(req, res)
 })
-  
-  router.post('/sendPrinterSocket', function (req, res) {
-    api.sendPrinterSocket(req, res)
-})
-  
+
 module.exports = router
