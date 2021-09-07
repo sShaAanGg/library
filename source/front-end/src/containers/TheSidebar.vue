@@ -1,13 +1,32 @@
 <template>
-  <CSidebar class="sidebar" fixed :show.sync="show">
-    <h5 class="systemName">EnMS 能源管理系統</h5>
-    <CRenderFunction class="navFuction" flat :content-to-render="nav" />
-    <CSidebarMinimizer class="minimizer" @click.native="minimize = !minimize" />
-  </CSidebar>
+    <CSidebar class="sidebar" fixed :minimize="minimize" :show.sync="show">
+<!--         <h5 class="systemName">EnMS</h5> -->
+        <CSidebarBrand to="/">
+            <img
+                src="img/brand/logo-black.png"
+                alt="Logo"
+                width="170"
+                height="46"
+                class="c-sidebar-brand-full"
+            />
+            <img
+                src="img/brand/favicon.png"
+                alt="Logo"
+                width="46"
+                height="46"
+                class="c-sidebar-brand-minimized"
+            />
+        </CSidebarBrand>
+        <CRenderFunction class="navFuction" flat :content-to-render="nav" />
+        <CSidebarMinimizer
+            class="minimizer"
+            @click.native="minimize = !minimize"
+        />
+    </CSidebar>
 </template>
 
 <script>
-import {admin ,user ,guest} from './_nav'
+import {admin, user, guest} from './_nav'
 
 export default {
   name: 'TheSidebar',
@@ -52,22 +71,22 @@ export default {
 </script>
 
 <style scoped>
-/* .sidebar {
-  background-color: #b1e7b1;
+.sidebar {
+  background-color: #deffde;
   color:green;
-} */
+}
 .minimizer {
-  background-color: #000000;
+    background-color: #000000;
 }
 .systemName {
-  background-color: #000000;
-  color: gainsboro;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-bottom: 20px;
+    background-color: #000000;
+    color: gainsboro;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 20px;
 }
 .navFunction {
-  color: green;
-  background-color: white;
+    color: green;
+    background-color: white;
 }
 </style>

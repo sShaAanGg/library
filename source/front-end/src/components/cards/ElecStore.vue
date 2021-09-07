@@ -1,19 +1,13 @@
 <template>
     <div class="card">
-        <h2 class="card-title">本月總耗電量</h2>
-        <DonutChartElectricConsum></DonutChartElectricConsum>
+        <h2 class="card-title">本月綠能儲電量</h2>
+            <CCardBody class='total-body' align='center'>
+                2200 kWh
+            </CCardBody>
     </div>
 </template>
 
 <script>
-import DonutChartElectricConsum from '@/components/charts/DonutChartElectricConsum';
-
-export default {
-    components: {
-        DonutChartElectricConsum
-    }
-}
-
 </script>
 
 <style>
@@ -26,11 +20,11 @@ export default {
 }
 .card-title {
     color: green;
-    font-size: 24px;
+    font-size:24px;
     padding-left:5px;
     padding-top:5px;
     padding-bottom:5px;
     background-color: black;
-    border-bottom: 1px green solid;
+    border-bottom:1px green solid;
 }
 </style>

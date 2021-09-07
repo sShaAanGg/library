@@ -79,7 +79,7 @@ export default {
             //         type: 'category',
             //         boundaryGap: false,
             //         axisLabel: {
-            //             show: true, 
+            //             show: true,
             //             inside: false,
             //             rotate: 0,
             //             margin: 10,
