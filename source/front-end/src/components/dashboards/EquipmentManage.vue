@@ -16,7 +16,7 @@
 </script>
 
 <style scope>
-.background {
+/* .background {
 	background-color: #272727;
 }
 .card-1 {
@@ -25,5 +25,5 @@
 }
 .fullpage {
 	border-color: #272727;
-}
+} */
 </style>

@@ -1,7 +1,9 @@
 <template>
-    <div class="card">
-        <h2 class="card-title">本月總耗電量</h2>
-        <DonutChartElectricConsum></DonutChartElectricConsum>
+    <div class="card-ec">
+        <h2 class="card-title-elecconsum">本月總耗電量</h2>
+        <CCardBody>
+            <DonutChartElectricConsum v-if="isShowChart"></DonutChartElectricConsum>
+        </CCardBody>
     </div>
 </template>
 
@@ -11,22 +13,31 @@ import DonutChartElectricConsum from '@/components/charts/DonutChartElectricCons
 export default {
     components: {
         DonutChartElectricConsum
+    },
+    data() {
+        return {
+            isShowChart: true,
+        }
     }
 }
 
 </script>
 
 <style>
-.card {
+.card-ec {
     background-color: black;
+    align-content: center;
+    width: 38vw;
+    height: 62.25vh;
+    min-width: 600px;
     border-top:5px green solid;
     border-left:5px green solid;
     border-right:5px green solid;
     border-bottom:5px green solid;
 }
-.card-title {
+.card-title-elecconsum {
     color: green;
-    font-size: 24px;
+    font-size: 1.5vw;
     padding-left:5px;
     padding-top:5px;
     padding-bottom:5px;

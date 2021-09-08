@@ -1,5 +1,5 @@
 <template>
-    <div class="chart" id="LineChartElectricConsum" style="width: 610px;height:373px;">
+    <div class="chart" id="LineChartElectricConsum" style="width: 38vw;height:43vh;">
         
     </div>
 

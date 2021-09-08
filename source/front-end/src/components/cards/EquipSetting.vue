@@ -1,8 +1,8 @@
 <template>
-    <div class="card">
-        <h2 class="card-title">設備控制</h2>
+    <div class="card-eset">
+        <h2 class="card-title-eset">設備控制</h2>
         <CRow>
-            <CCol class="light-master-switch">
+            <CCol lg = '6' class="light-master-switch">
                 <h4> 燈光總電源：
                     <CButton
                         :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
@@ -13,7 +13,7 @@
                     </CButton>
                 </h4>
             </CCol>
-            <CCol class="fan-master-switch">
+            <CCol lg = '6' class="fan-master-switch">
                 <h4>
                     風扇總電源：
                     <CButton
@@ -56,9 +56,6 @@ export default {
                     this.isOnLight = !curStat;
 
                     this.statusLight = (this.isOnLight) ? 'ON' : 'OFF';
-                    console.log('[Front end] Response: ', resMsg);
-                    console.log(resMsg[0])
-                    this.status_light = (resMsg['status'] == 'SUCESS') ? 'OFF' : 'ON';
                 })
         },
 
@@ -80,19 +77,18 @@ export default {
 </script>
 
 <style scoped>
-.card {
+.card-eset {
     background-color: black;
-    width:1465px;
-    position: absolute;
-    left: 25px;
+    width: 77.9vw;
+    height:12.9vh;
     border-top:5px green solid;
     border-left:5px green solid;
     border-right:5px green solid;
     border-bottom: 5px green solid;
 }
-.card-title {
+.card-title-eset {
     color: green;
-    font-size: 24px;
+    font-size: 1.5vw;
     padding-left:5px;
     padding-top:5px;
     padding-bottom:5px;

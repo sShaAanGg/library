@@ -1,5 +1,5 @@
 <template>
-    <div class="chart" id="DonutChartElectricConsum" style="width: 610px;height:500px;"></div>
+    <div class="chart" id="DonutChartElectricConsum" style="width: 38vw;height:60vh;"></div>
 </template>
 
 <script>

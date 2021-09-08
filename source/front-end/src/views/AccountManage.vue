@@ -390,7 +390,7 @@ export default {
 </script>
 
 <style scope>
-.background {
+/* .background {
 	background-color: #272727;
 }
 .card-1 {
@@ -401,5 +401,5 @@ export default {
 .fullpage {
 	border-color: #272727;
 	color: #7da8d3
-}
+} */
 </style>

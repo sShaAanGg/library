@@ -11,6 +11,7 @@
             <!-- </transition> -->
           </CContainer>
         </main>
+        
       </div>
       <!-- <TheFooter/> -->
     </div>
@@ -44,5 +45,7 @@ export default {
 }
 .c-main {
   background-color: #272727;
+
 }
+
 </style>

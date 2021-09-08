@@ -652,8 +652,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .cardstyle {
-    // border: 0px;
-    box-shadow: 2px 2px 2px rgba(20%,20%,40%,0.1),4px 4px 6px rgba(20%,20%,40%,0.1),6px 6px 12px rgba(20%,20%,40%,0.2);
-    }
+    // .cardstyle {
+    // // border: 0px;
+    // box-shadow: 2px 2px 2px rgba(20%,20%,40%,0.1),4px 4px 6px rgba(20%,20%,40%,0.1),6px 6px 12px rgba(20%,20%,40%,0.2);
+    // }
 </style>
