@@ -1,39 +1,61 @@
 <template>
     <div>
-        <div class="card-base">
-            <CRow :gutters="false">
-                <CCol lg = '2'>
-                    <CCol lg= '12'>
-                        <div class="mb-1 cardstyle">
-                            <ElecStore></ElecStore>
-                        </div>
-                    </CCol>
-                    <CCol lg= '12'>
-                        <div class="mb-1 cardstyle">
-                            <CarbonEmission></CarbonEmission>
-                        </div>
-                    </CCol>
-                    <CCol lg = '12'>
-                        <div class="mb-1 cardstyle">
-                            <ReduceCarbonEmission></ReduceCarbonEmission>
-                        </div>
-                    </CCol>
-                </CCol>
-                <CCol lg='10'>
-                    <CRow :gutters="false">
-                        <CCol lg = '6'>
-                            <div class="mb-1 cardstyle">
-                                <ElecConsum></ElecConsum>
-                            </div>
-                        </CCol>
-                        <CCol lg = '6'>
-                            <div class="mb-1 cardstyle">
-                                <DemandResponse></DemandResponse>
+        <div >
+            <CRow class="card-base" >
+                <CCol lg = '2' class="pt-2">
+                    <CRow>
+                        <CCol lg = '12'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecStore></ElecStore>
                             </div>
                         </CCol>
                         <CCol lg = '12'>
-                            <div class="mb-1 cardstyle">
-                                <EquipSetting></EquipSetting>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecStore></ElecStore>
+                            </div>
+                        </CCol>
+                        <CCol lg = '12'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecStore></ElecStore>
+                            </div>
+                        </CCol>
+                        <CCol lg = '12'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecStore></ElecStore>
+                            </div>
+                        </CCol>
+                        <CCol lg = '12'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecStore></ElecStore>
+                            </div>
+                        </CCol>
+                    </CRow>
+                </CCol>
+                <CCol lg = '10' class="pt-2">
+                    <CRow>
+                        <CCol lg = '4'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecConsum></ElecConsum>
+                            </div>
+                        </CCol>
+                        <CCol lg = '4'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecConsum></ElecConsum>
+                            </div>
+                        </CCol>
+                        <CCol lg = '4'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecConsum></ElecConsum>
+                            </div>
+                        </CCol>
+                        <CCol lg = '5'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <DemandResponse></DemandResponse>
+                            </div>
+                        </CCol>
+                        <CCol lg = '7'>
+                            <div class="mb-1 mr-1 cardstyle">
+                                <ElecConsum></ElecConsum>
                             </div>
                         </CCol>
                     </CRow>
@@ -59,7 +81,7 @@ export default {
         ReduceCarbonEmission,
         ElecConsum,        
         DemandResponse,
-        EquipSetting
+        EquipSetting,
     }
 }
 
@@ -67,9 +89,14 @@ export default {
 
 <style scope>
 .card-base {
-    background-color: #000000;
-    border-color: #272727;
+    background-color: #081d1b;
+    border-color: #0e2e2b;
 }
-
+.cardstyle {
+    /* border-top:5px green solid;
+    border-left:5px green solid;
+    border-right:5px green solid;
+    border-bottom:5px green solid; */
+}
 
 </style>

@@ -71,10 +71,6 @@ export default {
 </script>
 
 <style scoped>
-.sidebar {
-  background-color: #deffde;
-  color:green;
-}
 .minimizer {
     background-color: #000000;
 }
