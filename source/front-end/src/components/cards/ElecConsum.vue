@@ -1,9 +1,13 @@
 <template>
-    <div class="card-ec">
-        <h2 class="card-title-elecconsum">本月總耗電量</h2>
-        <CCardBody>
-            <DonutChartElectricConsum v-if="isShowChart"></DonutChartElectricConsum>
-        </CCardBody>
+    <div class="card-h">
+        <h2 class="card-font">本月總耗電量</h2>
+        <CRow>
+            <CCol lg = '12'>
+                <CCardBody>
+                    <DonutChartElectricConsum v-if="isShowChart"></DonutChartElectricConsum>
+                </CCardBody>
+            </CCol>
+        </CRow>
     </div>
 </template>
 
@@ -24,24 +28,13 @@ export default {
 </script>
 
 <style>
-.card-ec {
-    background-color: black;
-    align-content: center;
-    width: 38vw;
-    height: 62.25vh;
-    min-width: 600px;
-    border-top:5px green solid;
-    border-left:5px green solid;
-    border-right:5px green solid;
-    border-bottom:5px green solid;
+.card-h {
+    background-color: #0e2e2b;
 }
-.card-title-elecconsum {
-    color: green;
-    font-size: 1.5vw;
-    padding-left:5px;
-    padding-top:5px;
-    padding-bottom:5px;
-    background-color: black;
-    border-bottom: 1px green solid;
+
+.card-font {
+    color: #98a8a0;
+    background-color: #0e2e2b;
+    border-bottom: 1px rgb(77, 107, 77) solid;
 }
 </style>

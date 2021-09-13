@@ -1,8 +1,5 @@
 <template>
-    <div class="chart" id="LineChartElectricConsum" style="width: 38vw;height:43vh;">
-        
-    </div>
-
+    <div class="chart" id="main" style="width: 30vw;height:30vh;" />                  
 </template>
 
 <script>
@@ -10,72 +7,75 @@ export default {
     name: "LineChartElectricConsum",
     data() {
         return {
-            myChart: '',
+            myChart:'',
+
+            option:{
+                xAxis: {
+                max: 'dataMax',
+            },
+            yAxis: {
+                type: 'category',
+                data: ['契約容量', '前年度', '現使用容量'],
+                inverse: true,
+                animationDuration: 300,
+                animationDurationUpdate: 300,
+                max: 2 // only the largest 3 bars will be displayed
+            },
+            visualMap: {
+                orient: 'horizontal',
+                left: 'center',
+                min: 0,
+                max: 22000,
+                text: ['High Score', 'Low Score'],
+                // Map the score column to color
+                dimension: 0,
+                inRange: {
+                    color: ['#00FF00', '#FFFF00','#FF0000']
+                }
+            },
+            series: [{
+                realtimeSort: true,
+                name: 'X',
+                type: 'bar',
+                data: [22000,10000,500],
+                label: {
+                    show: true,
+                    position: 'right',
+                    valueAnimation: true
+                }
+            }],
+            legend: {
+                show: true
+            },
+            animationDuration: 0,
+            animationDurationUpdate: 300,
+            animationEasing: 'linear',
+            animationEasingUpdate: 'linear'
+            }
         }
+    },
+    created(){
     },
     mounted() {
-        this.draw_chart();
+        this.chart()
     },
     methods: {
-        draw_chart() {
-            console.log('in draw_chart');
-            this.myChart = this.$echarts.init(document.getElementById("LineChartElectricConsum"));
-            let randomNumber = Array.from({length: 30}, () => Math.floor(Math.random() * 1000));
-            let xLabel = Array.from({length: 50}, () => Math.floor(1));
-            var option;
-            option = {
-                // title: {
-                //     text: '需量管理',
-                //     textStyle: {
-                //         fontSize: 24,
-                //         color: 'green'
-                //     },
-                //     padding:[10,525,10, 10],
-                //     borderWidth: 1,
-                //     borderColor: 'green',
-                //     shadowColor: 'white'
-                // },
-                xAxis: {
-                    type: 'category',
-                    data: xLabel,
-                    // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                    axisLabel: {
-                        show: false,
-                        textStyle: {
-                            color: '#D0D0D0'
-                        }
-                    },
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        textStyle: {
-                            color: '#D0D0D0'
-                        }
-                    },
-                },
-                series: [{
-                    // data: [4500, 4100, 4300, 5500, 5200, 5800, 5100, 5050, 5250, 5550],
-                    data: randomNumber,
-                    type: 'line',
-                    smooth: true,
-                    lineStyle: { color: '#ACD6FF'},
-                    labelStyle: { color: '#ACD6FF'}
-                }]
-            };
-            this.myChart.setOption(option);
+        chart() {
+            this.myChart = this.$echarts.init(document.getElementById("main"));
+            this.myChart.setOption(this.option);
         }
-
-
     },
 }
 </script>
 
 <style scoped>
-/* .chart {
-    border-top:5px green solid;
-    border-left:5px green solid;
-    border-right:5px green solid;
-    border-bottom:5px green solid;
-} */
+.card-h {
+    background-color: #0e2e2b;
+}
+
+.card-font {
+    color: #98a8a0;
+    background-color: #0e2e2b;
+    border-bottom: 1px rgb(77, 107, 77) solid;
+}
 </style>
