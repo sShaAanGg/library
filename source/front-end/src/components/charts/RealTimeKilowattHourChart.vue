@@ -13,6 +13,7 @@ export default {
     data() {
         return { 
                 myChart: '',
+                curHeight: '',
 
                 option:{
                     tooltip: {
@@ -40,10 +41,10 @@ export default {
                             radius: '110%',
                             axisLine: {            
                                 lineStyle: {       
-                                    color: [[0.2, 'lime'], [0.8, '#1e90ff'], [1, '#ff4500']],
+                                    color: [[0.2, '#55A864'], [0.8, '#3B7AB3'], [1, '#AC2D2D']],
                                     width: 5,
-                                    shadowColor: '#fff',
-                                    shadowBlur: 10
+                                    // shadowColor: '#fff',
+                                    // shadowBlur: 10
                                 }
                             },
                             axisLabel: {           
@@ -60,21 +61,22 @@ export default {
                             },
                             title: {
                                 offsetCenter: [0, '0%'],
-                                 fontWeight: 'bolder',
-                                    fontSize: 25,
-                                    fontStyle: 'italic',
-                                    color: '#fff',
-                                    shadowColor: '#fff',
-                                    shadowBlur: 10
+                                // fontWeight: 'bolder',
+                                fontSize: this.$utils.adjustFontSize(0.16),
+                                // fontStyle: 'italic',
+                                color: '#fff',
+                                // shadowColor: '#fff',
+                                // shadowBlur: 10
                             },
                             detail: {
-                                backgroundColor: '#02F78E',
-                                borderWidth: 0,
-                                borderColor: '#fff',
-                                shadowColor: '#fff',
-                                shadowBlur: 5,
+                                // backgroundColor: 'rgb(110, 148, 127)',
+                                // borderWidth: 0,
+                                // borderColor: '#fff',
+                                // shadowColor: '#fff',
+                                // shadowBlur: 5,
                                 offsetCenter: [0, '20%'],
-                                fontWeight: 'bolder',
+                                fontSize: this.$utils.adjustFontSize(0.28),
+                                // fontWeight: 'bolder',
                                 color: '#fff'
                             },
                             data: [{
@@ -136,11 +138,11 @@ export default {
         this.option.series[0].data[0].value = this.fromRealTimeKilowattHourData;
         this.option.series[1].data[0].value = this.fromRealTimeKilowattHourData;
         if (this.fromRealTimeKilowattHourData > 4400){
-            this.option.series[1].itemStyle.color = '#1e90ff';
+            this.option.series[1].itemStyle.color = '#3B7AB3';
         } else if (this.fromRealTimeKilowattHourData >16000){
-            this.option.series[1].itemStyle.color = '#ff4500';
+            this.option.series[1].itemStyle.color = '#AC2D2D';
         } else {
-            this.option.series[1].itemStyle.color = 'lime';
+            this.option.series[1].itemStyle.color = '#55A864';
         }
         this.myChart.setOption(this.option);
     },
@@ -159,10 +161,11 @@ export default {
         chart() {
             this.myChart = this.$echarts.init(document.getElementById("realTimeChart"));
             this.myChart.setOption(this.option);
-        }
+        },
     },
 
 }
+
 </script>
 
 <style scoped>

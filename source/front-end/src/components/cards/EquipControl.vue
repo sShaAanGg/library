@@ -1,6 +1,6 @@
 <template lang="html">
     <div class='wrapper card-eset'>
-        <h6 class="card-eset-title">設備控制</h6>
+        <h4 class="card-eset-title">設備控制</h4>
         <!-- <button class='change__style' @click='changeStyle()'>Change Style</button> -->
         <tabs :mode="mode">
             <tab title="廠區一">
@@ -93,7 +93,7 @@
             <tab title="廠區四">
                 <CRow>
                     <CCol lg = '8' class="fan-master-switch">
-                        <h6>
+                        <h4>
                             風扇總電源：
                             <CButton
                                 :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
@@ -102,12 +102,12 @@
                             >
                                 {{ statusFan }}
                             </CButton>
-                        </h6>
+                        </h4>
                     </CCol>
                 </CRow>                 
                 <CRow>
                     <CCol lg = '8' class="light-master-switch">
-                        <h6> 燈光總電源：
+                        <h4> 燈光總電源：
                             <CButton
                                 :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
                                 size='sm'
@@ -115,7 +115,7 @@
                             >
                                 {{ statusLight }}
                             </CButton>
-                        </h6>
+                        </h4>
                     </CCol>
                 </CRow>             
             </tab>
@@ -209,6 +209,7 @@ export default {
 }
 
 .card-eset-title {
+    font-size: 1vw;
     color: #98a8a0;
     background-color: #0e2e2b;
     border-bottom: 1px rgb(77, 107, 77) solid;

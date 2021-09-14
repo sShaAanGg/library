@@ -35,8 +35,8 @@ export default {
 
             this.option = {
                 grid: {
-                    left: '1%',
-                    right: '0%',
+                    left: '0%',
+                    right: '5%',
                     bottom: '15%',
                     top: '2%',
                     containLabel: true,
@@ -44,8 +44,8 @@ export default {
                 xAxis: {
                     max: 'dataMax',
                     axisLabel:{
-                        fontSize: 14,
-                        color:'#98a8a0'
+                        fontSize: this.$utils.adjustFontSize(0.16),
+                        color:'white'
                     },
                     splitLine: {
                         lineStyle: {
@@ -61,8 +61,8 @@ export default {
                     animationDurationUpdate: 300,
                     max: 2,
                     axisLabel:{
-                        fontSize: 14,
-                        color:'#98a8a0'
+                        fontSize: this.$utils.adjustFontSize(0.16),
+                        color:'white'
                     }
                 },
                 visualMap: {
@@ -85,7 +85,8 @@ export default {
                         valueAnimation: true,
                         position: 'top',
                         fontFamily: 'monospace',
-                        color:'#98a8a0'
+                        color:'#98a8a0',
+                        fontSize: this.$utils.adjustFontSize(0.14)
                     }
                 }],
                 legend: {

@@ -4,6 +4,15 @@
         <CCardBody class='card-body-rce' align='center'>
             16 kgCO<sub>2</sub>e
         </CCardBody>
+        <div style="text-align: right">
+            <img
+                class="card-img-es"
+                src="img/dashboard_imgs/co2_reduce.png"
+                width="120"
+                height="80"
+                display="inline"
+            />
+        </div>        
     </div>
 </template>
 

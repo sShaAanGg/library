@@ -1,23 +1,5 @@
 <template>
     <div id="donutChart" style = "width: 23vw;height:30vh" />
-    <!-- <div>
-    <CChartDoughnut     
-        :datasets="[
-        {
-            data: [653, 270, 50, 27],
-            backgroundColor: [
-            '#175580',
-            '#346780',
-            '#3C968D',
-            '#388C6C'    
-            ],
-            radius: ['80%', '90%'],
-            borderColor: '#0e2e2b'
-        }
-        ]"
-        :labels="['廠區一','廠區二','廠區三','廠區四']"
-        :options="options" />
-    </div> -->
 </template>
 
 <script>
@@ -29,31 +11,6 @@ export default {
 
         }
     },
-    // components: { CChartDoughnut },
-    // data() {
-    //     return {
-    //         myChart: '',
-    //         data:[
-    //             {value: 653, name: '廠區一'},
-    //             {value: 270, name: '廠區二'},
-    //             {value: 50, name: '廠區三'} ,
-    //             {value: 27, name: '廠區四'}
-    //         ],
-    //         options:{          
-    //             legend: {
-    //                 display: false,
-    //                 position: 'bottom',
-    //                 labels: {
-    //                     fontSize: 14,
-    //                     fontColor:'white'
-    //                 }
-    //             },
-    //             center: ['50%', '50%']
-    //         }
-    //     }
-    // },
-    // mounted() {
-    // },
     mounted() {
         this.draw_chart()
     },
@@ -67,7 +24,7 @@ export default {
                     show: true,
                     orient: 'vertical',
                     textStyle: {
-                        fontSize: 16,
+                        fontSize: this.$utils.adjustFontSize(0.16),
                         color:'white',
                         padding: [5, 10, 5, 10]
                     },

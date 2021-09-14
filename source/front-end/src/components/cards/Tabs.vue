@@ -102,6 +102,7 @@ export default {
   .tabs__dark li {
     /* background-color: #ddd;
     color: #aaa; */
+    font-size: 0.7vw;
     background-color: rgb(110, 148, 127);
     color: #38634d;
   }
@@ -110,6 +111,7 @@ export default {
     /* background-color: #555;
     color: white; */
     /* background-color: #204632; */
+    font-size: 0.7vw;
     background-color: #0e2e2b;
     color: rgb(221, 218, 218);
 

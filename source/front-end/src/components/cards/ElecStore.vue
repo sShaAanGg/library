@@ -1,9 +1,18 @@
 <template>
-    <div class="card-h">
+    <div class="card-es">
         <h4 class="card-font">本月綠能儲電量</h4>
-            <CCardBody class="card-body-es" align='center'>
-                2200 KWh
-            </CCardBody>                   
+        
+        <CCardBody class="card-body-es" align='center'> 0 KWh </CCardBody> 
+
+        <div style="text-align: right">
+            <img
+                class="card-img-es"
+                src="img/dashboard_imgs/elec_store.png"
+                width="80"
+                height="80"
+                display="inline"
+            />
+        </div>
     </div>
 </template>
 
@@ -23,7 +32,7 @@ export default {
 </script>
 
 <style>
-.card-h {
+.card-es {
     background-color: #0e2e2b;
 }
 
@@ -37,4 +46,5 @@ export default {
     color: white;
     font-size: 1.5vw;
 }
+
 </style>

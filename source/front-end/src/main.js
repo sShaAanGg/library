@@ -32,7 +32,8 @@ Vue.prototype.$echarts = echarts;
 import { CChartBar } from '@coreui/vue-chartjs'
 Vue.component('CChartBar', CChartBar)
 import "default-passive-events"
-
+import * as Utils from '@/common/utils.js';
+Vue.prototype.$utils = Utils;
 
 
 const messages = {

@@ -4,6 +4,15 @@
         <CCardBody class="card-body-ce" align='center'>
             220 kgCO<sub>2</sub>e
         </CCardBody>
+        <div style="text-align: right">
+            <img
+                class="card-img-es"
+                src="img/dashboard_imgs/co2.png"
+                width="90"
+                height="90"
+                display="inline"
+            />
+        </div>        
     </div>
 </template>
 

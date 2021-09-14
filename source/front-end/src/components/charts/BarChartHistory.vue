@@ -19,7 +19,7 @@
         legend: {
             labels: {
                 fontColor: 'white',
-                fontSize: 16
+                fontSize: this.$utils.adjustFontSize(0.16)
             }
         },
         scales: {
@@ -29,7 +29,7 @@
                 },
                 ticks: {
                     fontColor: 'white',
-                    fontSize: 16
+                    fontSize: this.$utils.adjustFontSize(0.16)
 
                 }
             }],
@@ -39,7 +39,7 @@
                 },
                 ticks: {
                     fontColor: 'white',
-                    fontSize: 14,
+                    fontSize: this.$utils.adjustFontSize(0.16),
                 },
                 barPercentage: 0.4
             }]

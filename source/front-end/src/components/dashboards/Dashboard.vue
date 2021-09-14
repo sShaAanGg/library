@@ -55,7 +55,7 @@
                         </CCol>
                         <CCol lg = '4'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <EquipSetting></EquipSetting>
+                                <EquipControl></EquipControl>
                             </div>
                         </CCol>
                     </CRow>
@@ -72,7 +72,7 @@ import CarbonEmission from '@/components/cards/CarbonEmission';
 import ReduceCarbonEmission from '@/components/cards/ReduceCarbonEmission';
 import ElecConsum from '@/components/cards/ElecConsum';
 import DemandResponse from '@/components/cards/DemandResponse';
-import EquipSetting from '@/components/cards/EquipSetting';
+import EquipControl from '@/components/cards/EquipControl';
 import HistoryAnalysis from '@/components/cards/HistoryAnalysis';
 import AbnormalEvent from '@/components/cards/AbnormalEvent';
 import RealTimeKilowattHour from '@/components/cards/RealTimeKilowattHour';
@@ -84,7 +84,7 @@ export default {
         ReduceCarbonEmission,
         ElecConsum,        
         DemandResponse,
-        EquipSetting,
+        EquipControl,
         HistoryAnalysis,
         AbnormalEvent,
         RealTimeKilowattHour

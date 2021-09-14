@@ -23,7 +23,7 @@ export default {
                     axisLabel: {
                         textStyle: {
                             color: '#C9BDB5',
-                            fontSize: 14
+                            fontSize: this.$utils.adjustFontSize(16)
                         }
                     },
                     splitLine: {
@@ -42,7 +42,7 @@ export default {
                     axisLabel: {
                         textStyle: {
                             color: '#C9BDB5',
-                            fontSize: 14
+                            fontSize: this.$utils.adjustFontSize(0.16)
                         }
                     }
                 }   ,
@@ -60,7 +60,7 @@ export default {
                     axisLabel: {
                         textStyle: {
                             color: '#C9BDB5',
-                            fontSize: 14
+                            fontSize: this.$utils.adjustFontSize(0.16)
                         }
                     }
                 },
