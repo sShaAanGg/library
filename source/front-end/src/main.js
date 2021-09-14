@@ -29,6 +29,10 @@ import zhTC from 'vxe-table/lib/locale/lang/zh-TC'
 import enUS from 'vxe-table/lib/locale/lang/en-US'
 import * as echarts from 'echarts'
 Vue.prototype.$echarts = echarts;
+import { CChartBar } from '@coreui/vue-chartjs'
+Vue.component('CChartBar', CChartBar)
+import "default-passive-events"
+
 
 
 const messages = {

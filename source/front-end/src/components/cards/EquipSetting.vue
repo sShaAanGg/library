@@ -1,38 +1,140 @@
-<template>
-    <div class="card-eset">
-        <h2 class="card-title-eset">設備控制</h2>
-        <CRow>
-            <CCol lg = '6' class="light-master-switch">
-                <h4> 燈光總電源：
-                    <CButton
-                        :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
-                        size='lg'
-                        @click="switch_light()"
-                    >
-                        {{ statusLight }}
-                    </CButton>
-                </h4>
-            </CCol>
-            <CCol lg = '6' class="fan-master-switch">
-                <h4>
-                    風扇總電源：
-                    <CButton
-                        :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
-                        size='lg'
-                        @click="switch_fan()"
-                    >
-                        {{ statusFan }}
-                    </CButton>
-                </h4>
-            </CCol>
-        </CRow>
+<template lang="html">
+    <div class='wrapper card-eset'>
+        <h6 class="card-eset-title">設備控制</h6>
+        <!-- <button class='change__style' @click='changeStyle()'>Change Style</button> -->
+        <tabs :mode="mode">
+            <tab title="廠區一">
+                <CRow>
+                    <CCol lg = '8' class="light-master-switch">
+                        <h6> 燈光總電源：
+                            <CButton
+                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_light()"
+                            >
+                                {{ statusLight }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>
+                <CRow>
+                    <CCol lg = '8' class="fan-master-switch">
+                        <h6>
+                            風扇總電源：
+                            <CButton
+                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_fan()"
+                            >
+                                {{ statusFan }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>
+            </tab>
+            <tab title="廠區二">
+                <CRow>
+                    <CCol lg = '8' class="fan-master-switch">
+                        <h6>
+                            風扇總電源：
+                            <CButton
+                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_fan()"
+                            >
+                                {{ statusFan }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>                  
+                <CRow>
+                    <CCol lg = '8' class="light-master-switch">
+                        <h6> 燈光總電源：
+                            <CButton
+                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_light()"
+                            >
+                                {{ statusLight }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>
+            </tab>
+            <tab title="廠區三">
+                <CRow>
+                    <CCol lg = '8' class="light-master-switch">
+                        <h6> 燈光總電源：
+                            <CButton
+                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_light()"
+                            >
+                                {{ statusLight }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>
+                <CRow>
+                    <CCol lg = '8' class="fan-master-switch">
+                        <h6>
+                            風扇總電源：
+                            <CButton
+                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_fan()"
+                            >
+                                {{ statusFan }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>              
+            </tab>
+            <tab title="廠區四">
+                <CRow>
+                    <CCol lg = '8' class="fan-master-switch">
+                        <h6>
+                            風扇總電源：
+                            <CButton
+                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_fan()"
+                            >
+                                {{ statusFan }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>                 
+                <CRow>
+                    <CCol lg = '8' class="light-master-switch">
+                        <h6> 燈光總電源：
+                            <CButton
+                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
+                                size='sm'
+                                @click="switch_light()"
+                            >
+                                {{ statusLight }}
+                            </CButton>
+                        </h6>
+                    </CCol>
+                </CRow>             
+            </tab>
+        </tabs>
     </div>
 </template>
 
 <script>
+import Tab from './Tab.vue'
+import Tabs from './Tabs.vue'
+
 export default {
-    data() {
+    components: {
+        Tab,
+        Tabs
+    },
+    data () {
         return {
+            mode: 'dark',
             isOnLight: false,
             isOnFan: false,
             statusLight: 'OFF',
@@ -40,11 +142,17 @@ export default {
         }
     },
     mounted() {
-        // turn on all lights and fans in the beginning
         this.switch_light();
         this.switch_fan();
     },
     methods: {
+        changeStyle () {
+          if (this.mode === 'dark') {
+            this.mode = 'light'
+          } else {
+            this.mode = 'dark'
+          }
+        },
         switch_light() {
             let data = this.isOnLight ? 'light_off' : 'light_on';
             this.$http
@@ -71,32 +179,41 @@ export default {
 
                     this.statusFan = (this.isOnFan) ? 'ON' : 'OFF';
                 })
-        }
-    }
+        }    
+  }
 }
 </script>
 
-<style scoped>
+<style lang="css">
+  * {
+    margin: 0;
+    padding: 0;
+    font-family: 'Karla', sans-serif;
+  }
+  .wrapper {
+    width: 100%;
+    min-height: 47.5vh;
+    background-color: #f8f8f8;
+    margin: 0;
+    /* padding: 20px; */
+  }
+
+  .change__style {
+    background-color: #eee;
+    font-size: 1em;
+    margin-bottom: 10px;
+    padding: 5px;
+  }
 .card-eset {
-    background-color: black;
-    width: 77.9vw;
-    height:12.9vh;
-    border-top:5px green solid;
-    border-left:5px green solid;
-    border-right:5px green solid;
-    border-bottom: 5px green solid;
+    background-color: #0e2e2b;
 }
-.card-title-eset {
-    color: green;
-    font-size: 1.5vw;
-    padding-left:5px;
-    padding-top:5px;
-    padding-bottom:5px;
-    background-color: black;
-    border-bottom: 1px green solid;
-    position: relative;
-    left: 1px;
+
+.card-eset-title {
+    color: #98a8a0;
+    background-color: #0e2e2b;
+    border-bottom: 1px rgb(77, 107, 77) solid;
 }
+
 .light-master-switch {
     color: white;
     text-align: center;
@@ -104,7 +221,7 @@ export default {
 .but-light-master-switch {
     color: green;
     padding-bottom:10px;
-    width: 120px;
+    width: 80px;
 
     border-top:2px green solid;
     border-left:2px green solid;
@@ -114,7 +231,7 @@ export default {
 .but-master-switch-off {
     color: #4F4F4F;
     padding-bottom:10px;
-    width: 120px;
+    width: 80px;
 
     border-top:2px #4F4F4F solid;
     border-left:2px #4F4F4F solid;

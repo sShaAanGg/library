@@ -1,10 +1,10 @@
 <template>
-    <div class="card-h">
+    <div class="card-ec">
         <h2 class="card-font">本月總耗電量</h2>
         <CRow>
             <CCol lg = '12'>
                 <CCardBody>
-                    <DonutChartElectricConsum v-if="isShowChart"></DonutChartElectricConsum>
+                    <DonutChartElectricConsum></DonutChartElectricConsum>
                 </CCardBody>
             </CCol>
         </CRow>
@@ -18,21 +18,18 @@ export default {
     components: {
         DonutChartElectricConsum
     },
-    data() {
-        return {
-            isShowChart: true,
-        }
-    }
 }
 
 </script>
 
 <style>
-.card-h {
+.card-ec {
     background-color: #0e2e2b;
+    height: 37.5vh;
 }
 
 .card-font {
+    font-size: 1vw;
     color: #98a8a0;
     background-color: #0e2e2b;
     border-bottom: 1px rgb(77, 107, 77) solid;

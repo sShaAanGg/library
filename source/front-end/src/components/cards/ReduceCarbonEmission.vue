@@ -15,9 +15,15 @@
     background-color: #0e2e2b;
 }
 
-.card-font {
+.card-title-rce {
+    font-size: 1vw;
     color: #98a8a0;
     background-color: #0e2e2b;
     border-bottom: 1px rgb(77, 107, 77) solid;
 }
+.card-body-rce {
+    color: white;
+    font-size: 1.5vw;
+}
+
 </style>

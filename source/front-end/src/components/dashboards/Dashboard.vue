@@ -11,24 +11,24 @@
                         </CCol>
                         <CCol lg = '12'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecStore></ElecStore>
+                                <CarbonEmission></CarbonEmission>
                             </div>
                         </CCol>
                         <CCol lg = '12'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecStore></ElecStore>
+                                <ReduceCarbonEmission></ReduceCarbonEmission>
                             </div>
                         </CCol>
                         <CCol lg = '12'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecStore></ElecStore>
+                                <AbnormalEvent></AbnormalEvent>
                             </div>
                         </CCol>
-                        <CCol lg = '12'>
+                        <!-- <CCol lg = '12'>
                             <div class="mb-1 mr-1 cardstyle">
                                 <ElecStore></ElecStore>
                             </div>
-                        </CCol>
+                        </CCol> -->
                     </CRow>
                 </CCol>
                 <CCol lg = '10' class="pt-2">
@@ -40,22 +40,22 @@
                         </CCol>
                         <CCol lg = '4'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecConsum></ElecConsum>
+                                <DemandResponse :data="dataArray"></DemandResponse>
                             </div>
                         </CCol>
                         <CCol lg = '4'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecConsum></ElecConsum>
+                                <RealTimeKilowattHour :fromDashboardData="realTimeKilowattHourData"></RealTimeKilowattHour>
                             </div>
                         </CCol>
-                        <CCol lg = '5'>
+                        <CCol lg = '8'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <DemandResponse></DemandResponse>
+                                <HistoryAnalysis></HistoryAnalysis>
                             </div>
                         </CCol>
-                        <CCol lg = '7'>
+                        <CCol lg = '4'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecConsum></ElecConsum>
+                                <EquipSetting></EquipSetting>
                             </div>
                         </CCol>
                     </CRow>
@@ -73,6 +73,9 @@ import ReduceCarbonEmission from '@/components/cards/ReduceCarbonEmission';
 import ElecConsum from '@/components/cards/ElecConsum';
 import DemandResponse from '@/components/cards/DemandResponse';
 import EquipSetting from '@/components/cards/EquipSetting';
+import HistoryAnalysis from '@/components/cards/HistoryAnalysis';
+import AbnormalEvent from '@/components/cards/AbnormalEvent';
+import RealTimeKilowattHour from '@/components/cards/RealTimeKilowattHour';
 
 export default {
     components: {
@@ -82,7 +85,27 @@ export default {
         ElecConsum,        
         DemandResponse,
         EquipSetting,
-    }
+        HistoryAnalysis,
+        AbnormalEvent,
+        RealTimeKilowattHour
+    },
+
+    data(){
+        return{
+            realTimeKilowattHourData: 0,
+            dataArray:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
+        }
+    },
+
+    created() {
+    },
+
+    mounted(){
+        setInterval(() => {
+            this.realTimeKilowattHourData = (Math.random() * 10000).toFixed(2) - 0;
+            this.dataArray = [22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)]
+        }, 2000);
+    }    
 }
 
 </script>
@@ -92,11 +115,6 @@ export default {
     background-color: #081d1b;
     border-color: #0e2e2b;
 }
-.cardstyle {
-    /* border-top:5px green solid;
-    border-left:5px green solid;
-    border-right:5px green solid;
-    border-bottom:5px green solid; */
-}
+
 
 </style>
