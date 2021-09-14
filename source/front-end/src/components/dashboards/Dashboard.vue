@@ -45,7 +45,7 @@
                         </CCol>
                         <CCol lg = '4'>
                             <div class="mb-1 mr-1 cardstyle">
-                                <ElecConsum></ElecConsum>
+                                <RealTimeKilowattHour :fromDashboardData="realTimeKilowattHourData"></RealTimeKilowattHour>
                             </div>
                         </CCol>
                         <CCol lg = '5'>
@@ -73,6 +73,7 @@ import ReduceCarbonEmission from '@/components/cards/ReduceCarbonEmission';
 import ElecConsum from '@/components/cards/ElecConsum';
 import DemandResponse from '@/components/cards/DemandResponse';
 import EquipSetting from '@/components/cards/EquipSetting';
+import RealTimeKilowattHour from '@/components/cards/RealTimeKilowattHour';
 
 export default {
     components: {
@@ -82,6 +83,22 @@ export default {
         ElecConsum,        
         DemandResponse,
         EquipSetting,
+        RealTimeKilowattHour
+    },
+    
+    data(){
+        return{
+            realTimeKilowattHourData: 0,
+        }
+    },
+
+    created() {
+    },
+
+    mounted(){
+        setInterval(() => {
+            this.realTimeKilowattHourData = (Math.random() * 10000).toFixed(2) - 0;
+        }, 2000);
     }
 }
 
@@ -91,12 +108,6 @@ export default {
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
-}
-.cardstyle {
-    /* border-top:5px green solid;
-    border-left:5px green solid;
-    border-right:5px green solid;
-    border-bottom:5px green solid; */
 }
 
 </style>
