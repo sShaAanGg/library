@@ -73,7 +73,7 @@ export default {
                     text: ['High', 'Low'],
                     dimension: 0,
                     inRange: {
-                        color: ['#00FF00', '#FFFF00','#FF0000']
+                        color: ['#55A864', '#A89F5B','#AC2D2D']
                     },
                 },
                 series: [{

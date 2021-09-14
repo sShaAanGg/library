@@ -15,6 +15,7 @@
 import DonutChartElectricConsum from '@/components/charts/DonutChartElectricConsum';
 
 export default {
+    name: "ElecConsum",
     components: {
         DonutChartElectricConsum
     },

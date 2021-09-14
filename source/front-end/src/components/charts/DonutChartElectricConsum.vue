@@ -1,5 +1,5 @@
 <template>
-    <div class="chart" id="main" style = "width: 23vw;height:30vh" />
+    <div id="donutChart" style = "width: 23vw;height:30vh" />
     <!-- <div>
     <CChartDoughnut     
         :datasets="[
@@ -21,57 +21,12 @@
 </template>
 
 <script>
-import { CChartDoughnut } from '@coreui/vue-chartjs'
 export default {
     name: "DonutChartElectricConsum",
     data() {
         return {
             myChart:'',
-            option: {
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    show: false,
-                    top: '5%',
-                    left: 'center'
-                },
-                series: [
-                    {
-                        name: '访问来源',
-                        type: 'pie',
-                        radius: ['50%', '70%'],
-                        avoidLabelOverlap: false,
-                        label: {
-                            show: false,
-                            position: 'center'
-                        },
-                        emphasis: {
-                            label: {
-                                show: true,
-                                fontSize: '40',
-                                fontWeight: 'bold'
-                            }
-                        },
-                        labelLine: {
-                            show: false
-                        },
-                        data: [
-                            {value: 653, name: '廠區一'},
-                            {value: 270, name: '廠區二'},
-                            {value: 50, name: '廠區三'},
-                            {value: 27, name: '廠區四'},
-                        ],
-                        backgroundColor: [
-                            '#175580',
-                            '#346780',
-                            '#3C968D',
-                            '#388C6C'  
-                        ]
-                    }
-                ]
-            }
-            
+
         }
     },
     // components: { CChartDoughnut },
@@ -104,7 +59,56 @@ export default {
     },
     methods: {
         draw_chart() {
-            this.myChart = this.$echarts.init(document.getElementById("main"));
+            this.option = {
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    show: true,
+                    orient: 'vertical',
+                    textStyle: {
+                        fontSize: 16,
+                        color:'white',
+                        padding: [5, 10, 5, 10]
+                    },
+                    right: '5%',
+
+                },
+                series: [
+                    {
+                        type: 'pie',
+                        right: '30%',
+                        radius: ['65%', '85%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        // emphasis: {
+                        //     label: {
+                        //         show: true,
+                        //         fontSize: '20px',
+                        //     }
+                        // },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [
+                            {value: 653, name: '廠區一'},
+                            {value: 270, name: '廠區二'},
+                            {value: 50, name: '廠區三'},
+                            {value: 27, name: '廠區四'},
+                        ],
+                        color: [
+                            '#175580',
+                            '#346780',
+                            '#3C968D',
+                            '#388C6C'  
+                        ]
+                    }
+                ]
+            }
+            this.myChart = this.$echarts.init(document.getElementById("donutChart"));
             this.myChart.setOption(this.option);
         }
     },
