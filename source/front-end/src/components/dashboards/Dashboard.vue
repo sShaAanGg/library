@@ -1,77 +1,77 @@
 <template>
-    <div>
-        <div >
-            <CRow class="card-base" >
-                <CCol lg = '2' class="pt-2">
-                    <CRow>
-                        <CCol lg = '12'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <ElecStore :fromDataEs="elecStore"></ElecStore>
-                            </div>
-                        </CCol>
-                        <CCol lg = '12'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <CarbonEmission :fromDataCe="cEmission"></CarbonEmission>
-                            </div>
-                        </CCol>
-                        <CCol lg = '12'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <ReduceCarbonEmission :fromDataRce="reducedCEmission"></ReduceCarbonEmission>
-                            </div>
-                        </CCol>
-                        <CCol lg = '12'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <AbnormalEvent 
-                                    :fromDataAe="eventLog"
-                                    :curTemp="temperature"
-                                    :curHumidity="humidity"
-                                    :curIllumi="illuminance"
-                                    :curCO2="carbonDioxide"
-                                    :curPm2dot5="pm2dot5"
-                                    :isNormal="curIsNormal"
-                                    :logIndex="curLogIndex"
-                                />
-                            </div>
-                        </CCol>
-                        <!-- <CCol lg = '12'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <ElecStore></ElecStore>
-                            </div>
-                        </CCol> -->
-                    </CRow>
-                </CCol>
-                <CCol lg = '10' class="pt-2">
-                    <CRow>
-                        <CCol lg = '4'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <ElecConsum :fromDataEc="getElecConsumData"></ElecConsum>
-                            </div>
-                        </CCol>
-                        <CCol lg = '4'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <DemandResponse :fromDataDr="elecCapacity"></DemandResponse>
-                            </div>
-                        </CCol>
-                        <CCol lg = '4'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <RealTimeKilowattHour :fromDataRt="realTimeKilowattHourData"></RealTimeKilowattHour>
-                            </div>
-                        </CCol>
-                        <CCol lg = '8'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <HistoryAnalysis :fromDataHa="getBarData"></HistoryAnalysis>
-                            </div>
-                        </CCol>
-                        <CCol lg = '4'>
-                            <div class="mb-1 mr-1 cardstyle">
-                                <EquipControl></EquipControl>
-                            </div>
-                        </CCol>
-                    </CRow>
-                </CCol>
-            </CRow>
-        </div>
+
+    <div class="c-main">
+        <CRow class="card-base" >
+            <CCol lg = '2' class="pt-2">
+                <CRow>
+                    <CCol lg = '12'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <ElecStore :fromDataEs="elecStore"></ElecStore>
+                        </div>
+                    </CCol>
+                    <CCol lg = '12'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <CarbonEmission :fromDataCe="cEmission"></CarbonEmission>
+                        </div>
+                    </CCol>
+                    <CCol lg = '12'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <ReduceCarbonEmission :fromDataRce="reducedCEmission"></ReduceCarbonEmission>
+                        </div>
+                    </CCol>
+                    <CCol lg = '12'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <AbnormalEvent 
+                                :fromDataAe="eventLog"
+                                :curTemp="temperature"
+                                :curHumidity="humidity"
+                                :curIllumi="illuminance"
+                                :curCO2="carbonDioxide"
+                                :curPm2dot5="pm2dot5"
+                                :isNormal="curIsNormal"
+                                :logIndex="curLogIndex"
+                            />
+                        </div>
+                    </CCol>
+                    <!-- <CCol lg = '12'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <ElecStore></ElecStore>
+                        </div>
+                    </CCol> -->
+                </CRow>
+            </CCol>
+            <CCol lg = '10' class="pt-2">
+                <CRow>
+                    <CCol lg = '4'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <ElecConsum :fromDataEc="getElecConsumData"></ElecConsum>
+                        </div>
+                    </CCol>
+                    <CCol lg = '4'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <DemandResponse :fromDataDr="elecCapacity"></DemandResponse>
+                        </div>
+                    </CCol>
+                    <CCol lg = '4'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <RealTimeKilowattHour :fromDataRt="realTimeKilowattHourData"></RealTimeKilowattHour>
+                        </div>
+                    </CCol>
+                    <CCol lg = '8'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <HistoryAnalysis :fromDataHa="getBarData"></HistoryAnalysis>
+                        </div>
+                    </CCol>
+                    <CCol lg = '4'>
+                        <div class="mb-1 mr-1 cardstyle">
+                            <EquipControl></EquipControl>
+                        </div>
+                    </CCol>
+                </CRow>
+            </CCol>
+        </CRow>
     </div>
+
 </template>
 
 <script>
@@ -111,6 +111,7 @@ export default {
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
+            // elecCapacity: [], 
             getElecConsumData: [],
             getBarData: [],
 
