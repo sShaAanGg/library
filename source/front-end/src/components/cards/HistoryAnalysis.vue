@@ -2,7 +2,7 @@
     <div class='card-h'>
         <h2 class='card-font'>年度碳排量比較</h2>
         <CCardBody align='center'>
-            <BarChartHistory></BarChartHistory>
+            <BarChartHistory :barData="fromDataHa"></BarChartHistory>
         </CCardBody>
     </div>
 </template>
@@ -11,6 +11,9 @@
 import BarChartHistory from '@/components/charts/BarChartHistory';
 
 export default {
+    inject: ['reload'],
+    props: ['fromDataHa'],
+    name: "HistoryAnalysis",
     components: {
         BarChartHistory
     }

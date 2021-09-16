@@ -2,7 +2,7 @@
     <div class='card-h'>
         <h2 class='card-font'>即時用電量</h2>
         <CCardBody align='center'>
-            <RealTimeKilowattHourChart :fromRealTimeKilowattHourData="fromDashboardData"></RealTimeKilowattHourChart>
+            <RealTimeKilowattHourChart :realtimeElec="fromDataRt"></RealTimeKilowattHourChart>
         </CCardBody>
     </div>
 </template>
@@ -12,7 +12,7 @@ import RealTimeKilowattHourChart from '@/components/charts/RealTimeKilowattHourC
 
 export default {
     inject: ['reload'],
-    props: [ 'fromDashboardData'],
+    props: [ 'fromDataRt'],
     name: `RealTimeKilowattHour`,
 
     data() {

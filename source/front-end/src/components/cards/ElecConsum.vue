@@ -4,7 +4,7 @@
         <CRow>
             <CCol lg = '12'>
                 <CCardBody>
-                    <DonutChartElectricConsum></DonutChartElectricConsum>
+                    <DonutChartElectricConsum :elecConsumData="fromDataEc"></DonutChartElectricConsum>
                 </CCardBody>
             </CCol>
         </CRow>
@@ -15,6 +15,8 @@
 import DonutChartElectricConsum from '@/components/charts/DonutChartElectricConsum';
 
 export default {
+    inject: ['reload'],
+    props: ['fromDataEc'],
     name: "ElecConsum",
     components: {
         DonutChartElectricConsum

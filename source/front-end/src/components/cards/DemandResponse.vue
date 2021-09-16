@@ -2,7 +2,7 @@
     <div class='card-h'>
         <h2 class='card-font'>需量管理</h2>
         <CCardBody align='center'>
-            <LineChartElectricConsum :data="data"></LineChartElectricConsum>
+            <LineChartElectricConsum :data="fromDataDr"></LineChartElectricConsum>
         </CCardBody>
     </div>
 </template>
@@ -11,7 +11,7 @@
 import LineChartElectricConsum from '@/components/charts/LineChartElectricConsum';
 export default {
     inject: ['reload'],
-    props: [ 'data' ],
+    props: [ 'fromDataDr' ],
     components: {
         LineChartElectricConsum
     },

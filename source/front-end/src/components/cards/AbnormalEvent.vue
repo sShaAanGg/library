@@ -1,21 +1,27 @@
 <template>
     <div class="card-ae">
         <h6 class="card-ae-title">廠區狀態</h6>
-        <h4 :class="[isAbnormal ? 'status-abnormal' : 'status-normal']"> {{status}}</h4>
+        <div class="sensor-data">
+            <h6>溫度：{{curTemp}} &#8451;</h6>
+            <h6>濕度：{{curHumidity}} % </h6>
+            <h6>照度：{{curIllumi}} LUX </h6>
+            <h6>CO<sub>2</sub>：{{curCO2}} ppm</h6>
+            <h6>PM2.5：{{curPm2dot5}} &#956;g/m<sup>3</sup></h6>
+        </div>
+        <ul v-if="isNormal" class="status-normal">{{factoryStatus[logIndex]}}</ul>
+        <ul v-else class="status-abnormal"> 異常 </ul>
     </div>
 </template>
 
 <script>
 export default {
+    inject: ['reload'],
+    props: ['fromDataAe', 'curTemp', 'curHumidity', 'curIllumi','curCO2', 'curPm2dot5', 'isNormal', 'logIndex'],
     data() {
         return {
-            isAbnormal: false,
-            status: '無異常'
+            factoryStatus: ['廠區一  無異常', '廠區二  無異常', '廠區三  無異常']
         }
     },
-    methods: {
-
-    }
 }
 </script>
 
@@ -38,6 +44,17 @@ export default {
     padding-bottom: 10px;
 }
 .status-abnormal {
-    color: red;
+    color: rgb(219, 20, 20);
+    font-size: 1.5vw;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
+}
+.sensor-data {
+    position:relative;
+    color:white;
+    left:20%;
+    font-size: 1vw;
 }
 </style>

@@ -2,14 +2,14 @@
     <div class="card-h">
         <h2 class="card-font"> 本月碳排放量 </h2>
         <CCardBody class="card-body-ce" align='center'>
-            220 kgCO<sub>2</sub>e
+            {{fromDataCe}} kgCO<sub>2</sub>e
         </CCardBody>
         <div style="text-align: right">
             <img
                 class="card-img-es"
                 src="img/dashboard_imgs/co2.png"
-                width="90"
-                height="90"
+                width="80"
+                height="80"
                 display="inline"
             />
         </div>        
@@ -17,6 +17,10 @@
 </template>
 
 <script>
+export default {
+    inject: ['reload'],
+    props: ['fromDataCe'],
+}
 </script>
 
 <style>

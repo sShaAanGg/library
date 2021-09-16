@@ -1,22 +1,18 @@
 <template>
-    <div id="donutChart" style = "width: 23vw;height:30vh" />
+    <div id="donutChart" style = "width: 23vw;height:30vh">
+        <div style="display:none" > {{elecConsumData}}</div>
+    </div>
 </template>
 
 <script>
 export default {
+    inject: ['reload'],
+    props: ['elecConsumData'],
     name: "DonutChartElectricConsum",
     data() {
         return {
             myChart:'',
-
-        }
-    },
-    mounted() {
-        this.draw_chart()
-    },
-    methods: {
-        draw_chart() {
-            this.option = {
+            option: {
                 tooltip: {
                     trigger: 'item'
                 },
@@ -51,10 +47,10 @@ export default {
                             show: false
                         },
                         data: [
-                            {value: 653, name: '廠區一'},
-                            {value: 270, name: '廠區二'},
-                            {value: 50, name: '廠區三'},
-                            {value: 27, name: '廠區四'},
+                            {value: 1000, name: '廠區一'},
+                            {value: 1000, name: '廠區二'},
+                            {value: 1000, name: '廠區三'},
+                            {value: 1000, name: '廠區四'},
                         ],
                         color: [
                             '#175580',
@@ -65,6 +61,23 @@ export default {
                     }
                 ]
             }
+        }
+    },
+    beforeUpdate() {
+        this.option.series[0].data[0].value = this.elecConsumData[0];
+        this.option.series[0].data[1].value = this.elecConsumData[1];
+        this.option.series[0].data[2].value = this.elecConsumData[2];
+        this.option.series[0].data[3].value = this.elecConsumData[3];
+        this.myChart.setOption(this.option);
+
+
+    },
+    mounted() {
+        this.draw_chart()
+    },
+    methods: {
+        draw_chart() {
+
             this.myChart = this.$echarts.init(document.getElementById("donutChart"));
             this.myChart.setOption(this.option);
         }

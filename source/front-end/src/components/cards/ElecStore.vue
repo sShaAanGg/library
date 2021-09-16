@@ -2,7 +2,7 @@
     <div class="card-es">
         <h4 class="card-font">本月綠能儲電量</h4>
         
-        <CCardBody class="card-body-es" align='center'> 0 KWh </CCardBody> 
+        <CCardBody class="card-body-es" align='center'> {{fromDataEs}} KWh </CCardBody> 
 
         <div style="text-align: right">
             <img
@@ -18,6 +18,8 @@
 
 <script>
 export default {
+    inject: ['reload'],
+    props: ['fromDataEs'],
     data() {
         return {
             screenWidth: Screen.screenWidth,    

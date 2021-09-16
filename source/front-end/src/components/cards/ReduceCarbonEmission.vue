@@ -2,14 +2,14 @@
     <div class="card-h">
         <h2 class="card-title-rce">本月減碳排放量</h2>
         <CCardBody class='card-body-rce' align='center'>
-            16 kgCO<sub>2</sub>e
+            {{fromDataRce}} kgCO<sub>2</sub>e
         </CCardBody>
         <div style="text-align: right">
             <img
                 class="card-img-es"
                 src="img/dashboard_imgs/co2_reduce.png"
-                width="120"
-                height="80"
+                width="110"
+                height="75"
                 display="inline"
             />
         </div>        
@@ -17,6 +17,12 @@
 </template>
 
 <script>
+export default {
+    inject: ['reload'],
+    props: ['fromDataRce'],
+    name: "HistoryAnalysis",
+
+}
 </script>
 
 <style>

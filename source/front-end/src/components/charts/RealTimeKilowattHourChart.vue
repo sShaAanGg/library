@@ -1,13 +1,13 @@
 <template>
     <div class="chart" id="realTimeChart" style="width: 30vw;height:30vh;">
-        <div style="display:none" >{{fromRealTimeKilowattHourData}}</div>                  
+        <div style="display:none" >{{realtimeElec}}</div>                  
     </div>
 </template>
 
 <script>
 export default {
     inject: ['reload'],
-    props: [ 'fromRealTimeKilowattHourData'],
+    props: [ 'realtimeElec'],
     name: `RealTimeKilowattHourChart`,
 
     data() {
@@ -81,7 +81,7 @@ export default {
                             },
                             data: [{
                             value: 0,
-                            name: '即時用量(kw/h)'
+                            name: '即時用量(KWh)'
                             }]
                         },
                         
@@ -135,12 +135,12 @@ export default {
     },
 
     beforeUpdate() {
-        this.option.series[0].data[0].value = this.fromRealTimeKilowattHourData;
-        this.option.series[1].data[0].value = this.fromRealTimeKilowattHourData;
-        if (this.fromRealTimeKilowattHourData > 4400){
-            this.option.series[1].itemStyle.color = '#3B7AB3';
-        } else if (this.fromRealTimeKilowattHourData >16000){
+        this.option.series[0].data[0].value = this.realtimeElec;
+        this.option.series[1].data[0].value = this.realtimeElec;
+        if (this.realtimeElec >16000){
             this.option.series[1].itemStyle.color = '#AC2D2D';
+        } else if (this.realtimeElec > 4400){
+            this.option.series[1].itemStyle.color = '#3B7AB3';
         } else {
             this.option.series[1].itemStyle.color = '#55A864';
         }

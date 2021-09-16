@@ -38,7 +38,7 @@ export default {
                     left: '0%',
                     right: '5%',
                     bottom: '15%',
-                    top: '2%',
+                    top: '3%',
                     containLabel: true,
                 },
                 xAxis: {

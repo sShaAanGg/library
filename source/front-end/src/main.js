@@ -36,6 +36,7 @@ import * as Utils from '@/common/utils.js';
 Vue.prototype.$utils = Utils;
 
 
+
 const messages = {
     zh_TC: {
         ...zhTC

@@ -47,6 +47,7 @@
     "es6-promise": "^4.2.8",
     "fs": "0.0.1-security",
     "json2csv": "^5.0.5",
+    "leaflet": "^1.7.1",
     "moment": "^2.29.1",
     "read-excel-file": "^4.0.7",
     "vue": "~2.6.11",
