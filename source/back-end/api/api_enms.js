@@ -92,10 +92,11 @@ module.exports = {
             errorMsg: "Some error occurred while select_current_cumulative_electricity_consumption"
         };
 
-        let sql = " SELECT SUM(ampere) AS sum_ampere FROM enms_info WHERE ampere != 0 AND `datetime` > ? AND `datetime` < ? GROUP BY mac ";
+        let sql =   " SELECT equipment_info.factory, SUM(ampere) AS sum_ampere FROM enms_info INNER JOIN equipment_info ON equipment_info.mac = enms_info.mac "+
+                    " WHERE ampere != 0 AND `datetime` > ? AND `datetime` < ? GROUP BY equipment_info.factory; ";
 
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(), 'yyyyMM01000000'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
-
+        console.log(sql)
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let cumulativeElectricityConsumption = [];
             let ix = 0;
@@ -158,8 +159,11 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while select_event_log"
         }
-        let sql = " SELECT * FROM error_log ORDER BY datetime desc ";
-
+        let sql =   " SELECT error_log.mac, error_log.`datetime`, error_log.event, equipment_info.factory, equipment_info.equipment "+
+                    " FROM error_log INNER JOIN equipment_info ON equipment_info.mac = error_log.mac                                "+ 
+                    " WHERE `datetime` > ? AND `datetime` < ? ORDER BY `datetime` DESC                                              ";
+        let time = new Date().setTime(new Date() - 5000);
+        sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);
     }
 }
