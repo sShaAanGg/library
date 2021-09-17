@@ -69,7 +69,7 @@ const i18n = new VueI18n({
 Vue.use(VXETable , {i18n: (key, args) => i18n.t(key, args)})
 
 var root = location.protocol + '//' + location.hostname
-axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? root + ':3005' : root + ':3005'
+axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? root + ':5000' : root + ':5000'
 
 
 Vue.prototype.$http = axios
