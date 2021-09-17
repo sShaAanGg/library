@@ -96,12 +96,12 @@ module.exports = {
                     " WHERE ampere != 0 AND `datetime` > ? AND `datetime` < ? GROUP BY equipment_info.factory; ";
 
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(), 'yyyyMM01000000'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
+        console.log(sql)
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let cumulativeElectricityConsumption = [];
             let ix = 0;
             
             // (result[ix].sum_ampere * 305) / 100000 每10秒紀錄一次資料的公式
-            console.log(result.length);
             while (ix < result.length){
                 cumulativeElectricityConsumption.push(((result[ix].sum_ampere * 305) / 100000).toFixed(2));
                 ++ix;
@@ -109,7 +109,6 @@ module.exports = {
             
             res.status(statusData.successCode).send(cumulativeElectricityConsumption);
         });
-  
     },
 
     select_real_time_electricity_consumption: function(req, res) {
@@ -164,8 +163,7 @@ module.exports = {
                     " FROM error_log INNER JOIN equipment_info ON equipment_info.mac = error_log.mac                                "+ 
                     " WHERE `datetime` > ? AND `datetime` < ? ORDER BY `datetime` DESC                                              ";
         let time = new Date().setTime(new Date() - 5000);
-        // sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
-        sql = dbFactory.build_mysql_format(sql, ['20210901000000', '20210902000000']);        
+        sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);
     }
 }

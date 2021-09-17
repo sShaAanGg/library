@@ -355,5 +355,4 @@ export default {
     border-color: #0e2e2b;
 }
 
-
 </style>

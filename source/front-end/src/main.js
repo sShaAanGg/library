@@ -27,6 +27,7 @@ import VXETable from 'vxe-table'
 import VueI18n from 'vue-i18n'
 import zhTC from 'vxe-table/lib/locale/lang/zh-TC'
 import enUS from 'vxe-table/lib/locale/lang/en-US'
+import "default-passive-events"
 import * as echarts from 'echarts'
 Vue.prototype.$echarts = echarts;
 import { CChartBar } from '@coreui/vue-chartjs'
