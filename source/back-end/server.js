@@ -1,19 +1,27 @@
-const express       = require('express')
-const cors          = require('cors')
-var http            = require('http')
-const bodyParser    = require('body-parser')
-const enms          = require('./routers/enms')
+const express       = require('express');
+const cors          = require('cors');
+var http            = require('http');
+const bodyParser    = require('body-parser');
+const enms          = require('./routers/enms');
+const cron          = require('./routers/cron');
+const morgan      = require('morgan');
 
 const app = express()
 
-app.use(bodyParser.json({limit: '50mb',         extended: true}))
-app.use(bodyParser.urlencoded({limit: '50mb',   extended: true}))
+app.use(bodyParser.json({limit: '50mb',         extended: true}));
+app.use(bodyParser.urlencoded({limit: '50mb',   extended: true}));
+app.use(morgan('tiny'));
+app.use(cors());
 
-app.use(cors())
-app.use('/api/enms', enms)
+app.use('/api/enms', enms);
+app.use('/api/cron', cron);
 
-var httpServer = http.createServer(app)
+var httpServer = http.createServer(app);
 
-httpServer.listen(3001,() => {
-    console.log('HTTP Server running on port 3001...')
-})
+httpServer.listen(3005,() => {
+    console.log('HTTP Server running on port 3005...');
+});
+
+module.exports = httpServer;
+
+

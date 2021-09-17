@@ -4,25 +4,40 @@
   "description": "",
   "bin": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "pkg": "pkg . -t node10-win-x64 --out-path=output/"
+    "test": "env-cmd -f ./.env-test nyc --reporter=html mocha --exit --timeout 15000",
+    "start": "nodemon server.js",
+    "cron": "nodemon tools/cron_enms.js",
+    "pkg": "pkg . -t node12-win-x64 --out-path=output/"
   },
-  "author": "Tracy Chen",
+  "author": "David Zhang",
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "autocannon": "^7.4.0",
+    "autocannon-reporter": "^1.1.0",
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "cron": "^1.8.2",
     "dotenv": "^8.2.0",
+    "env-cmd": "10.1.0",
     "express": "^4.17.1",
     "formidable": "^1.2.2",
     "fs-extra": "^9.0.0",
     "js-sha256": "^0.9.0",
+    "jsmodbus": "^4.0.4",
+    "mocha": "^8.2.1",
+    "modbus-serial": "^8.0.4",
+    "morgan": "^1.10.0",
     "mysql": "^2.18.1",
-    "pm2": "^4.2.3",
+    "net": "^1.0.2",
+    "nodemon": "^2.0.7",
+    "nyc": "^15.1.0",
+    "pkg": "^5.2.1",
+    "should": "^13.2.3",
+    "supertest": "^6.0.1",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.2"
+    "winston-daily-rotate-file": "^4.4.2",
+    "ws": "^7.1.2"
   },
   "pkg": {
     "scripts": [

@@ -8,18 +8,19 @@
             <h6>CO<sub>2</sub>：{{curCO2}} ppm</h6>
             <h6>PM2.5：{{curPm2dot5}} &#956;g/m<sup>3</sup></h6>
         </div>
-        <ul v-if="isNormal" class="status-normal">{{factoryStatus[logIndex]}}</ul>
-        <ul v-else class="status-abnormal"> 異常 </ul>
+        <ul v-if="isNormal" class="status-normal">{{normalLog[logIndex]}}</ul>
+        <ul v-else class="status-abnormal"> {{abnoramlLog}}</ul>
     </div>
 </template>
 
 <script>
 export default {
     inject: ['reload'],
-    props: ['fromDataAe', 'curTemp', 'curHumidity', 'curIllumi','curCO2', 'curPm2dot5', 'isNormal', 'logIndex'],
+    props: ['fromDataAe', 'curTemp', 'curHumidity', 'curIllumi','curCO2', 'curPm2dot5', 
+            'isNormal', 'logIndex', 'abnoramlLog'],
     data() {
         return {
-            factoryStatus: ['廠區一  無異常', '廠區二  無異常', '廠區三  無異常']
+            normalLog: ['廠區一  無異常', '廠區二  無異常', '廠區三  無異常']
         }
     },
 }

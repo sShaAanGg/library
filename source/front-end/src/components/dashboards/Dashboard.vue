@@ -30,6 +30,7 @@
                                 :curPm2dot5="pm2dot5"
                                 :isNormal="curIsNormal"
                                 :logIndex="curLogIndex"
+                                :abnoramlLog="curAbnormalLog"
                             />
                         </div>
                     </CCol>
@@ -108,10 +109,13 @@ export default {
             
             // data to plot graph
             cEmissionLastYear: [],
+            cEmissionThisYearBefore:[],
+            cEmissionThisYear: [],
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
-            elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            // elecCapacity: [], 
+            // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
+            contractCapacity: 50000,
+            elecCapacity: [50000, 15000, 5000], 
             getElecConsumData: [],
             getBarData: [],
 
@@ -123,7 +127,9 @@ export default {
             carbonDioxide: '',
             pm2dot5: '',
             curIsNormal: true,
-            curLogIndex: ''
+            curLogIndex: 0,
+            curAbnormalLog: '',
+            abnormalLogs: [],
 
         }
     },
@@ -134,70 +140,211 @@ export default {
     mounted(){
         /* Initailize all values */
         // get carbon emission of 23 month data at the beginning
-        this.cEmissionLastYear = [170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120,
-                                        200, 190, 280, 340, 620, 750, 290, 310];
+        // this.cEmissionLastYear = [170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120,
+        //                                 200, 190, 280, 340, 620, 750, 290, 310];
         // get carbon emission of this month last year
-        this.cEmissionLastTime = Math.round(Math.random() * 10000);
-
-        this.cEmission = Math.round(Math.random() * 10000);
-        this.reducedCEmission = this.cEmissionLastTime - this.cEmission;  
         this.temperature = (Math.random() * 15 + 20).toFixed(1);
         this.humidity = (Math.random() * 20 + 40).toFixed(2);
         this.illuminance = (Math.random() * 100 + 500).toFixed(2);
         this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
         this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
         this.curLogIndex = 0;
+        this.get_history_data();
+        this.get_cur_month_elec();
+        this.update_factory_status();
+        this.get_real_time_elec();
+        this.get_sensor_data();
+        // this.check_abnormal_event();
+        
 
 
         // get carbon emission of this month every 10 minutes      
         setInterval(() => {
-            this.cEmission = Math.round(Math.random() * 10000);
-            this.reducedCEmission = this.cEmissionLastTime - this.cEmission;
+            this.get_cur_month_elec();
+            this.get_real_time_elec();
+            this.get_sensor_data();
+            this.update_factory_status();
+        }, 2000);
+        // setInterval(()=>{
+        //     this.update_factory_status();
+        // }, 5000);
+
+        setInterval(() => {
+            this.get_cur_abnormal_event();
+        }, 3000);
+        setInterval(() => {
+            this.check_abnormal_event();
+        }, 5000);
+
+        // update history data every day
+        setInterval(() => {
+            this.get_history_data();
+        }, 86400000)
+
+        // setInterval(() => {
+            // periodically call api to get updated data
+
+
+
+
+            // this.realTimeKilowattHourData = (Math.random() * 10000).toFixed(2) - 0;
+            // this.elecCapacity = [22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)];
+            // this.getElecConsumData =  [Math.round(Math.random() * 10000), 
+            //                             Math.round(Math.random() * 10000),
+            //                             Math.round(Math.random() * 10000),
+            //                             Math.round(Math.random() * 10000)];
+           
+            // this.getBarData = [[170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120],
+            //                 [200, 190, 280, 340, 620, 750, 290, 310, 500, 680, 300, 100]];
+        // }, 2000); 
+        
+        // get event log every 5 minutes
+        // setInterval(() => {
+        //     let lastIsNormal = this.curIsNormal;
+        //     this.curIsNormal = !lastIsNormal;
+        //     setTimeout(() => {
+        //         this.curIsNormal = lastIsNormal;
+        //     }, 5000);
+        // }, 20000);        
+        // setInterval(() => {
+        //     let choose = Math.round(Math.random() * 10);
+        //     if (choose < 6) {
+        //         this.eventLog =[{'time':'09:11:12', 'area':'廠區一', 'event':'水冷機故障'}, 
+        //                         {'time':'09:10:23', 'area':'廠區三', 'event':'馬達故障'}];
+        //     }
+        //     else this.eventLog = '';
+        // }, 500);
+    },
+    methods: {
+        get_history_data() {
+            this.$http
+                .get('api/enms/select_two_years_electricity_consumption')
+                .then(res=> {
+                    let todayDate = new Date();
+                    let curMonth = todayDate.getMonth();
+                    
+                    // this.cEmissionLastYear = [];
+                    // this.cEmissionThisYearBefore = [];
+                    for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
+                        (ix < 12)   ? this.cEmissionLastYear.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2)) 
+                                    : this.cEmissionThisYearBefore.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2));
+                    }
+                    // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
+                    // console.log('after:', this.cEmissionLastYear);
+                    this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
+                    console.log(this.cEmissionThisYear);
+                    this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
+                    this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
+                    this.elecCapacity = [this.contractCapacity, 0, 0];
+                    for (let iy = 0; iy < 12; iy++){
+                        this.elecCapacity[1] += this.cEmissionLastYear[iy];
+                        if (iy < this.cEmissionThisYearBefore.length) {
+                            this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
+                        }                                                                
+                    }
+                });            
+        },
+
+        get_cur_month_elec() {
+            this.$http
+                .get('api/enms/select_current_month_cumulative_electricity_consumption')
+                .then(res=>{
+                    // currently has one area
+                    // this.getElecConsumData = [JSON.parse(res.data[0]), 
+                    //                             JSON.parse(res.data[1]),
+                    //                             JSON.parse(res.data[2]), 
+                    //                             JSON.parse(res.data[3])];
+                    this.getElecConsumData = [1000, 1000, 1000, JSON.parse(res.data[0])];
+                    this.cEmission = (0.554 * (this.getElecConsumData[0] 
+                                                + this.getElecConsumData[1] 
+                                                + this.getElecConsumData[2]
+                                                + this.getElecConsumData[3])).toFixed(2);
+
+                    // do not use deep copy                                                
+                    this.cEmissionThisYear = Object.assign([], this.cEmissionThisYearBefore);
+
+                    this.cEmissionThisYear.push(this.cEmission);
+                    this.getBarData.push(this.cEmissionLastYear, this.cEmissionThisYear);
+                    this.reducedCEmission = (this.cEmissionLastTime - this.cEmission).toFixed(2);
+                });
+        },
+
+        update_factory_status() {
+            let lastLogIndex = this.curLogIndex;
+            (lastLogIndex === 2) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
+        },
+
+        get_cur_abnormal_event() {
+            if (this.abnormalLogs.length == 0) {
+                this.curIsNormal = true;
+            } 
+            else {
+                this.curIsNormal = false;
+                this.curAbnormalLog = this.abnormalLogs.shift();
+            }
+        },
+        check_abnormal_event() {
+            this.$http
+                .get('/api/enms/select_event_log')
+                .then(res=> {
+                    console.log(res.data[0]);
+
+                    // this.curAbnormalLogs = JSON.parse(res.data);
+                    if (res.data.length != 0) {
+                        // let getAbnormalLogs = ['廠區一 功率過高', '廠區二 功率過高', '廠區三 功率過高'];
+                        for (let ix = 0; ix < res.data.length; ix++) {
+                            let eventLog = '';
+                            switch (res.data[ix].factory) {
+                                case '1':
+                                    // eventLog = '廠區一' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                    eventLog = '廠區一異常';
+                                    break;
+                                case '2':
+                                    // eventLog = '廠區二' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                    eventLog = '廠區二異常';
+                                    break;
+                                case '3':
+                                    // eventLog = '廠區三' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                    eventLog = '廠區三異常';
+                                    break;
+                                case '4':
+                                    // eventLog = '廠區四' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                    eventLog = '廠區四異常';
+                                    break;                                                                        
+
+                            }
+                            console.log('event:', eventLog);
+                            this.abnormalLogs.push(eventLog);
+                        }
+                    }
+
+                });
+            // let lastIsNormal = this.curIsNormal;
+            // this.curIsNormal = !lastIsNormal;
+            // setTimeout(() => {
+            //     this.curIsNormal = lastIsNormal;
+            // }, 5000);
+        },
+
+        get_real_time_elec() {
+            this.$http
+                .get('/api/enms/select_real_time_electricity_consumption')
+                .then(res=> {
+                    // console.log('real time elec:', res.data);
+                    this.realTimeKilowattHourData = res.data;
+                });      
+        },
+
+        get_sensor_data() {
             this.temperature = (Math.random() * 15 + 20).toFixed(1);
             this.humidity = (Math.random() * 20 + 40).toFixed(2);
             this.illuminance = (Math.random() * 100 + 500).toFixed(2);
             this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
             this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
-            
-            let lastLogIndex = this.curLogIndex;
-            (lastLogIndex === 2) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
-
-        }, 2000);
-
-        setInterval(() => {
-            let lastIsNormal = this.curIsNormal;
-            this.curIsNormal = !lastIsNormal;
-            setTimeout(() => {
-                this.curIsNormal = lastIsNormal;
-            }, 5000);
-        }, 20000);
-
-        setInterval(() => {
-            // periodically call api to get updated data
-            this.realTimeKilowattHourData = (Math.random() * 10000).toFixed(2) - 0;
-            this.elecCapacity = [22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)];
-            this.getElecConsumData =  [Math.round(Math.random() * 10000), 
-                                        Math.round(Math.random() * 10000),
-                                        Math.round(Math.random() * 10000),
-                                        Math.round(Math.random() * 10000)];
-           
-            this.getBarData = [[170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120],
-                            [200, 190, 280, 340, 620, 750, 290, 310, 500, 680, 300, 100]];
-        }, 2000); 
-        
-        // get event log every 5 minutes
-        setInterval(() => {
-            let choose = Math.round(Math.random() * 10);
-            if (choose < 6) {
-                this.eventLog =[{'time':'09:11:12', 'area':'廠區一', 'event':'水冷機故障'}, 
-                                {'time':'09:10:23', 'area':'廠區三', 'event':'馬達故障'}];
-            }
-            else this.eventLog = '';
-        }, 500)
+        }
 
 
-
-    }    
+    }
 }
 
 </script>

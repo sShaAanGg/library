@@ -5,20 +5,21 @@
             style="height:40vh"
             :datasets="[
             {
-                data: [170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120],
-                // data: barData[0],
-                backgroundColor: '#3C968D',
+                // data: [170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120],
+                data: barData[0],
+                backgroundColor: '#0F8ABF',
                 label: 'last year',
             },
                     {
-                data: [200, 190, 280, 340, 620, 750, 290, 310, test, 680, 300, 100],
-                // data: barData[1],
+                // data: [200, 190, 280, 340, 620, 750, 290, 310, test, 680, 300, 100],
+                data: barData[1],
                 backgroundColor: '#388C6C',
                 label: 'this year',
             }
             ]"
             labels="months"
             :options="{ 
+                animation: false,
                 maintainAspectRatio: false ,
                 legend: {
                     labels: {

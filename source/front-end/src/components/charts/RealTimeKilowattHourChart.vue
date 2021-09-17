@@ -81,7 +81,7 @@ export default {
                             },
                             data: [{
                             value: 0,
-                            name: '即時用量(KWh)'
+                            name: '即時用量(KW)'
                             }]
                         },
                         

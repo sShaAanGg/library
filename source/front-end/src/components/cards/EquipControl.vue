@@ -157,31 +157,33 @@ export default {
           }
         },
         switch_light() {
-            let data = this.isOnLight ? 'light_off' : 'light_on';
-            this.$http
-                .post('/api/enms/send_switch_socket', {data:data})
-                .then(res => {
-                    let resMsg = JSON.stringify(res);
+            this.isOnLight = true;
+            // let data = this.isOnLight ? 'light_off' : 'light_on';
+            // this.$http
+            //     .post('/api/enms/send_switch_socket', {data:data})
+            //     .then(res => {
+            //         let resMsg = JSON.stringify(res);
 
-                    let curStat = this.isOnLight;
-                    this.isOnLight = !curStat;
+            //         let curStat = this.isOnLight;
+            //         this.isOnLight = !curStat;
 
-                    this.statusLight = (this.isOnLight) ? 'ON' : 'OFF';
-                })
+            //         this.statusLight = (this.isOnLight) ? 'ON' : 'OFF';
+            //     })
         },
 
         switch_fan() {
-            let data = this.isOnFan ? 'fan_off' : 'fan_on';
-            this.$http
-                .post('/api/enms/send_switch_socket', {data:data})
-                .then(res=> {
-                    let resMsg = JSON.stringify(res);
+            this.isOnFan = true;
+            // let data = this.isOnFan ? 'fan_off' : 'fan_on';
+            // this.$http
+            //     .post('/api/enms/send_switch_socket', {data:data})
+            //     .then(res=> {
+            //         let resMsg = JSON.stringify(res);
 
-                    let curStat = this.isOnFan;
-                    this.isOnFan = !curStat;
+            //         let curStat = this.isOnFan;
+            //         this.isOnFan = !curStat;
 
-                    this.statusFan = (this.isOnFan) ? 'ON' : 'OFF';
-                })
+            //         this.statusFan = (this.isOnFan) ? 'ON' : 'OFF';
+            //     })
         }    
   }
 }
