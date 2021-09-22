@@ -39,15 +39,28 @@ client.setID(1);
 // on device number 1. and log the values to the console.
 var lastCount = 0;
 setInterval(function() {
-    client.readInputRegisters(17, 1)
+    client.readInputRegisters(17, 8)
         .then((data)=>{
-            if ( parseInt(data.data) != lastCount){
+            if ( parseInt(data.data[0]) != lastCount[0]){
                 let insertSql = dbFactory.build_mysql_format(sql, ["11111111" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
                 console.log(insertSql);
                 dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
-                    lastCount = data.data;
                 });
             }
+            if ( parseInt(data.data[1]) != lastCount[1]){
+                let insertSql = dbFactory.build_mysql_format(sql, ["22222222" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
+                console.log(insertSql);
+                dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
+                });
+            }
+            if ( parseInt(data.data[2]) != lastCount[2]){
+                let insertSql = dbFactory.build_mysql_format(sql, ["33333333" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
+                console.log(insertSql);
+                dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
+                });
+            }
+            console.log(data.data);
+            lastCount = data.data;
         })
         .catch((err)=>{
             console.log(err);
