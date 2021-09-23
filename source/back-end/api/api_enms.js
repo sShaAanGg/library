@@ -24,12 +24,12 @@ module.exports = {
     /*========================================================== */
     send_switch_socket: function(req, res) {
 
-        console.log('[Back end] send_switch_socket');
+        // console.log('[Back end] send_switch_socket');
 
         var param = req.body.data;
         var hexStr;
 
-        console.log(param);
+        // console.log(param);
 
         switch (param) {
             case 'light_on':
@@ -71,11 +71,11 @@ module.exports = {
 
         /* 監聽end事件 */
         client.on("data", function (data) {
-            console.log("the data of server is " + data.toString());
+            // console.log("the data of server is " + data.toString());
         })
 
         client.on('end', () => {
-            console.log('[Back end]' + msg);
+            // console.log('[Back end]' + msg);
             res.send(msg);
             client.end();
         })
@@ -96,7 +96,6 @@ module.exports = {
                     " WHERE ampere != 0 AND `datetime` > ? AND `datetime` < ? GROUP BY equipment_info.factory; ";
 
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(), 'yyyyMM01000000'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
-        console.log(sql)
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let cumulativeElectricityConsumption = [];
             let ix = 0;
@@ -145,6 +144,7 @@ module.exports = {
         };
 
         let sql = " SELECT * FROM history_info WHERE yearmonth > ? AND yearmonth < ? ";
+        // let sql = " SELECT yearmonth, mac, SUM(electircity) FROM history_info WHERE yearmonth > ? AND yearmonth < ? group by mac";
         sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '0100000000', 
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
         
@@ -162,7 +162,7 @@ module.exports = {
         let sql =   " SELECT error_log.mac, error_log.`datetime`, error_log.event, equipment_info.factory, equipment_info.equipment "+
                     " FROM error_log INNER JOIN equipment_info ON equipment_info.mac = error_log.mac                                "+ 
                     " WHERE `datetime` > ? AND `datetime` < ? ORDER BY `datetime` DESC                                              ";
-        let time = new Date().setTime(new Date() - 5000);
+        let time = new Date().setTime(new Date() - 2000);
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);
     }

@@ -35,7 +35,7 @@ export default {
 }
 .card-body-ce {
     color: white;
-    font-size: 1.5vw;
+    font-size: 1.1vw;
     background-color: #0e2e2b;
 }
 </style>

@@ -93,35 +93,6 @@
                     </CCol>
                 </CRow>              
             </tab>
-            <tab title="廠區四">
-                <CRow>
-                    <CCol lg = '8' class="fan-master-switch">
-                        <h6>
-                            風扇總電源：
-                            <CButton
-                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_fan()"
-                            >
-                                {{ statusFan }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>                 
-                <CRow>
-                    <CCol lg = '8' class="light-master-switch">
-                        <h6> 燈光總電源：
-                            <CButton
-                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_light()"
-                            >
-                                {{ statusLight }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>             
-            </tab>
         </tabs>
     </div>
 </template>

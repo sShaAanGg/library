@@ -4,13 +4,13 @@ var http            = require('http');
 const bodyParser    = require('body-parser');
 const enms          = require('./routers/enms');
 const cron          = require('./routers/cron');
-const morgan      = require('morgan');
+// const morgan      = require('morgan');
 
 const app = express()
 
 app.use(bodyParser.json({limit: '50mb',         extended: true}));
 app.use(bodyParser.urlencoded({limit: '50mb',   extended: true}));
-app.use(morgan('tiny'));
+// app.use(morgan('tiny'));
 app.use(cors());
 
 app.use('/api/enms', enms);

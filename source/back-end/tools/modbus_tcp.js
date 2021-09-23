@@ -47,13 +47,13 @@ setInterval(function() {
                 dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
                 });
             }
-            if ( parseInt(data.data[1]) != lastCount[1]){
+            if ( parseInt(data.data[2]) != lastCount[2]){
                 let insertSql = dbFactory.build_mysql_format(sql, ["22222222" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
                 console.log(insertSql);
                 dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
                 });
             }
-            if ( parseInt(data.data[2]) != lastCount[2]){
+            if ( parseInt(data.data[4]) != lastCount[4]){
                 let insertSql = dbFactory.build_mysql_format(sql, ["33333333" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
                 console.log(insertSql);
                 dbFactory.action_db_with_cb(insertSql, statusData, ()=>{

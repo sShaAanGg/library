@@ -17,7 +17,7 @@
 export default {
     inject: ['reload'],
     props: ['fromDataAe', 'curTemp', 'curHumidity', 'curIllumi','curCO2', 'curPm2dot5', 
-            'isNormal', 'logIndex', 'abnoramlLog'],
+            'isNormal', 'logIndex', 'abnoramlLog', 'abLogIdx'],
     data() {
         return {
             normalLog: ['廠區一  無異常', '廠區二  無異常', '廠區三  無異常']
@@ -46,7 +46,7 @@ export default {
 }
 .status-abnormal {
     color: rgb(219, 20, 20);
-    font-size: 1.5vw;
+    font-size: 1vw;
     text-align: center;
     padding-top: 10px;
     padding-bottom: 10px;

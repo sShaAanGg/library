@@ -50,13 +50,12 @@ export default {
                             {value: 1000, name: '廠區一'},
                             {value: 1000, name: '廠區二'},
                             {value: 1000, name: '廠區三'},
-                            {value: 1000, name: '廠區四'},
                         ],
                         color: [
                             '#175580',
                             '#346780',
                             '#3C968D',
-                            '#388C6C'  
+                            // '#388C6C'  
                         ]
                     }
                 ]
@@ -67,7 +66,7 @@ export default {
         this.option.series[0].data[0].value = this.elecConsumData[0];
         this.option.series[0].data[1].value = this.elecConsumData[1];
         this.option.series[0].data[2].value = this.elecConsumData[2];
-        this.option.series[0].data[3].value = this.elecConsumData[3];
+        // this.option.series[0].data[3].value = this.elecConsumData[3];
         this.myChart.setOption(this.option);
 
 

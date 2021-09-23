@@ -5,6 +5,9 @@
 </template>
 
 <script>
+let meterMax = 150;
+let meterMin = 0;
+
 export default {
     inject: ['reload'],
     props: [ 'realtimeElec'],
@@ -14,6 +17,7 @@ export default {
         return { 
                 myChart: '',
                 curHeight: '',
+
 
                 option:{
                     tooltip: {
@@ -35,8 +39,8 @@ export default {
                             center: ["40%", "60%"],
                             startAngle: 200,
                             endAngle: -20,
-                            min: 0,
-                            max: 22000,
+                            min: meterMin,
+                            max: meterMax, // 22000,
                             splitNumber: 5,
                             radius: '110%',
                             axisLine: {            
@@ -91,8 +95,8 @@ export default {
                             startAngle: 200,
                             endAngle: -20,
                             radius: '105%',
-                            min: 0,
-                            max: 22000,
+                            min: meterMin,
+                            max: meterMax,
                             itemStyle: {
                                 color: '#F9F900',
                             },
@@ -137,9 +141,9 @@ export default {
     beforeUpdate() {
         this.option.series[0].data[0].value = this.realtimeElec;
         this.option.series[1].data[0].value = this.realtimeElec;
-        if (this.realtimeElec >16000){
+        if (this.realtimeElec > Math.round(meterMax * 0.8)){
             this.option.series[1].itemStyle.color = '#AC2D2D';
-        } else if (this.realtimeElec > 4400){
+        } else if (this.realtimeElec > Math.round(meterMax * 0.2)){
             this.option.series[1].itemStyle.color = '#3B7AB3';
         } else {
             this.option.series[1].itemStyle.color = '#55A864';

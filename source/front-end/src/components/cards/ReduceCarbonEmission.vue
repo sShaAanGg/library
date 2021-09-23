@@ -38,7 +38,7 @@ export default {
 }
 .card-body-rce {
     color: white;
-    font-size: 1.5vw;
+    font-size: 1.2vw;
 }
 
 </style>

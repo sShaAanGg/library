@@ -114,7 +114,7 @@ export default {
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            contractCapacity: 50000,
+            contractCapacity: 1100000,
             elecCapacity: [50000, 15000, 5000], 
             getElecConsumData: [],
             getBarData: [],
@@ -129,7 +129,9 @@ export default {
             curIsNormal: true,
             curLogIndex: 0,
             curAbnormalLog: '',
+            abnormalStatus: {},
             abnormalLogs: [],
+            canGetNew: true
 
         }
     },
@@ -157,63 +159,25 @@ export default {
         // this.check_abnormal_event();
         
 
-
-        // get carbon emission of this month every 10 minutes      
+    
         setInterval(() => {
             this.get_cur_month_elec();
             this.get_real_time_elec();
             this.get_sensor_data();
             this.update_factory_status();
         }, 2000);
-        // setInterval(()=>{
-        //     this.update_factory_status();
-        // }, 5000);
 
         setInterval(() => {
             this.get_cur_abnormal_event();
-        }, 3000);
+        }, 100);
         setInterval(() => {
             this.check_abnormal_event();
-        }, 5000);
+        }, 100);
 
         // update history data every day
         setInterval(() => {
             this.get_history_data();
         }, 86400000)
-
-        // setInterval(() => {
-            // periodically call api to get updated data
-
-
-
-
-            // this.realTimeKilowattHourData = (Math.random() * 10000).toFixed(2) - 0;
-            // this.elecCapacity = [22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)];
-            // this.getElecConsumData =  [Math.round(Math.random() * 10000), 
-            //                             Math.round(Math.random() * 10000),
-            //                             Math.round(Math.random() * 10000),
-            //                             Math.round(Math.random() * 10000)];
-           
-            // this.getBarData = [[170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120],
-            //                 [200, 190, 280, 340, 620, 750, 290, 310, 500, 680, 300, 100]];
-        // }, 2000); 
-        
-        // get event log every 5 minutes
-        // setInterval(() => {
-        //     let lastIsNormal = this.curIsNormal;
-        //     this.curIsNormal = !lastIsNormal;
-        //     setTimeout(() => {
-        //         this.curIsNormal = lastIsNormal;
-        //     }, 5000);
-        // }, 20000);        
-        // setInterval(() => {
-        //     let choose = Math.round(Math.random() * 10);
-        //     if (choose < 6) {
-        //         this.eventLog =[{'time':'09:11:12', 'area':'廠區一', 'event':'水冷機故障'}, 
-        //                         {'time':'09:10:23', 'area':'廠區三', 'event':'馬達故障'}];
-        //     }
-        //     else this.eventLog = '';
-        // }, 500);
     },
     methods: {
         get_history_data() {
@@ -254,7 +218,7 @@ export default {
                     //                             JSON.parse(res.data[1]),
                     //                             JSON.parse(res.data[2]), 
                     //                             JSON.parse(res.data[3])];
-                    this.getElecConsumData = [1000, 1000, 1000, JSON.parse(res.data[0])];
+                    this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2]), JSON.parse(res.data[3])];
                     this.cEmission = (0.554 * (this.getElecConsumData[0] 
                                                 + this.getElecConsumData[1] 
                                                 + this.getElecConsumData[2]
@@ -274,20 +238,35 @@ export default {
             (lastLogIndex === 2) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
         },
 
-        get_cur_abnormal_event() {
-            if (this.abnormalLogs.length == 0) {
-                this.curIsNormal = true;
-            } 
-            else {
+        get_cur_abnormal_event() {        
+            if (this.abnormalLogs.length && this.canGetNew) {
+                let newestLog = Object.assign([],this.abnormalLogs[0]);
+                let newstIdx = 0;
+                for(let iz = 1; iz < this.abnormalLogs.length; ++iz) {
+                    if (this.abnormalLogs[iz].time > newestLog.time) {
+                        newestLog = Object.assign([],this.abnormalLogs[iz]);
+                        newstIdx = iz;
+                    }
+                }
+            
+                this.curAbnormalLog = newestLog.event;
+                
                 this.curIsNormal = false;
-                this.curAbnormalLog = this.abnormalLogs.shift();
+                this.canGetNew = false;
+                setTimeout(() => {
+                    this.canGetNew = true;
+                    this.abnormalLogs.splice(newstIdx, 1);
+                }, 3000)
+            }
+            else if(this.abnormalLogs.length == 0 ){
+                this.curIsNormal = true;
             }
         },
         check_abnormal_event() {
             this.$http
                 .get('/api/enms/select_event_log')
                 .then(res=> {
-                    console.log(res.data[0]);
+                    // console.log(res.data[0]);
 
                     // this.curAbnormalLogs = JSON.parse(res.data);
                     if (res.data.length != 0) {
@@ -295,35 +274,50 @@ export default {
                         for (let ix = 0; ix < res.data.length; ix++) {
                             let eventLog = '';
                             switch (res.data[ix].factory) {
-                                case '1':
+                                case '廠區一':
                                     // eventLog = '廠區一' + res.data[ix].equipment + ' ' + res.data[ix].event;
                                     eventLog = '廠區一異常';
                                     break;
-                                case '2':
+                                case '廠區二':
                                     // eventLog = '廠區二' + res.data[ix].equipment + ' ' + res.data[ix].event;
                                     eventLog = '廠區二異常';
                                     break;
-                                case '3':
+                                case '廠區三':
                                     // eventLog = '廠區三' + res.data[ix].equipment + ' ' + res.data[ix].event;
                                     eventLog = '廠區三異常';
-                                    break;
-                                case '4':
-                                    // eventLog = '廠區四' + res.data[ix].equipment + ' ' + res.data[ix].event;
-                                    eventLog = '廠區四異常';
-                                    break;                                                                        
+                                    break;                                                                  
+                            }
+                            if (eventLog){
+                                if (this.abnormalLogs.length == 0) {
+                                    this.abnormalLogs.push({'event':eventLog, 'hasShown':false, 'time':res.data[ix].datetime});
+                                }
+                                else {
+                                    for (let iy = 0; iy < this.abnormalLogs.length; ++iy) {
+                                        if (this.abnormalLogs[iy].event == eventLog) {
+                                            this.abnormalLogs[iy].hasShown = false;
+                                            this.abnormalLogs[iy].time = res.data[ix].datetime;
+                                            break;
+                                        }
+                                        if (iy === this.abnormalLogs.length - 1) {
+                                            this.abnormalLogs.push({'event':eventLog, 'hasShown':false, 'time':res.data[ix].datetime});
+                                            break;
+                                        }                                        
+
+                                    }
+
+                                }
+
 
                             }
-                            console.log('event:', eventLog);
-                            this.abnormalLogs.push(eventLog);
                         }
                     }
 
                 });
-            // let lastIsNormal = this.curIsNormal;
-            // this.curIsNormal = !lastIsNormal;
-            // setTimeout(() => {
-            //     this.curIsNormal = lastIsNormal;
-            // }, 5000);
+            // for(let iz = 0; iz < this.abnormalLogs.length; ++iz) {
+            //     let nowDate = new Date();
+            //     let getTime = nowDate.getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds(); 
+            //     console.log(getTime, iz, this.abnormalLogs[iz].event, this.abnormalLogs[iz].time);
+            // }
         },
 
         get_real_time_elec() {
