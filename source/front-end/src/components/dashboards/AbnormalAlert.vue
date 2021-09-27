@@ -1,8 +1,8 @@
 <template>
-	<div class="fullpage">
-	<CCard class="card-1">
+	<div>
+	<CCard class="card-base">
 		<CCardBody>
-		<h4 style="color: #d686bc">
+		<h4 style="color: #98a8a0">
 			<CIcon name="cil-warning" size="lg" /> 異常告警
 		</h4>
 		<hr class="mt-0 mb-2" />
@@ -388,4 +388,8 @@ export default {
 .fullpage {
 	border-color: #272727;
 } */
+.card-base {
+    background-color: #081d1b;
+    border-color: #0e2e2b;
+}
 </style>

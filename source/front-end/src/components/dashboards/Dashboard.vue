@@ -151,62 +151,64 @@ export default {
         this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
         this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
         this.curLogIndex = 0;
-        this.get_history_data();
-        this.get_cur_month_elec();
-        this.update_factory_status();
-        this.get_real_time_elec();
-        this.get_sensor_data();
-        // this.check_abnormal_event();
+        // this.get_history_data();
+        // this.get_cur_month_elec();
+        // this.update_factory_status();
+        // this.get_real_time_elec();
+        // this.get_sensor_data();
         
 
     
-        setInterval(() => {
-            this.get_cur_month_elec();
-            this.get_real_time_elec();
-            this.get_sensor_data();
-            this.update_factory_status();
-        }, 2000);
+        // setInterval(() => {
+        //     this.get_cur_month_elec();
+        //     this.get_real_time_elec();
+        //     this.get_sensor_data();
+        //     this.update_factory_status();
+        // }, 2000);
 
-        setInterval(() => {
-            this.get_cur_abnormal_event();
-        }, 100);
-        setInterval(() => {
-            this.check_abnormal_event();
-        }, 100);
+        // setInterval(() => {
+        //     this.get_cur_abnormal_event();
+        // }, 100);
+        // setInterval(() => {
+        //     this.check_abnormal_event();
+        // }, 100);
 
-        // update history data every day
-        setInterval(() => {
-            this.get_history_data();
-        }, 86400000)
+        // // update history data every day
+        // setInterval(() => {
+        //     this.get_history_data();
+        // }, 86400000)
     },
     methods: {
         get_history_data() {
-            this.$http
-                .get('api/enms/select_two_years_electricity_consumption')
-                .then(res=> {
-                    let todayDate = new Date();
-                    let curMonth = todayDate.getMonth();
+            // this.$http
+            //     .get('api/enms/select_two_years_electricity_consumption')
+            //     .then(res=> {
+            //         let todayDate = new Date();
+            //         let curMonth = todayDate.getMonth();
                     
-                    // this.cEmissionLastYear = [];
-                    // this.cEmissionThisYearBefore = [];
-                    for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
-                        (ix < 12)   ? this.cEmissionLastYear.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2)) 
-                                    : this.cEmissionThisYearBefore.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2));
-                    }
-                    // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
-                    // console.log('after:', this.cEmissionLastYear);
-                    this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
-                    console.log(this.cEmissionThisYear);
-                    this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
-                    this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
-                    this.elecCapacity = [this.contractCapacity, 0, 0];
-                    for (let iy = 0; iy < 12; iy++){
-                        this.elecCapacity[1] += this.cEmissionLastYear[iy];
-                        if (iy < this.cEmissionThisYearBefore.length) {
-                            this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
-                        }                                                                
-                    }
-                });            
+            //         // this.cEmissionLastYear = [];
+            //         // this.cEmissionThisYearBefore = [];
+            //         for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
+            //             if (ix > 23) break;
+            //             (ix < 12)   ? this.cEmissionLastYear.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2)) 
+            //                         : this.cEmissionThisYearBefore.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2));
+            //         }
+            //         // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
+            //         // console.log('after:', this.cEmissionLastYear);
+            //         this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
+            //         console.log(this.cEmissionThisYear);
+            //         this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
+            //         this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
+            //         this.elecCapacity = [this.contractCapacity, 0, 0];
+            //         for (let iy = 0; iy < 12; iy++){
+            //             this.elecCapacity[1] += this.cEmissionLastYear[iy];
+            //             if (iy < this.cEmissionThisYearBefore.length) {
+            //                 this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
+            //             }                                                                
+            //         }
+            //         console.log(this.cEmissionLastYear, this.cEmissionThisYearBefore);
+            //     });
+ 
         },
 
         get_cur_month_elec() {
@@ -241,11 +243,11 @@ export default {
         get_cur_abnormal_event() {        
             if (this.abnormalLogs.length && this.canGetNew) {
                 let newestLog = Object.assign([],this.abnormalLogs[0]);
-                let newstIdx = 0;
+                let newestIdx = 0;
                 for(let iz = 1; iz < this.abnormalLogs.length; ++iz) {
                     if (this.abnormalLogs[iz].time > newestLog.time) {
                         newestLog = Object.assign([],this.abnormalLogs[iz]);
-                        newstIdx = iz;
+                        newestIdx = iz;
                     }
                 }
             
@@ -255,7 +257,7 @@ export default {
                 this.canGetNew = false;
                 setTimeout(() => {
                     this.canGetNew = true;
-                    this.abnormalLogs.splice(newstIdx, 1);
+                    this.abnormalLogs.splice(newestIdx, 1);
                 }, 3000)
             }
             else if(this.abnormalLogs.length == 0 ){
@@ -266,51 +268,46 @@ export default {
             this.$http
                 .get('/api/enms/select_event_log')
                 .then(res=> {
-                    // console.log(res.data[0]);
-
-                    // this.curAbnormalLogs = JSON.parse(res.data);
-                    if (res.data.length != 0) {
-                        // let getAbnormalLogs = ['廠區一 功率過高', '廠區二 功率過高', '廠區三 功率過高'];
-                        for (let ix = 0; ix < res.data.length; ix++) {
-                            let eventLog = '';
-                            switch (res.data[ix].factory) {
-                                case '廠區一':
-                                    // eventLog = '廠區一' + res.data[ix].equipment + ' ' + res.data[ix].event;
-                                    eventLog = '廠區一異常';
-                                    break;
-                                case '廠區二':
-                                    // eventLog = '廠區二' + res.data[ix].equipment + ' ' + res.data[ix].event;
-                                    eventLog = '廠區二異常';
-                                    break;
-                                case '廠區三':
-                                    // eventLog = '廠區三' + res.data[ix].equipment + ' ' + res.data[ix].event;
-                                    eventLog = '廠區三異常';
-                                    break;                                                                  
+                    for (let ix = 0; ix < res.data.length; ix++) {
+                        let eventLog = '';
+                        switch (res.data[ix].factory) {
+                            case '廠區一':
+                                // eventLog = '廠區一' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                eventLog = '廠區一異常';
+                                break;
+                            case '廠區二':
+                                // eventLog = '廠區二' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                eventLog = '廠區二異常';
+                                break;
+                            case '廠區三':
+                                // eventLog = '廠區三' + res.data[ix].equipment + ' ' + res.data[ix].event;
+                                eventLog = '廠區三異常';
+                                break;                                                                  
+                        }
+                        if (eventLog){
+                            if (this.abnormalLogs.length == 0) {
+                                this.abnormalLogs.push({'event':eventLog, 'hasShown':false, 'time':res.data[ix].datetime});
                             }
-                            if (eventLog){
-                                if (this.abnormalLogs.length == 0) {
-                                    this.abnormalLogs.push({'event':eventLog, 'hasShown':false, 'time':res.data[ix].datetime});
-                                }
-                                else {
-                                    for (let iy = 0; iy < this.abnormalLogs.length; ++iy) {
-                                        if (this.abnormalLogs[iy].event == eventLog) {
-                                            this.abnormalLogs[iy].hasShown = false;
-                                            this.abnormalLogs[iy].time = res.data[ix].datetime;
-                                            break;
-                                        }
-                                        if (iy === this.abnormalLogs.length - 1) {
-                                            this.abnormalLogs.push({'event':eventLog, 'hasShown':false, 'time':res.data[ix].datetime});
-                                            break;
-                                        }                                        
-
+                            else {
+                                for (let iy = 0; iy < this.abnormalLogs.length; ++iy) {
+                                    if (this.abnormalLogs[iy].event == eventLog) {
+                                        this.abnormalLogs[iy].hasShown = false;
+                                        this.abnormalLogs[iy].time = res.data[ix].datetime;
+                                        break;
                                     }
+                                    if (iy == this.abnormalLogs.length - 1) {
+                                        this.abnormalLogs.push({'event':eventLog, 'hasShown':false, 'time':res.data[ix].datetime});
+                                        break;
+                                    }                                        
 
                                 }
 
-
                             }
+
+
                         }
                     }
+                
 
                 });
             // for(let iz = 0; iz < this.abnormalLogs.length; ++iz) {

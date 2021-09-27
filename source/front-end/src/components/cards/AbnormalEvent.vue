@@ -46,7 +46,7 @@ export default {
 }
 .status-abnormal {
     color: rgb(219, 20, 20);
-    font-size: 1vw;
+    font-size: 1.5vw;
     text-align: center;
     padding-top: 10px;
     padding-bottom: 10px;
