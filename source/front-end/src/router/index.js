@@ -15,6 +15,8 @@ const EquipmentManage = () => import('@/components/dashboards/EquipmentManage.vu
 const AIAnalysis = () => import('@/components/dashboards/AIAnalysis.vue')
 const AbnormalAlert = () => import('@/components/dashboards/AbnormalAlert.vue')
 
+//Cards
+const Analysis = () => import('@/components/cards/Analysis')
 
 // Views - Pages
 const Page401 = () => import('@/views/pages/Page401')
@@ -90,6 +92,14 @@ function configRoutes() {
                     name: '異常告警',
                     component: AbnormalAlert,
                     meta: {requiresAuth: true}
+                },
+                {
+                    path: '/analysis/:mode/:factory',
+                    name: 'Analysis',
+                    component: Analysis,
+                    meta:{
+                        requiresAuth: true
+                    }
                 },
                 {
                     path: '/account-manage',

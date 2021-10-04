@@ -200,5 +200,80 @@ module.exports = {
         
         dbFactory.action_db(sql, statusDataCommon, res);
 
-    }
+    },
+
+    select_data_year: function(req, res){
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_data_year"
+        }
+
+        let sql = " SELECT DATE_FORMAT(datetime,'%Y') as year FROM history_month_info GROUP BY year "
+
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            res.status(statusData.successCode).send(result);
+        });
+    },
+
+    select_two_years_electricity_consumption_for_anslysis: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_two_years_electricity_consumption"
+        };
+        
+        var param = req.body.data;
+        let sql;
+
+        if (param.analysisMode === 'year'){
+            if (param.factory){
+                sql =   " SELECT DATE_FORMAT(history_month_info.datetime,'%Y-%m') as datetime, history_month_info.electricity, history_month_info.carbon_footprint, history_month_info.carbon_negative, "                     +
+                " machine_info.machine_name, machine_info.factory, machine_info.type FROM ((history_month_info INNER JOIN equipment_info ON history_month_info.mac = equipment_info.mac) INNER JOIN machine_info ON "         +
+                " equipment_info.machine_sn = machine_info.machine_sn) WHERE history_month_info.datetime >= ? AND history_month_info.datetime < ? AND machine_info.factory = ? "                                                                           
+                sql = dbFactory.build_mysql_format(sql, [   new Date(param.date).getFullYear()-1  + '0100000000', 
+                                                            new Date(param.date).getFullYear()+1 + '0100000000',
+                                                            param.factory]);
+            } else {
+                sql =   " SELECT DATE_FORMAT(history_month_info.datetime,'%Y-%m') as datetime, history_month_info.electricity, history_month_info.carbon_footprint, history_month_info.carbon_negative, "      +
+                " machine_info.machine_name, machine_info.factory, machine_info.type FROM ((history_month_info INNER JOIN equipment_info ON history_month_info.mac = equipment_info.mac) "                     +
+                " INNER JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn) WHERE history_month_info.datetime >= ? AND history_month_info.datetime < ? "                                 
+                sql = dbFactory.build_mysql_format(sql, [   new Date(param.date).getFullYear()-1  + '0100000000', 
+                                                            new Date(param.date).getFullYear()+1 + '0100000000']);
+            }
+        }
+
+
+        if (param.analysisMode === 'month'){
+            let date1 = new Date(param.date).getFullYear()-1;
+            let date2 = new Date(param.date).getFullYear();
+
+            if (new Date(param.date).getMonth() < 9){
+                date1 += '0' + (new Date(param.date).getMonth()+1) + '00000000';
+                date2 += '0' + (new Date(param.date).getMonth()+2) + '00000000';
+            } else {
+                date1 += (new Date(param.date).getMonth()+1) + '00000000';
+                date2 += (new Date(param.date).getMonth()+2) + '00000000';
+            }
+
+            if (param.factory){
+                sql =   " SELECT DATE_FORMAT(history_day_info.datetime,'%Y-%m-%d') as datetime, history_day_info.electricity, history_day_info.carbon_footprint, history_day_info.carbon_negative, "                        +
+                " machine_info.machine_name, machine_info.factory, machine_info.type FROM ((history_day_info INNER JOIN equipment_info ON history_day_info.mac = equipment_info.mac) INNER JOIN machine_info ON "           +
+                " equipment_info.machine_sn = machine_info.machine_sn) WHERE history_day_info.datetime >= ? AND history_day_info.datetime < ? AND machine_info.factory = ?"
+                sql = dbFactory.build_mysql_format(sql, [   date1, 
+                                                            date2,
+                                                            param.factory]);
+            } else {
+                sql =   " SELECT DATE_FORMAT(history_day_info.datetime,'%Y-%m-%d') as datetime, history_day_info.electricity, history_day_info.carbon_footprint, history_day_info.carbon_negative,"                         +
+                " machine_info.machine_name, machine_info.factory, machine_info.type FROM ((history_day_info INNER JOIN equipment_info ON history_day_info.mac = equipment_info.mac)"                                       +
+                " INNER JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn) WHERE history_day_info.datetime >= ? AND history_day_info.datetime < ? "                                                                                            
+                sql = dbFactory.build_mysql_format(sql, [   date1, 
+                                                            date2]);
+            }
+        }
+
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            res.status(statusData.successCode).send(result);
+        });
+    },
 }
