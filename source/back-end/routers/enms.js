@@ -30,5 +30,13 @@ router.get('/select_event_log', function (req, res) {
     api.select_event_log(req, res);
 });
 
+router.post('/select_equip_controllers', function (req, res) {
+    api.select_equip_controllers(req, res);
+});
+
+router.post('/select_machine_list', function (req, res) {
+    api.select_machine_list(req, res);
+});
+
 
 module.exports = router;

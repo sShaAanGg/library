@@ -3,96 +3,9 @@
         <h4 class="card-eset-title">設備控制</h4>
         <!-- <button class='change__style' @click='changeStyle()'>Change Style</button> -->
         <tabs :mode="mode">
-            <tab title="廠區一">
-                <CRow>
-                    <CCol lg = '8' class="light-master-switch">
-                        <h6> 燈光總電源：
-                            <CButton
-                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_light()"
-                            >
-                                {{ statusLight }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>
-                <CRow>
-                    <CCol lg = '8' class="fan-master-switch">
-                        <h6>
-                            風扇總電源：
-                            <CButton
-                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_fan()"
-                            >
-                                {{ statusFan }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>
-                <div>
-                    
-                </div>
-            </tab>
-            <tab title="廠區二">
-                <CRow>
-                    <CCol lg = '8' class="fan-master-switch">
-                        <h6>
-                            風扇總電源：
-                            <CButton
-                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_fan()"
-                            >
-                                {{ statusFan }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>                  
-                <CRow>
-                    <CCol lg = '8' class="light-master-switch">
-                        <h6> 燈光總電源：
-                            <CButton
-                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_light()"
-                            >
-                                {{ statusLight }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>
-            </tab>
-            <tab title="廠區三">
-                <CRow>
-                    <CCol lg = '8' class="light-master-switch">
-                        <h6> 燈光總電源：
-                            <CButton
-                                :class="[isOnLight ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_light()"
-                            >
-                                {{ statusLight }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>
-                <CRow>
-                    <CCol lg = '8' class="fan-master-switch">
-                        <h6>
-                            風扇總電源：
-                            <CButton
-                                :class="[isOnFan ? 'but-light-master-switch' : 'but-master-switch-off']"
-                                size='sm'
-                                @click="switch_fan()"
-                            >
-                                {{ statusFan }}
-                            </CButton>
-                        </h6>
-                    </CCol>
-                </CRow>              
-            </tab>
+            <tab title="廠區一"></tab>
+            <tab title="廠區二"></tab>
+            <tab title="廠區三"></tab>
         </tabs>
     </div>
 </template>
@@ -104,20 +17,14 @@ import Tabs from './Tabs.vue'
 export default {
     components: {
         Tab,
-        Tabs
+        Tabs,
     },
     data () {
         return {
             mode: 'dark',
-            isOnLight: false,
-            isOnFan: false,
-            statusLight: 'OFF',
-            statusFan: 'OFF',
         }
     },
     mounted() {
-        this.switch_light();
-        this.switch_fan();
     },
     methods: {
         changeStyle () {
@@ -127,35 +34,6 @@ export default {
             this.mode = 'dark'
           }
         },
-        switch_light() {
-            this.isOnLight = true;
-            // let data = this.isOnLight ? 'light_off' : 'light_on';
-            // this.$http
-            //     .post('/api/enms/send_switch_socket', {data:data})
-            //     .then(res => {
-            //         let resMsg = JSON.stringify(res);
-
-            //         let curStat = this.isOnLight;
-            //         this.isOnLight = !curStat;
-
-            //         this.statusLight = (this.isOnLight) ? 'ON' : 'OFF';
-            //     })
-        },
-
-        switch_fan() {
-            this.isOnFan = true;
-            // let data = this.isOnFan ? 'fan_off' : 'fan_on';
-            // this.$http
-            //     .post('/api/enms/send_switch_socket', {data:data})
-            //     .then(res=> {
-            //         let resMsg = JSON.stringify(res);
-
-            //         let curStat = this.isOnFan;
-            //         this.isOnFan = !curStat;
-
-            //         this.statusFan = (this.isOnFan) ? 'ON' : 'OFF';
-            //     })
-        }    
   }
 }
 </script>

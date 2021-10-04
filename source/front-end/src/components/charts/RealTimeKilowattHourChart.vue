@@ -138,7 +138,7 @@ export default {
     
     },
 
-    beforeUpdate() {
+    beforeUpdate() {        
         this.option.series[0].data[0].value = this.realtimeElec;
         this.option.series[1].data[0].value = this.realtimeElec;
         if (this.realtimeElec > Math.round(meterMax * 0.8)){

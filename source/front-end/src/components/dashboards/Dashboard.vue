@@ -121,7 +121,7 @@ export default {
 
             // sensor data and event log
             eventLog: '',
-            temperature: '',
+            temperature: '', 
             humidity: '',
             illuminance: '',
             carbonDioxide: '',
@@ -156,9 +156,9 @@ export default {
         // this.update_factory_status();
         // this.get_real_time_elec();
         // this.get_sensor_data();
+        // this.check_abnormal_event();
         
 
-    
         // setInterval(() => {
         //     this.get_cur_month_elec();
         //     this.get_real_time_elec();
@@ -176,55 +176,61 @@ export default {
         // // update history data every day
         // setInterval(() => {
         //     this.get_history_data();
-        // }, 86400000)
+        // }, 86400000);
     },
     methods: {
         get_history_data() {
-            // this.$http
-            //     .get('api/enms/select_two_years_electricity_consumption')
-            //     .then(res=> {
-            //         let todayDate = new Date();
-            //         let curMonth = todayDate.getMonth();
+            // let curDate = new Date();
+            // let curTime = curDate.getHours() + ':' + curDate.getMinutes() 
+            //                 + ':' + curDate.getSeconds() + ':' + curDate.getMilliseconds();
+            // console.log('***before API:', curTime);
+            this.$http
+                .get('api/enms/select_two_years_electricity_consumption')
+                .then(res=> {
+                    let todayDate = new Date();
+                    let curMonth = todayDate.getMonth();
                     
-            //         // this.cEmissionLastYear = [];
-            //         // this.cEmissionThisYearBefore = [];
-            //         for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
-            //             if (ix > 23) break;
-            //             (ix < 12)   ? this.cEmissionLastYear.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2)) 
-            //                         : this.cEmissionThisYearBefore.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2));
-            //         }
-            //         // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
-            //         // console.log('after:', this.cEmissionLastYear);
-            //         this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
-            //         console.log(this.cEmissionThisYear);
-            //         this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
-            //         this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
-            //         this.elecCapacity = [this.contractCapacity, 0, 0];
-            //         for (let iy = 0; iy < 12; iy++){
-            //             this.elecCapacity[1] += this.cEmissionLastYear[iy];
-            //             if (iy < this.cEmissionThisYearBefore.length) {
-            //                 this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
-            //             }                                                                
-            //         }
-            //         console.log(this.cEmissionLastYear, this.cEmissionThisYearBefore);
-            //     });
+                    // this.cEmissionLastYear = [];
+                    // this.cEmissionThisYearBefore = [];
+                    for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
+                        if (ix > 22) break;
+                        (ix < 12)   ? this.cEmissionLastYear.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2)) 
+                                    : this.cEmissionThisYearBefore.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2));
+                    }
+                    // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
+                    // console.log('after:', this.cEmissionLastYear);
+                    this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
+                    // console.log(this.cEmissionThisYear);
+                    this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
+                    this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
+                    this.elecCapacity = [this.contractCapacity, 0, 0];
+                    for (let iy = 0; iy < 12; iy++){
+                        this.elecCapacity[1] += this.cEmissionLastYear[iy];
+                        if (iy < this.cEmissionThisYearBefore.length) {
+                            this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
+                        }                                                                
+                    }
+                    // console.log(this.cEmissionLastYear, this.cEmissionThisYearBefore);
+                });
+            // let curDateAfter = new Date();
+            // let curTimeAfter = curDateAfter.getHours() + ':' + curDateAfter.getMinutes() 
+            //                     + ':' + curDateAfter.getSeconds() + ':' + curDateAfter.getMilliseconds();
+            // console.log('***after API:', curTimeAfter);
  
         },
 
         get_cur_month_elec() {
+            // let curDate = new Date();
+            // let curTime = curDate.getHours() + ':' + curDate.getMinutes() 
+            //                 + ':' + curDate.getSeconds() + ':' + curDate.getMilliseconds();
+            // console.log('***before API get_cur_month_elec:', curTime);            
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
-                    // currently has one area
-                    // this.getElecConsumData = [JSON.parse(res.data[0]), 
-                    //                             JSON.parse(res.data[1]),
-                    //                             JSON.parse(res.data[2]), 
-                    //                             JSON.parse(res.data[3])];
-                    this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2]), JSON.parse(res.data[3])];
+                    this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2])];
                     this.cEmission = (0.554 * (this.getElecConsumData[0] 
                                                 + this.getElecConsumData[1] 
-                                                + this.getElecConsumData[2]
-                                                + this.getElecConsumData[3])).toFixed(2);
+                                                + this.getElecConsumData[2])).toFixed(2);
 
                     // do not use deep copy                                                
                     this.cEmissionThisYear = Object.assign([], this.cEmissionThisYearBefore);
@@ -233,6 +239,12 @@ export default {
                     this.getBarData.push(this.cEmissionLastYear, this.cEmissionThisYear);
                     this.reducedCEmission = (this.cEmissionLastTime - this.cEmission).toFixed(2);
                 });
+            // let curDateAfter = new Date();
+            // let curTimeAfter = curDateAfter.getHours() + ':' + curDateAfter.getMinutes() 
+            //                     + ':' + curDateAfter.getSeconds() + ':' + curDateAfter.getMilliseconds();
+            // console.log('***after API get_cur_month_elec:', curTimeAfter);
+            // console.log('barData:', this.getBarData);        
+
         },
 
         update_factory_status() {
@@ -321,8 +333,7 @@ export default {
             this.$http
                 .get('/api/enms/select_real_time_electricity_consumption')
                 .then(res=> {
-                    // console.log('real time elec:', res.data);
-                    this.realTimeKilowattHourData = res.data;
+                    this.realTimeKilowattHourData = parseFloat(res.data).toFixed(2);
                 });      
         },
 

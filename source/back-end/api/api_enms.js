@@ -17,6 +17,11 @@ let dbFactory = new db.DbFactory(   process.env.DB_HOST,
                                     process.env.DB_NAME,
                                     process.env.DB_PORT,
                                     true);
+let statusDataCommon = {
+    successCode: 200,
+    errorCode: 500,
+    errorMsg: " "
+}                                    
 
 module.exports = {
     /*========================================================== */
@@ -84,7 +89,7 @@ module.exports = {
     /*========================================================== */
     //  enms api
     /*========================================================== */
-    
+
     select_current_month_cumulative_electricity_consumption: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -159,11 +164,41 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while select_event_log"
         }
-        let sql =   " SELECT error_log.mac, error_log.`datetime`, error_log.event, equipment_info.factory, equipment_info.equipment "+
+        let sql =   " SELECT error_log.mac, error_log.`start_datetime`, error_log.event, equipment_info.factory, equipment_info.equipment "+
                     " FROM error_log INNER JOIN equipment_info ON equipment_info.mac = error_log.mac                                "+ 
-                    " WHERE `datetime` > ? AND `datetime` < ? ORDER BY `datetime` DESC                                              ";
+                    " WHERE `start_datetime` > ? AND `start_datetime` < ? ORDER BY `start_datetime` DESC                                              ";
         let time = new Date().setTime(new Date() - 2000);
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);
+    },
+
+    select_equip_controllers: function(req, res) {
+        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_buttons";
+
+        let sql =   "select DISTINCT equipment_controller.mac, equipment_controller.button_name, equipment_controller.button_type, " + 
+                    "equipment_controller.button_port, equipment_controller.button_pin " +
+                    "from equipment_controller " + 
+                    "JOIN equipment_info ON equipment_controller.mac = equipment_info.mac " +
+                    "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn " +
+                    "WHERE machine_info.factory = ?";
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.factory]);
+        dbFactory.action_db(sql, statusDataCommon, res);
+
+    },
+
+    select_machine_list: function(req, res) {
+        statusDataCommon['errorMsg'] = "Some error occurred while select_machine_list";
+
+        let sql = "SELECT machine_name, `type`, year_elec, month_elec, voltage, work_years, work_hours, activation FROM enms.machine_info ";
+        if(req.body.data.factory) {
+            let factorySql = sql + "where factory = ?";
+            sql = dbFactory.build_mysql_format(factorySql, [req.body.data.factory]);
+        }
+        else {
+            sql = dbFactory.build_mysql_format(sql);
+        }
+        
+        dbFactory.action_db(sql, statusDataCommon, res);
+
     }
 }
