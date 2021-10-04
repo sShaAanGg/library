@@ -72,7 +72,7 @@ function asyncQuery(sql) {
 var forDate = new CronJob('0 0 1 * * *', async function() {
     var before      = new Date();
     var newDate     = new Date();
-    var insertSQL   = ' INSERT INTO history_day_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES '
+    var insertSQL   = ' INSERT INTO history_day_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES ';
     var sql;
     
     before = before.setDate(before.getDate()-1)
@@ -114,7 +114,7 @@ forDate.start();
 var forMonth = new CronJob('0 0 0 3 * *', async function() {
     var before  = new Date();
     var newDate  = new Date();
-    var insertSQL   = ' INSERT INTO history_month_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES '
+    var insertSQL   = ' INSERT INTO history_month_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES ';
     var sql;
     
     before = before.setMonth(before.getMonth()-1)
@@ -155,7 +155,7 @@ var CarbonNegative = new CronJob('0 0 2 * * *', async function() {
     var ToDate      = newDate.getDate() - 1;
     var sql;
     
-    sql = ' SELECT id, mac, DATE_FORMAT(datetime,"%Y") as year, carbon_footprint FROM history_day_info WHERE month(datetime) = ? AND day(datetime) = ? '
+    sql = ' SELECT id, mac, DATE_FORMAT(datetime,"%Y") as year, carbon_footprint FROM history_day_info WHERE month(datetime) = ? AND day(datetime) = ? ';
     sql = mysql.format(sql, [ ToMonth, ToDate]);
     
     var result = await asyncQuery(sql); 
@@ -165,7 +165,7 @@ var CarbonNegative = new CronJob('0 0 2 * * *', async function() {
             continue;
         
         var index = result.findIndex(x => x.year == parseInt(ToYear)-1 && x.mac == result[i].mac);
-        sql = ' UPDATE history_day_info SET carbon_negative = ? WHERE id = ? '
+        sql = ' UPDATE history_day_info SET carbon_negative = ? WHERE id = ? ';
         var carbon_negative = (result[i].carbon_footprint - result[index].carbon_footprint).toFixed(2);
         sql = mysql.format(sql, [ carbon_negative, result[i].id]);
         await asyncQuery(sql);

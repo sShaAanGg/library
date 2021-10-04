@@ -46,4 +46,8 @@ router.post('/select_two_years_electricity_consumption_for_anslysis', function (
     api.select_two_years_electricity_consumption_for_anslysis(req, res);
 });
 
+router.get('/select_error_log', function (req, res) {
+    api.select_error_log(req, res);
+});
+
 module.exports = router;

@@ -192,7 +192,7 @@ export default {
         }
     },
 
-    created(){
+    created() {
         switch(this.$route.params.mode) {
             case 'powerConsumption':
                 this.AnalysisData.mode = 'powerConsumption';
@@ -303,11 +303,8 @@ export default {
         },
 
         select_chart_data() {
-            console.log(this.AnalysisData.year)
             if (this.AnalysisData.analysisMode === 'year')
                 this.AnalysisData.date = this.AnalysisData.year + '-01';
-
-            console.log(this.AnalysisData.date);
 
             let data = {
                 factory:this.factory,

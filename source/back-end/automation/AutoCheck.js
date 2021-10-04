@@ -72,7 +72,7 @@ function asyncQuery(sql) {
 async function DataArchivingForDate() {
     var before      = new Date();
     var newDate     = new Date();
-    var insertSQL   = ' INSERT INTO history_day_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES '
+    var insertSQL   = ' INSERT INTO history_day_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES ';
     var sql;
     
     before = before.setDate(before.getDate()-1)
@@ -113,10 +113,10 @@ async function DataArchivingForDate() {
 async function DataArchivingForMonth() {
     var before  = new Date();
     var newDate  = new Date();
-    var insertSQL   = ' INSERT INTO history_month_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES '
+    var insertSQL   = ' INSERT INTO history_month_info (mac, datetime, electricity, watt, carbon_footprint, carbon_negative) VALUES ';
     var sql;
     
-    before = before.setMonth(before.getMonth()-1)
+    before = before.setMonth(before.getMonth()-1);
     before = new Date(before);
     
     var startDateTime   = format(before  ,'yyyyMM01000000');
@@ -145,6 +145,30 @@ async function DataArchivingForMonth() {
     await asyncQuery(sql);
 }
 
+async function CarbonNegative() {
+    var newDate     = new Date();
+    var ToYear      = newDate.getFullYear();
+    var ToMonth     = newDate.getMonth()+1;
+    var ToDate      = newDate.getDate() - 1;
+    var sql;
+    
+    sql = ' SELECT id, mac, DATE_FORMAT(datetime,"%Y") as year, carbon_footprint FROM history_day_info WHERE month(datetime) = ? AND day(datetime) = ? ';
+    sql = mysql.format(sql, [ ToMonth, ToDate]);
+    
+    var result = await asyncQuery(sql); 
+    
+    for (let i = 0; i < result.length; ++i){
+        if (result[i].year != ToYear)
+            continue;
+        
+        var index = result.findIndex(x => x.year == parseInt(ToYear)-1 && x.mac == result[i].mac);
+        sql = ' UPDATE history_day_info SET carbon_negative = ? WHERE id = ? ';
+        var carbon_negative = (result[i].carbon_footprint - result[index].carbon_footprint).toFixed(2);
+        sql = mysql.format(sql, [ carbon_negative, result[i].id]);
+        await asyncQuery(sql);
+    }
+}
+
 var checkInfo01 = new CronJob('0 0 */1 * * *', async function() {
     var before  = new Date();
     var newDate  = new Date();
@@ -165,6 +189,7 @@ var checkInfo01 = new CronJob('0 0 */1 * * *', async function() {
 
     if (result.length === 0){
         await DataArchivingForDate();
+        await CarbonNegative();
     }
 
 },null,true);
@@ -176,7 +201,7 @@ var checkInfo02 = new CronJob('0 0 */1 3 * *', async function() {
     var newDate  = new Date();
     var sql;
 
-    before = before.setMonth(before.getMonth()-1)
+    before = before.setMonth(before.getMonth()-1);
     before = new Date(before);
 
     var startDateTime   = format(before  ,'yyyyMM01000000');

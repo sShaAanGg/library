@@ -4,6 +4,7 @@ var http            = require('http');
 const bodyParser    = require('body-parser');
 const enms          = require('./routers/enms');
 const cron          = require('./routers/cron');
+const account     = require('./routers/accounts');
 // const morgan      = require('morgan');
 
 const app = express()
@@ -15,6 +16,7 @@ app.use(cors());
 
 app.use('/api/enms', enms);
 app.use('/api/cron', cron);
+app.use('/api/accounts',  account);
 
 var httpServer = http.createServer(app);
 

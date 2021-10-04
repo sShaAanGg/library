@@ -276,4 +276,20 @@ module.exports = {
             res.status(statusData.successCode).send(result);
         });
     },
+
+    select_error_log: function(req, res){
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_data_year"
+        }
+
+        let sql = " SELECT machine_info.machine_sn, machine_info.machine_name, DATE_FORMAT(error_log.start_datetime,'%Y-%m-%d %H:%i:%s') as start_datetime, "       +
+            " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %H:%i:%s') as end_datetime, error_log.event FROM "                                                       +
+            " ((error_log INNER JOIN equipment_info ON error_log.mac = equipment_info.mac)  INNER JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn) "
+
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            res.status(statusData.successCode).send(result);
+        });
+    },
 }
