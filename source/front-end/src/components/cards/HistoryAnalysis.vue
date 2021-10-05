@@ -1,7 +1,7 @@
 <template>
     <div class='card-h'>
         <h2 class='card-font'>年度碳排量比較</h2>
-        <CCardBody align='center'>
+        <CCardBody align='center' @click="$router.push('/analysis/carbonEmissions/all')">
             <BarChartHistory :barData="fromDataHa"></BarChartHistory>
         </CCardBody>
     </div>

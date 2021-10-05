@@ -8,7 +8,8 @@
                         <hr class="mt-0 mb-2">
                         <CRow>
                             <CCol lg = '3' class="pt-2">
-                                <h4 class="card-font">時間區間 : 
+                                <h4 class="card-font">
+                                    時間區間 : 
                                     <CButton v-bind="classColor['Y']" @click="switch_mode('year')">年</CButton>
                                     <CButton v-bind="classColor['M']" @click="switch_mode('month')">月</CButton> 
                                 </h4>
@@ -22,7 +23,7 @@
                                     type="month"
                                     class="mr-2"
                                     v-model="AnalysisData.date"
-                                    max="2021-09"
+                                    :max="max"
                                     v-if="AnalysisData.analysisMode==='month'"
                                 />
                             </CCol>
@@ -136,6 +137,8 @@
 export default {
     data: () => {
         return {
+            max:'',
+
             myChart:'',
             option : {},
 
@@ -202,7 +205,7 @@ export default {
                 this.AnalysisData.value = 0;
                 this.AnalysisData.fields = [
                     { key: 'sort',                  label:'分類項目',           _style:'width:25%'            },
-                    { key: 'value',                 label:'耗電量(KW)',             _style:'width:25%'        },
+                    { key: 'value',                 label:'耗電量(KW)',         _style:'width:25%'              },
                     { key: 'analysis',              label:'去年同期分析',       _style:'width:25%'             },
                     { key: 'show_details',          label:'',                   _style:'width:25%'            }
                 ];
@@ -210,7 +213,7 @@ export default {
                     { key: 'date',                  label:'日期',               _style:'width:20%'            },
                     { key: 'factory',               label:'區域',               _style:'width:20%'            },
                     { key: 'equipment',             label:'設備',               _style:'width:20%'            },
-                    { key: 'value',                 label:'耗電量(KW)',             _style:'width:20%'        },
+                    { key: 'value',                 label:'耗電量(KW)',         _style:'width:20%'              },
                     { key: 'analysis',              label:'去年同期分析',       _style:'width:20%'             }
                 ];
             break;
@@ -274,6 +277,9 @@ export default {
                     this.AnalysisData.yearList.push(result.year);
                 }
                 var newDate = new Date();
+
+                this.max = newDate.getFullYear() + '-' + (newDate.getMonth() + 1);
+                
                 this.AnalysisData.analysisMode = 'year';
         
                 this.AnalysisData.year = (newDate.getFullYear()).toString();
@@ -362,7 +368,6 @@ export default {
                                     dateTotal[index].data += parseInt(data.toFixed(2));
                                 }
 
-
                                 var year = new Date(result.datetime).getFullYear();
 
                                 if (year == newDate.getFullYear()){
@@ -375,7 +380,7 @@ export default {
                                             analysis:result.carbon_negative
                                         })
                                     } else {
-                                        this.AnalysisData.items[index].value    += parseInt(data.toFixed(2));
+                                        this.AnalysisData.items[index].value    += parseInt(data);
                                         this.AnalysisData.items[index].analysis += parseInt(result.carbon_negative);
                                     }
 
