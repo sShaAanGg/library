@@ -2,328 +2,83 @@
 	<div>
 	<CCard class="card-base">
 		<CCardBody>
-		<h4 style="color: #98a8a0">
-			<CIcon name="cil-warning" size="lg" /> 異常告警
-		</h4>
-		<hr class="mt-0 mb-2" />
+			<h4 style="color: #98a8a0">
+				<CIcon class="text-danger" name="cil-warning" size="lg" /> 異常告警
+			</h4>
+			<hr class="mt-0 mb-2" />
 
-		<CDataTable
-			:items="items"
-			:fields="fields"
-			style="textalign: center; font-size: 125%"
-			:items-per-page="15"
-			:bordered="true"
-			column-filter
-			sorter
-			pagination
-		>
-			<template #show_details="{ item }">
-			<td class="p-2">
-				<CButton
-				square
-				size="sm"
-				style="color: #2eb85c"
-				@click="show_model('修改資料', item)"
-				>
-				<CIcon size="xl" name="cil-pencil" />
-				</CButton>
-				<CButton
-				square
-				size="sm"
-				style="color: #321fdb"
-				@click="show_model('修改密碼', item)"
-				>
-				<CIcon size="xl" name="cil-lock-locked" />
-				</CButton>
-				<CButton
-				square
-				size="sm"
-				style="color: #e55353"
-				@click="delete_account(item.account)"
-				>
-				<CIcon size="xl" name="cil-trash" />
-				</CButton>
-			</td>
-			</template>
-		</CDataTable>
-
-		<CModal
-			size="lg"
-			color="info"
-			:show.sync="showInsertModal"
-			:closeOnBackdrop="false"
-		>
 			<CRow>
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label=":" v-model="account" />
+			<CCol lg="3" class="pt-2">
+				<h5>起始日期 :</h5>
+				<CInput type="date" class="mr-2" v-model="startDate" />
 			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="密碼:" v-model="password" type="password" />
+			<CCol lg="3" class="pt-2">
+				<h5>結束日期 :</h5>
+				<CInput type="date" class="mr-2" v-model="endDate" />
 			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="姓名:" v-model="name" />
+			<CCol lg="2" class="pt-2">
+				<h5>廠區 :</h5>
+				<CInput v-model="factory" list="factory_list" @click="factory = ''"/>
+				<datalist id="factory_list">
+				<option v-for="item in factoryOptions" :key="item.index">
+					<h5>{{ item }}</h5>
+				</option>
+				</datalist>
 			</CCol>
-			<CCol lg="3" />
 
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="工號:" v-model="jobNumber" />
+			<CCol lg="4" class="pt-2">
+				<h3 class="pt-3" />
+				<CRow style="float: right">
+					<CButton
+						variant="outline"
+						class="mr-2 mb-4"
+						style="float: right"
+						color="success" 
+						v-bind = "{ shape: 'pill' }"
+						@click="search()"
+					>
+						<CIcon name="cilZoom" size="xl" />
+						搜尋
+					</CButton>
+					<CButton
+						variant="outline"
+						class="mr-2 mb-4"
+						style="float: right"
+						color="success" 
+						v-bind = "{ shape: 'pill' }"
+						@click="reset()"
+					>
+						<CIcon name="cil-account-logout" size="xl" />
+						返回
+					</CButton>
+				</CRow>
 			</CCol>
-			<CCol lg="3" />
+        </CRow>
 
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CSelect
-				label="部門:"
-				:options="departmentOptions"
-				:value.sync="dept"
-				@change="select_department('department', dept)"
-				/>
-			</CCol>
-			<CCol lg="3" />
+        <CRow v-if="show">
+            <CCol lg="12">
+                <CDataTable
+                :items="items"
+                :fields="fields"
+                style="textalign: center"
+                :items-per-page="10"
+                :bordered="true"
+                column-filter
+                sorter
+                pagination
+                >
+                </CDataTable>
+            </CCol>
+        </CRow>
 
-			<CCol lg="1" />
-			<CCol lg="10">
-				<CCard>
-				<CCardBody>
-					<CRow>
-					<CCol lg="3" v-for="item in level" :key="item.index">
-						<h5>{{ item.department }}</h5>
-						<input
-						type="checkbox"
-						v-model="item.status"
-						:value="item.status"
-						style="zoom: 3"
-						/>
-					</CCol>
-					</CRow>
-				</CCardBody>
-				</CCard>
-			</CCol>
-			<CCol lg="1" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CSelect
-				label="權限:"
-				:options="roleOptions"
-				:value.sync="role"
-				/>
-			</CCol>
-			<CCol lg="3" />
-			</CRow>
-
-			<template #header>
-			<h3 class="modal-title">新增使用者</h3>
-			<CButtonClose @click="showInsertModal = false" class="text-white" />
-			</template>
-			<template #footer>
-			<CButton @click="insert_account()" color="info">新增</CButton>
-			<CButton @click="showInsertModal = false" color="danger"
-				>返回</CButton
-			>
-			</template>
-		</CModal>
-
-		<CModal
-			size="lg"
-			color="success"
-			:show.sync="showDepartmentModal"
-			:closeOnBackdrop="false"
-		>
-			<CRow>
-			<CCol lg="3">
-				<CSelect
-				label="部門:"
-				:options="departmentOptions"
-				:value.sync="dept"
-				@change="select_department('department', dept)"
-				/>
-				<CButton
-				variant="outline"
-				color="success"
-				class="mr-1 mb-4"
-				@click="save_department(dept)"
-				><CIcon size="xl" name="cil-save"
-				/></CButton>
-				<CButton
-				variant="outline"
-				color="primary"
-				class="mr-1 mb-4"
-				@click="add_department(dept)"
-				><CIcon size="xl" name="cil-plus"
-				/></CButton>
-				<CButton
-				variant="outline"
-				color="danger"
-				class="mr-1 mb-4"
-				@click="delete_department(dept)"
-				><CIcon size="xl" name="cil-trash"
-				/></CButton>
-			</CCol>
-			<CCol lg="9">
-				<CCard>
-				<CCardBody>
-					<CRow>
-					<CCol lg="3" v-for="item in level" :key="item.index">
-						<h5>{{ item.department }}</h5>
-						<input
-						type="checkbox"
-						v-model="item.status"
-						:value="item.status"
-						style="zoom: 3"
-						/>
-					</CCol>
-					</CRow>
-				</CCardBody>
-				</CCard>
-			</CCol>
-			</CRow>
-
-			<template #header>
-			<h3 class="modal-title">管理部門</h3>
-			<CButtonClose
-				@click="showDepartmentModal = false"
-				class="text-white"
-			/>
-			</template>
-			<template #footer>
-			<CButton @click="showDepartmentModal = false" color="danger"
-				>返回</CButton
-			>
-			</template>
-		</CModal>
-
-		<CModal
-			size="lg"
-			color="success"
-			:show.sync="showUpdateModal"
-			:closeOnBackdrop="false"
-		>
-			<CRow>
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="帳號:" v-model="account" disabled />
-			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="姓名:" v-model="name" />
-			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="工號:" v-model="jobNumber" />
-			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CSelect
-				label="部門:"
-				:options="departmentOptions"
-				:value.sync="dept"
-				@change="select_department('department', dept)"
-				/>
-			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="1" />
-			<CCol lg="10">
-				<CCard>
-				<CCardBody>
-					<CRow>
-					<CCol lg="3" v-for="item in level" :key="item.index">
-						<h5>{{ item.department }}</h5>
-						<input
-						type="checkbox"
-						v-model="item.status"
-						:value="item.status"
-						style="zoom: 3"
-						/>
-					</CCol>
-					</CRow>
-				</CCardBody>
-				</CCard>
-			</CCol>
-			<CCol lg="1" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CSelect
-				label="權限:"
-				:options="roleOptions"
-				:value.sync="role"
-				/>
-			</CCol>
-			<CCol lg="3" />
-			</CRow>
-
-			<template #header>
-			<h3 class="modal-title">更新使用者資料</h3>
-			<CButtonClose @click="showUpdateModal = false" class="text-white" />
-			</template>
-			<template #footer>
-			<CButton @click="update_account()" color="success">更新</CButton>
-			<CButton @click="showUpdateModal = false" color="danger"
-				>返回</CButton
-			>
-			</template>
-		</CModal>
-
-		<CModal
-			size="lg"
-			color="primary"
-			:show.sync="showUpdatePasswordModal"
-			:closeOnBackdrop="false"
-		>
-			<CRow>
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="帳號:" v-model="updateAccount" disabled />
-			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput label="密碼:" v-model="newPassword" type="password" />
-			</CCol>
-			<CCol lg="3" />
-
-			<CCol lg="3" />
-			<CCol lg="6">
-				<CInput
-				label="確認密碼:"
-				v-model="checkPassword"
-				type="password"
-				/>
-			</CCol>
-			<CCol lg="3" />
-			</CRow>
-
-			<template #header>
-			<h3 class="modal-title">更新密碼</h3>
-			<CButtonClose
-				@click="showUpdatePasswordModal = false"
-				class="text-white"
-			/>
-			</template>
-			<template #footer>
-			<CButton @click="update_password()" color="primary">更新</CButton>
-			<CButton @click="showUpdatePasswordModal = false" color="danger"
-				>返回</CButton
-			>
-			</template>
-		</CModal>
+        <CRow v-if="noItems">
+            <CCol lg="12">
+                <CAlert color=".bg-dark" style="textalign: center; font-size: 200%">
+                    此搜尋條件無資料
+                </CAlert>
+            </CCol>
+        </CRow>
+		
 		</CCardBody>
 	</CCard>
 	</div>
@@ -332,46 +87,94 @@
 <script>
 export default {
 	data: () => {
-	return {
-		department: [],
-		departmentOptions: [],
-		level: [],
-		showDepartmentModal: false,
+		return {
+			startDate: "",
+			endDate: "",
+			factory:"",
 
-		items: [],
-		fields: [
-		{ key: "account", label: "序號", _style: "width:17%; color: #7da8d3" },
-		{ key: "name", label: "異常原因", _style: "width:17%; color: #7da8d3" },
-		{ key: "job_number", label: "開始時間", _style: "width:17%; color: #7da8d3" },
-		{ key: "dept", label: "結束時間", _style: "width:17%; color: #7da8d3" },
-		{ key: "role", label: "異常總時", _style: "width:17%; color: #7da8d3" },
-		{ key: "highest", label: "最高數值", _style: "width: 17%; color: #7da8d3" },
-		{ key: "show_details", label: "", _style: "width:15%; color: #7da8d3" },
-		],
+			show: false,
+			noItems: false,
 
-		showInsertModal: false,
-		showUpdateModal: false,
-		showUpdatePasswordModal: false,
+			items: [],
+			fields: [
+				{ key:  "id",        		label: "序號",		_style: "width:10%"},
+				{ key:  "equiment",   		label: "設備",		_style: "width:10%"},
+				{ key:  "abnormalReason",	label: "異常原因",	_style: "width:20%"},
+				{ key:  "startTime",        label: "開始時間",	_style: "width:20%"},
+				{ key:  "endTime",         	label: "結束時間",  _style: "width:20%"},
+				{ key:  "lengthTime",       label: "異常總時",  _style: "width:10%"},
+				{ key:  "highestValue",     label: "最高數值",  _style: "width:10%"},
+			],
+			factoryOptions: ["廠區一", "廠區二", "廠區三"],
+		};
+	},
+	created() {
+		this.reset();
 
-		account: "",
-		password: "",
-		name: "",
-		jobNumber: "",
-		dept: "",
-		role: "",
-		roleOptions: ["guest", "user", "admin"],
+	},
+	methods: {
+		search() {
+			this.show       = false;
+			this.noItems    = false;
 
-		updateAccount: "",
-		updateName: "",
-		updateJobNumber: "",
-		updateDept: "",
-		updateRole: "",
+			if (this.startDate !== "" && this.endDate == "" || this.startDate == "" && this.endDate !== ""){
+				alert("請輸入完整時間區間!");
+				this.reset();
+				return;
+			}
 
-		updatePassword: "",
+			if (this.factory == "" && this.startDate=="" && this.endDate==""){
+				alert("請輸入廠區或時間區間!");
+				this.reset();
+				return;
+			}
 
-		newPassword: "",
-		checkPassword: "",
-	};
+			if (this.endDate < this.startDate){
+				alert("請確認時間區間!");
+				this.reset();
+				return;
+			}
+
+			let searchData = {
+				startDate: this.startDate,
+				endDate: this.endDate,
+				factory: this.factory == '' ? '' : this.factory
+			};
+			
+			// this.$http
+			// 	.post('/api/machine/serach_history_info',{data:searchData})
+			// 	.then(res => {
+			// 		if (res.status === 200){
+			// 			res.data.length != 0 ? this.show = true : this.noItems = true;
+			// 			for (let ix =0; ix < res.data.length; ++ix){
+			// 				res.data[ix].time = res.data[ix].time.toString().slice(0,4) + "/" + 
+			// 									res.data[ix].time.toString().slice(4,6) + "/" + 
+			// 									res.data[ix].time.toString().slice(6,8) + " " + 
+			// 									res.data[ix].time.toString().slice(8,10) + ":" + 
+			// 									res.data[ix].time.toString().slice(10,12) + ":" + 
+			// 									res.data[ix].time.toString().slice(12,14);
+			// 				this.items.push();
+			// 			}
+			// 			this.items = res.data;
+			// 		} else {
+			// 			alert('傳入值出現非預期狀況，請確認後再進行操作!');
+			// 		}
+			// 	})
+			// 	.catch(err => {
+			// 		insert_system_error_log(err);
+			// 		alert('搜尋製程失敗，錯誤碼:' + err);
+			// 		this.reset();
+			// 	})
+		},
+	
+		reset() {
+			this.startDate = "";
+			this.endDate = "";
+			this.factory = "";
+			this.show = false;
+			this.noItems = false;
+			this.items =  [];
+		},
 	},
 
 };

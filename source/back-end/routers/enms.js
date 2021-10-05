@@ -30,5 +30,25 @@ router.get('/select_event_log', function (req, res) {
     api.select_event_log(req, res);
 });
 
+router.post('/select_machine_manage', function (req, res) {
+    api.select_machine_manage(req, res);
+});
+
+router.post('/insert_machine_manage', function (req, res) {
+    api.insert_machine_manage(req, res);
+});
+
+router.post('/update_machine_manage', function (req, res) {
+    api.update_machine_manage(req, res);
+});
+
+router.post('/delete_machine_manage', function (req, res) {
+    api.delete_machine_manage(req, res);
+});
+
+router.post('/select_machine_sn', function (req, res) {
+    api.select_machine_sn(req, res);
+});
+
 
 module.exports = router;
