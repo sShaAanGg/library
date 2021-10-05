@@ -38,6 +38,14 @@ router.post('/select_machine_list', function (req, res) {
     api.select_machine_list(req, res);
 });
 
+// ProductionLineStatusAnalysis
+router.post('/select_factory_machine_monthly_info', function (req, res) {
+    api.select_factory_machine_monthly_info(req, res);
+});
+router.post('/select_equip_error_log', function (req, res) {
+    api.select_equip_error_log(req, res);
+});
+
 router.get('/select_data_year', function (req, res) {
     api.select_data_year(req, res);
 });

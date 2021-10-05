@@ -202,6 +202,50 @@ module.exports = {
 
     },
 
+    select_factory_machine_monthly_info: function(req, res) {
+        /* TODO
+            change factory to production_line
+            because factory is for demo 
+        */
+       console.log('in api..');
+        statusDataCommon['errorMsg'] = "Some error occurred while select_factory_machine_monthly_info";
+
+        var sql = '';
+        if(req.body.data.factory == '' || req.body.data.datetime == '') {
+            sql =   "SELECT DISTINCT machine_info.machine_name, machine_info.machine_sn, machine_info.month_elec AS cur_month_elec, (machine_info.month_elec -history_month_info.electricity) AS yoy_month_elec, machine_info.activation " + 
+                    "FROM equipment_info " +
+                    "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn " +
+                    "JOIN history_month_info ON equipment_info.mac = history_month_info.mac " +
+                    "WHERE history_month_info.`datetime` = 20200900000000";;                
+            sql = dbFactory.build_mysql_format(sql);                          
+        }
+        else {
+            sql =   "SELECT DISTINCT machine_info.machine_name, machine_info.machine_sn, machine_info.month_elec AS cur_month_elec, (machine_info.month_elec -history_month_info.electricity) AS yoy_month_elec, machine_info.activation " + 
+                    "FROM equipment_info " +
+                    "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn " +
+                    "JOIN history_month_info ON equipment_info.mac = history_month_info.mac " +
+                    "WHERE machine_info.factory = ? AND history_month_info.`datetime` = ?";
+            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);                        
+        }
+
+        console.log(sql);        
+        dbFactory.action_db(sql, statusDataCommon, res);
+        
+    },
+
+    select_equip_error_log: function(req, res) {
+        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_error_log";
+
+        let sql =   "SELECT DISTINCT error_log.`event`, error_log.start_datetime, error_log.end_datetime " +
+                    "FROM error_log " +  
+                    "JOIN equipment_info ON error_log.mac = equipment_info.mac " +
+                    "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn " + 
+                    "WHERE machine_info.machine_sn = ?";
+        
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
+        dbFactory.action_db(sql, statusDataCommon, res);                    
+    },
+
     select_data_year: function(req, res){
         let statusData = {
             successCode: 200,
