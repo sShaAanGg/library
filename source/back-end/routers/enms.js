@@ -46,6 +46,15 @@ router.post('/select_equip_error_log', function (req, res) {
     api.select_equip_error_log(req, res);
 });
 
+router.post('/select_equip_daily_elec_yoy', function (req, res) {
+    api.select_equip_daily_elec_yoy(req, res);
+});
+
+router.post('/select_equip_daily_elec_this_month', function (req, res) {
+    api.select_equip_daily_elec_this_month(req, res);
+});
+// End of ProductionLineStatusAnalysis
+
 router.get('/select_data_year', function (req, res) {
     api.select_data_year(req, res);
 });

@@ -48,6 +48,7 @@ export default {
 				.get('api/enms/select_error_log')
 				.then(res => {
 					console.log(res.data)
+					this.items = res.data;
 				})
 				.catch(err =>{
                     console.log(err);

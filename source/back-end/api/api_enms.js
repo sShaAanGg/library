@@ -202,12 +202,12 @@ module.exports = {
 
     },
 
+    /* ProductionLineAnalysis API */
     select_factory_machine_monthly_info: function(req, res) {
         /* TODO
             change factory to production_line
             because factory is for demo 
         */
-       console.log('in api..');
         statusDataCommon['errorMsg'] = "Some error occurred while select_factory_machine_monthly_info";
 
         var sql = '';
@@ -228,7 +228,6 @@ module.exports = {
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);                        
         }
 
-        console.log(sql);        
         dbFactory.action_db(sql, statusDataCommon, res);
         
     },
@@ -245,6 +244,40 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         dbFactory.action_db(sql, statusDataCommon, res);                    
     },
+
+    select_equip_daily_elec_yoy: function(req, res) {
+        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
+
+        let sql =   "SELECT history_day_info.electricity " +
+                    "FROM history_day_info " +
+                    "JOIN equipment_info ON history_day_info.mac = equipment_info.mac " +
+                    "JOIN machine_info ON machine_info.machine_sn = equipment_info.machine_sn " +
+                    "WHERE machine_info.machine_sn = ?  " +
+                    "AND history_day_info.`datetime` >= ? " +
+                    "AND history_day_info.`datetime` <= ? " +
+                    "ORDER BY history_day_info.`datetime`";
+        sql = dbFactory.build_mysql_format(sql, 
+                        [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
+        dbFactory.action_db(sql, statusDataCommon, res);
+    },
+    select_equip_daily_elec_this_month: function(req, res) {
+        console.log('in select_equip_daily_elec_this_month...');
+        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
+
+        let sql =   "SELECT history_day_info.electricity " +
+                    "FROM history_day_info " +
+                    "JOIN equipment_info ON history_day_info.mac = equipment_info.mac " +
+                    "JOIN machine_info ON machine_info.machine_sn = equipment_info.machine_sn " +
+                    "WHERE machine_info.machine_sn = ?  " +
+                    "AND history_day_info.`datetime` >= ? " +
+                    "AND history_day_info.`datetime` <= ? " +
+                    "ORDER BY history_day_info.`datetime`";
+        sql = dbFactory.build_mysql_format(sql, 
+                        [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
+        console.log(sql);
+        dbFactory.action_db(sql, statusDataCommon, res);
+    },    
+    /* End of ProductionLineAnalysis API */
 
     select_data_year: function(req, res){
         let statusData = {
