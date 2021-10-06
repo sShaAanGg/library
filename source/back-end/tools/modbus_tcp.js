@@ -27,7 +27,7 @@ let statusData = {
 };
 
 let eventLog = "功率過高";
-let sql = " INSERT INTO error_log (mac, `datetime`, event) VALUES(?, ?, ?) ";
+let sql = " INSERT INTO error_log (mac, `start_datetime`, end_datetime, event) VALUES(?, ?, ?, ?) ";
                         
 
 // open connection to a tcp line
@@ -47,19 +47,19 @@ setInterval(function() {
             } 
             else {
                 if ( parseInt(data.data[0]) != lastCount[0]){
-                    let insertSql = dbFactory.build_mysql_format(sql, ["11111111" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
+                    let insertSql = dbFactory.build_mysql_format(sql, ["11111111" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  utility.formattime(new Date(), 'yyyyMMddHHmmss'), eventLog]);
                     console.log(insertSql);
                     dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
                     });
                 }
                 if ( parseInt(data.data[2]) != lastCount[2]){
-                    let insertSql = dbFactory.build_mysql_format(sql, ["22222222" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
+                    let insertSql = dbFactory.build_mysql_format(sql, ["22222222" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss'), eventLog]);
                     console.log(insertSql);
                     dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
                     });
                 }
                 if ( parseInt(data.data[4]) != lastCount[4]){
-                    let insertSql = dbFactory.build_mysql_format(sql, ["33333333" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'),  eventLog]);
+                    let insertSql = dbFactory.build_mysql_format(sql, ["33333333" ,utility.formattime(new Date(), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss'), eventLog]);
                     console.log(insertSql);
                     dbFactory.action_db_with_cb(insertSql, statusData, ()=>{
                     });

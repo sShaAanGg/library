@@ -133,9 +133,14 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while select_event_log"
         }
-        let sql =   " SELECT error_log.mac, error_log.`start_datetime`, error_log.event, equipment_info.factory, equipment_info.equipment "+
-                    " FROM error_log INNER JOIN equipment_info ON equipment_info.mac = error_log.mac                                "+ 
-                    " WHERE `start_datetime` > ? AND `start_datetime` < ? ORDER BY `start_datetime` DESC                                              ";
+        let sql =   "SELECT error_log.mac, error_log.`start_datetime`, error_log.`event`, machine_info.factory " +
+                    "FROM error_log " +  
+                    "JOIN equipment_info ON equipment_info.mac = error_log.mac " + 
+                    "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn  " +
+                    "WHERE `start_datetime` > ? AND `start_datetime` < ? ORDER BY `start_datetime` DESC";
+        // let sql =   " SELECT error_log.mac, error_log.`start_datetime`, error_log.event, equipment_info.factory, equipment_info.equipment "+
+        //             " FROM error_log INNER JOIN equipment_info ON equipment_info.mac = error_log.mac                                "+ 
+        //             " WHERE `start_datetime` > ? AND `start_datetime` < ? ORDER BY `start_datetime` DESC                                              ";
         let time = new Date().setTime(new Date() - 2000);
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);

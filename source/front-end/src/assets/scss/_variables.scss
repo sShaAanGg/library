@@ -36,3 +36,15 @@ $theme-colors: (
 	"ccardheader-info": $ccardheader-info-connected-bg,
 	"ccardheader-nc-info": $ccardheader-info-not-connected-bg
 );
+
+$primary: #98a8a0;
+
+// pagination for table
+$pagination-bg: #4C756A;
+$pagination-border-color: #4C756A;
+$pagination-hover-color: white;
+$pagination-hover-bg: #3c5c53;
+$pagination-hover-border-color: #3c5c53;
+$pagination-active-bg: #4C756A;
+$pagination-disabled-bg: #4C756A;
+$pagination-disabled-border-color: #4C756A;

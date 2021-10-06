@@ -40,7 +40,6 @@ export default {
                         .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
                         .then((res) => {
                             this.statusLight = res.data['comms'][0]['gpioStatus'];
-                            console.log(this.statusLight);
                             if(!this.statusLight) this.statusLight = 'KO';
                         })
                         .catch((error) => console.log(error))
@@ -49,7 +48,6 @@ export default {
         },
         set_switch() {
             // this.data['devices'].push({'mac':this.mac});
-            console.log(this.data);
             this.$http
                 .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
                 .then((res) => {
@@ -68,7 +66,6 @@ export default {
                                     .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
                                     .then((res) => {
                                         this.statusLight = res.data['comms'][0]['gpioStatus'];
-                                        console.log(this.statusLight);
                                     })
                                     .catch((error) => console.log(error))
                             })

@@ -10,7 +10,7 @@
 			<CDataTable
 				:items="items"
 				:fields="fields"
-				style="textalign: center; font-size: 125%"
+				style="textalign: center; font-size: 115%"
 				:items-per-page="10"
 				:bordered="true"
 				sorter
@@ -28,7 +28,7 @@ export default {
 		return {
 			items: [],
 			fields: [
-				{ key: "machine_sn", 		label: "序號", 			_style: "width:20%; color: #4C756A" },
+				{ key: "machine_sn", 		label: "S/N", 			_style: "width:20%; color: #4C756A" },
 				{ key: "machine_name",		label: "設備名稱", 		_style: "width:20%; color: #4C756A" },
 				{ key: "start_datetime", 	label: "開始時間", 		_style: "width:20%; color: #4C756A" },
 				{ key: "start_datetime", 	label: "結束時間", 		_style: "width:20%; color: #4C756A" },

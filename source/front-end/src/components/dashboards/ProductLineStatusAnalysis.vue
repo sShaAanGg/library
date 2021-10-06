@@ -79,17 +79,17 @@
                     <CDataTable
                         :items="equipEventList"
                         :fields="eventFields"
-                        style="textalign: center; font-size: 110%;"
-                        :items-per-page="15"
+                        style="textalign: center; font-size: 110%; color: green;"
+                        :items-per-page="5"
                         :bordered="true"
                         pagination
                     >
-                    </CDataTable>            
+                    </CDataTable>
                 </CCol> 
             </CRow>
             <CModal
                 title="系統提示"
-                size="xs"
+                size="sm"
                 color="dark"
                 :show.sync="showSearchHint"
                 :closeOnBackdrop="false"
@@ -97,7 +97,7 @@
                <CRow>
                    <h6 style="color:gray;">請選擇月份與廠區</h6>
                 </CRow>
-            </CModal>       
+            </CModal>
             
         </CCard>
 
@@ -134,7 +134,7 @@ export default {
                 {key: 'activation', label: '稼動率', _style: "color: #4C756A"},
                 {key: 'update_chart', label: ''}
             ],
-            equipEventList: '',
+            equipEventList: [],
             eventFields: [
                 {key: 'event', label: '異常原因', _style: "color: #4C756A"},
                 {key: 'start_datetime', label: '開始時間', _style: "color: #4C756A"},
@@ -192,7 +192,7 @@ export default {
             this.equipName = '請從右側選擇設備';
             this.equipElec = '-';
             this.equipActivate = '-';
-            this.equipEventList = '';
+            this.equipEventList = [];
             this.equipEventTimes  = '-';
             this.reset_chart();
 
@@ -206,7 +206,6 @@ export default {
                 .post('api/enms/select_factory_machine_monthly_info', {data:data})
                 .then((res) => {
                     this.equipList = res.data;
-                    console.log(this.equipList);
 
                 })
                 .catch((error) => console.log(error));
@@ -235,7 +234,6 @@ export default {
         },
         get_daily_elec(item) {
             let endDate = this.selectYear.toString() + '0' + (this.selectMonth.toString()) + '32000000';
-            console.log('endDate:', endDate);
             let data = {machine_sn:item.machine_sn, start_date:this.yearMonth, end_date: endDate};
             this.$http
                 .post('api/enms/select_equip_daily_elec_yoy', {data:data})
@@ -252,7 +250,6 @@ export default {
                     this.option.xAxis.data = xLabel;
                     this.option.yAxis.min = Math.floor(min);
                     this.lineChart.setOption(this.option);
-                    console.log('chart data: ', this.option.xAxis.data);
                 })
                 .catch((error) => console.log(error));            
 
@@ -262,7 +259,6 @@ export default {
                 this.option.series[0].data[ix] = 0;
             }
             this.option.yAxis.min = 0;
-            console.log(this.option);
 
             this.lineChart.setOption(this.option);
         }

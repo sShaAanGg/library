@@ -114,7 +114,7 @@ export default {
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            contractCapacity: 1100000,
+            contractCapacity: 70000,
             elecCapacity: [50000, 15000, 5000], 
             getElecConsumData: [],
             getBarData: [],
@@ -156,22 +156,22 @@ export default {
         this.update_factory_status();
         this.get_real_time_elec();
         this.get_sensor_data();
-        // this.check_abnormal_event();
+        this.check_abnormal_event();
         
 
         setInterval(() => {
-            // this.get_cur_month_elec();
+            this.get_cur_month_elec();
             this.get_real_time_elec();
             this.get_sensor_data();
             this.update_factory_status();
         }, 2000);
 
-        // setInterval(() => {
-        //     this.get_cur_abnormal_event();
-        // }, 100);
-        // setInterval(() => {
-        //     this.check_abnormal_event();
-        // }, 100);
+        setInterval(() => {
+            this.get_cur_abnormal_event();
+        }, 100);
+        setInterval(() => {
+            this.check_abnormal_event();
+        }, 100);
 
         // update history data every day
         // setInterval(() => {
@@ -189,7 +189,6 @@ export default {
                 .then(res=> {
                     let todayDate = new Date();
                     let curMonth = todayDate.getMonth();
-                    console.log(res.data);
                     // this.cEmissionLastYear = [];
                     // this.cEmissionThisYearBefore = [];
                     for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
@@ -210,7 +209,8 @@ export default {
                             this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
                         }                                                                
                     }
-                    console.log(this.cEmissionLastYear, this.cEmissionThisYearBefore);
+                    this.elecCapacity[1] = this.elecCapacity[1].toFixed(2);
+                    this.elecCapacity[2] = this.elecCapacity[2].toFixed(2);
                 });
             // let curDateAfter = new Date();
             // let curTimeAfter = curDateAfter.getHours() + ':' + curDateAfter.getMinutes() 
@@ -227,7 +227,6 @@ export default {
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
-                    console.log(res.data)
                     this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2])];
                     this.cEmission = (0.509 * (this.getElecConsumData[0] 
                                                 + this.getElecConsumData[1] 

@@ -53,7 +53,6 @@ export default {
                 .then(res=> {
                     // format of res.data: {{mac, name, type, port, pin}, {mac, name, type, port, pin}, ...} 
                     this.controlList = res.data;
-                    console.log(this.controlList);
                     for (let ix = 0; ix < this.controlList.length; ix++) {
                         let pushMac = {'mac':this.controlList[ix]['mac']};
                         this.data['devices'].push(pushMac);                        
