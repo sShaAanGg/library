@@ -15,10 +15,19 @@ export const admin = [
                 icon: 'cil-bar-chart',
             },
             {
-                _name: 'CSidebarNavItem',
-                name: '設備管理',
-                to: '/equipment-manage',
-                icon: 'cil-cog'
+                _name: 'CSidebarNavDropdown',
+                name: '設備',
+                icon: 'cil-cog',
+                items: [
+                    {
+                        name: '機台設備',
+                        to: '/machine-manage',
+                    },
+                    {
+                        name: '網路設備',
+                        to: '/equipment-manage',
+                    }
+                ]
             },
             {
                 _name: 'CSidebarNavItem',

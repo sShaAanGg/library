@@ -10,18 +10,17 @@ const dotenv = require('dotenv').config({ path: dotenvAbsolutePath });
 
 if (dotenv.error) {
     throw dotenv.error;
-};
+}
 
-let dbFactory = new db.DbFactory(
-    process.env.DB_HOST,
-    process.env.DB_USER,
-    process.env.DB_PASS,
-    process.env.DB_NAME,
-    process.env.DB_PORT,
-    true);
+let dbFactory = new db.DbFactory(   process.env.DB_HOST,
+                                    process.env.DB_USER,
+                                    process.env.DB_PASS,
+                                    process.env.DB_NAME,
+                                    process.env.DB_PORT,
+                                    true);
 
 module.exports = {
-    login:function (req, res) {
+    login: function(req, res) {
         let example = ['account', 'password'];
 
         if (false === utility.data_check(req.body.data, example)) {

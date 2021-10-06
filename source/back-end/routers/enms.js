@@ -66,5 +66,25 @@ router.post('/select_two_years_electricity_consumption_for_anslysis', function (
 router.get('/select_error_log', function (req, res) {
     api.select_error_log(req, res);
 });
+router.post('/select_machine_manage', function (req, res) {
+    api.select_machine_manage(req, res);
+});
+
+router.post('/insert_machine_manage', function (req, res) {
+    api.insert_machine_manage(req, res);
+});
+
+router.post('/update_machine_manage', function (req, res) {
+    api.update_machine_manage(req, res);
+});
+
+router.post('/delete_machine_manage', function (req, res) {
+    api.delete_machine_manage(req, res);
+});
+
+router.post('/select_machine_sn', function (req, res) {
+    api.select_machine_sn(req, res);
+});
+
 
 module.exports = router;

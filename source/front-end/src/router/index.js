@@ -12,6 +12,7 @@ const AccountManage = () => import('@/views/AccountManage')
 const Dashboard = () => import('@/components/dashboards/Dashboard.vue')
 const ProductLineStatusAnaylysis = () => import('@/components/dashboards/ProductLineStatusAnalysis.vue')
 const EquipmentManage = () => import('@/components/dashboards/EquipmentManage.vue')
+const MachineManage = () => import('@/components/dashboards/MachineManage.vue')
 const AIAnalysis = () => import('@/components/dashboards/AIAnalysis.vue')
 const AbnormalAlert = () => import('@/components/dashboards/AbnormalAlert.vue')
 
@@ -74,11 +75,16 @@ function configRoutes() {
                     component: ProductLineStatusAnaylysis,
                     meta: { requiresAuth: true }
                 },
-
                 {
                     path: '/equipment-manage',
-                    name: '設備管理',
+                    name: '網路設備',
                     component: EquipmentManage,
+                    meta: { requiresAuth: true }
+                },
+                {
+                    path: '/machine-manage',
+                    name: '機台設備',
+                    component: MachineManage,
                     meta: { requiresAuth: true }
                 },
                 {

@@ -109,71 +109,6 @@ export function format(time, format) {
     })
 }
 
-export function getPreMonthDay(date, monthNum) {
-    var dateArr = date.split('-');
-    var year = dateArr[0];
-    var month = dateArr[1];
-    var day = dateArr[2];
-    var days = new Date(year, month, 0);
-    days = days.getDate();
-    var year2 = year;
-    var month2 = parseInt(month) - monthNum;
-    if (month2 <= 0) {
-        year2 = parseInt(year2) - parseInt(month2 / 12 == 0 ? 1 : parseInt(month2) / 12);
-        month2 = 12 - (Math.abs(month2) % 12);
-    }
-    var day2 = day;
-    var days2 = new Date(year2, month2, 0);
-    days2 = days2.getDate();
-    if (day2 > days2) {
-        day2 = days2;
-    }
-    if (month2 < 10) {
-        month2 = '0' + month2;
-    }
-    var t2 = year2 + '-' + month2 + '-' + day2;
-    return t2;
-}
-
-export function contrastDepartment(department) {
-    switch (department) {
-        case 'S510':
-            return '球心';
-            break;
-        case 'S511':
-            return '射出';
-            break;
-        case 'S513':
-            return '震動';
-            break;
-        case 'S514':
-            return '包裝';
-            break;
-        case 'S515':
-            return '底漆';
-            break;
-        case 'S516':
-            return '印刷跟金油';
-            break;
-        case 'S517':
-            return '品檢';
-            break;
-        case 'S518':
-            return '加印';
-            break;
-        case 'S519':
-            return '託外加工單';
-            break;
-        case 'S520':
-            return '重工';
-            break;
-        case 'S521':
-            return '盒裝';
-            break;
-        default:
-            break;
-    }
-}
 
 export function adjustFontSize(res){
     let docEl = document.documentElement,
@@ -183,3 +118,6 @@ export function adjustFontSize(res){
     return res*fontSize;
 
 }
+
+export var factoryOptions = ["廠區一", "廠區二", "廠區三"];  
+export var machineTypeOptions = ["公共用電節能", "空調節能"];  
