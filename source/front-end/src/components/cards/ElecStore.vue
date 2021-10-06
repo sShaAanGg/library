@@ -2,8 +2,8 @@
     <div class="card-es">
         <h4 class="card-font">本月綠能儲電量</h4>
         
-        <CCardBody class="card-body-es" align='center'> {{fromDataEs}} KWh </CCardBody> 
-
+        <CCardBody class="card-body-es" align='center'> 
+            {{fromDataEs}} KWh 
         <div style="text-align: right">
             <img
                 class="card-img-es"
@@ -13,6 +13,8 @@
                 display="inline"
             />
         </div>
+        </CCardBody> 
+
     </div>
 </template>
 

@@ -3,7 +3,7 @@
         <h2 class="card-font">本月總耗電量</h2>
         <CRow>
             <CCol lg = '12'>
-                <CCardBody>
+                <CCardBody @click="$router.push('/analysis/powerConsumption/all')">
                     <DonutChartElectricConsum :elecConsumData="fromDataEc"></DonutChartElectricConsum>
                 </CCardBody>
             </CCol>

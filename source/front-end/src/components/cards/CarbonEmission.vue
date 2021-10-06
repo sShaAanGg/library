@@ -1,9 +1,8 @@
 <template>
     <div class="card-h">
         <h2 class="card-font"> 本月碳排放量 </h2>
-        <CCardBody class="card-body-ce" align='center'>
+        <CCardBody class="card-body-ce" align='center' @click="$router.push('/analysis/carbonEmissions/all')">
             {{fromDataCe}} kgCO<sub>2</sub>e
-        </CCardBody>
         <div style="text-align: right">
             <img
                 class="card-img-es"
@@ -13,6 +12,7 @@
                 display="inline"
             />
         </div>        
+        </CCardBody>
     </div>
 </template>
 
