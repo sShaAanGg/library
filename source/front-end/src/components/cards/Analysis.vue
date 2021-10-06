@@ -4,7 +4,7 @@
             <CCol lg = '12' class="pt-2">
                 <div class="card-h">
                     <CCardBody class="mr-1 mb-1 h-100">
-                        <h4 style="color:#8c5c7d" class="card-font"><CIcon name="cil-chart-line" size="lg"/> {{AnalysisData.name}}</h4>
+                        <h4 style="color:#98a8a0" class="card-font"><CIcon name="cil-chart-line" size="lg"/> {{AnalysisData.name}}</h4>
                         <hr class="mt-0 mb-2">
                         <CRow>
                             <CCol lg = '3' class="pt-2">
@@ -55,7 +55,7 @@
             <CCol lg = '6' class="pt-2">
                 <div class="card-h h-100">
                     <CCardBody>
-                        <h3 style="color:#8c5c7d"  class="card-font"><CIcon name="cil-chart-pie" size="lg"/> 圖表數據</h3>
+                        <h3 style="color:#98a8a0"  class="card-font"><CIcon name="cil-chart-pie" size="lg"/> 圖表數據</h3>
                         <CRow>
                             <CCol lg = '12' class="pt-2">
                                 <div id="analysisChart" style = "width: 38vw;height:60vh"/>
@@ -84,7 +84,7 @@
             <CCol lg = '6' class="pt-2">
                 <div class="card-h h-100">
                     <CCardBody>
-                        <h3 style="color:#8c5c7d"  class="card-font"><CIcon name="cil-align-left" size="lg"/> 進階數據</h3>
+                        <h3 style="color:#98a8a0"  class="card-font"><CIcon name="cil-align-left" size="lg"/> 進階數據</h3>
                         <CDataTable
                             :items="AnalysisData.items"
                             :fields="AnalysisData.fields"
@@ -182,8 +182,8 @@ export default {
     
                 items:[],
                 fields:[
-                    { key: 'sort',                  label:'分類項目',           _style:'width:25%'            },
-                    { key: 'value',                 label:'減碳量',             _style:'width:25%'           },
+                    { key: 'sort',                  label:'分類項目',           _style:'width:25%;  color: #4C756A'},
+                    { key: 'value',                 label:'減碳量',             _style:'width:25%;'},
                     { key: 'analysis',              label:'去年同期分析',       _style:'width:25%'           },
                     { key: 'show_details',          label:'',                   _style:'width:25%'           }
                 ],
@@ -718,5 +718,8 @@ export default {
     color: #98a8a0;
     background-color: #0e2e2b;
     border-bottom: 1px rgb(77, 107, 77) solid;
+}
+.table {
+    color: white;
 }
 </style>

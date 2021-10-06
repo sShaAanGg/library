@@ -83,7 +83,7 @@ function configRoutes() {
                 },
                 {
                     path: '/machine-manage',
-                    name: '機台設備',
+                    name: '設備管理',   // 機台設備
                     component: MachineManage,
                     meta: { requiresAuth: true }
                 },

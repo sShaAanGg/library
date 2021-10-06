@@ -10,31 +10,32 @@ export const admin = [
             },
             {
                 _name: 'CSidebarNavItem',
-                name: '產線狀態分析',
+                name: '產線歷史狀態分析',
                 to: '/product-line-status-analysis',
                 icon: 'cil-bar-chart',
             },
             {
-                _name: 'CSidebarNavDropdown',
-                name: '設備',
-                icon: 'cil-cog',
-                items: [
-                    {
-                        name: '機台設備',
-                        to: '/machine-manage',
-                    },
-                    {
-                        name: '網路設備',
-                        to: '/equipment-manage',
-                    }
-                ]
-            },
-            {
                 _name: 'CSidebarNavItem',
-                name: 'AI分析',
-                to: '/ai-analysis',
-                icon: 'cil-chart-pie'
+                name: '設備管理',
+                to: '/machine-manage',
+                icon: 'cil-cog',
+                // items: [
+                //     {
+                //         name: '機台設備',
+                //         to: '/machine-manage',
+                //     },
+                //     {
+                //         name: '網路設備',
+                //         to: '/equipment-manage',
+                //     }
+                // ]
             },
+            // {
+            //     _name: 'CSidebarNavItem',
+            //     name: 'AI分析',
+            //     to: '/ai-analysis',
+            //     icon: 'cil-chart-pie'
+            // },
             {
                 _name: 'CSidebarNavItem',
                 name: '異常告警',

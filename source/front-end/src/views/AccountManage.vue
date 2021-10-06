@@ -2,17 +2,18 @@
 	<div>
 		<CCard class="card-base">
 			<CCardBody>
-			<h4 style="color: #d686bc">
-				<CIcon name="cil-people" size="lg" /> 帳號管理
-			</h4>
-			<hr class="mt-0 mb-2" />
+			<CRow class="pt-2">				
+				<h4 style="color: #98a8a0">
+					<CIcon name="cil-people" size="lg" /> 帳號管理
+				</h4>
+				<hr class="mt-0 mb-2" />
 
-			<CRow class="pt-2">
+
 				<CCol lg="12">
 				<CButton
-					style="float: right"
+					style="float: right;color: #2C9430"
 					variant="outline"
-					color="info"
+					color="success"
 					class="mr-2 mb-4"
 					@click="show_model('新增')"
 					><CIcon name="cil-user-plus" /> 新增</CButton
@@ -26,7 +27,6 @@
 				style="textalign: center; font-size: 125%; color: #d686bc"
 				:items-per-page="15"
 				:bordered="true"
-				column-filter
 				sorter
 				pagination
 			>
@@ -35,7 +35,7 @@
 					<CButton
 						square
 						size="sm"
-						style="color: #2eb85c"
+						style="color: #609485"
 						@click="show_model('修改資料', item)"
 					>
 						<CIcon size="xl" name="cil-pencil" />
@@ -43,12 +43,12 @@
 					<CButton
 						square
 						size="sm"
-						style="color: #321fdb"
+						style="color: #C2B07E"
 						@click="show_model('修改密碼', item)"
 					>
 						<CIcon size="xl" name="cil-lock-locked" />
 					</CButton>
-					<CButton
+					<!-- <CButton
 						square
 						size="sm"
 						style="color: #e55353"
@@ -56,14 +56,15 @@
 						v-if="item.role!='admin'"
 					>
 						<CIcon size="xl" name="cil-trash" />
-					</CButton>
+					</CButton> -->
 				</td>
 				</template>
 			</CDataTable>
 
 			<CModal
+				class="modal-color"
 				size="lg"
-				color="info"
+				color="dark"
 				:show.sync="showInsertModal"
 				:closeOnBackdrop="false"
 			>
@@ -128,7 +129,7 @@
 
 			<CModal
 				size="lg"
-				color="success"
+				color="dark"
 				:show.sync="showUpdateModal"
 				:closeOnBackdrop="false"
 			>
@@ -187,7 +188,7 @@
 
 			<CModal
 				size="lg"
-				color="primary"
+				color="dark"
 				:show.sync="showUpdatePasswordModal"
 				:closeOnBackdrop="false"
 			>
@@ -245,12 +246,12 @@ export default {
 
 			items: [],
 			fields: [
-				{ key: "account", label: "帳號", _style: "width:17%; color: #7da8d3" },
-				{ key: "name", label: "姓名", _style: "width:17%; color: #7da8d3" },
-				{ key: "job_number", label: "工號", _style: "width:17%; color: #7da8d3" },
-				{ key: "dept", label: "部門", _style: "width:17%; color: #7da8d3" },
-				{ key: "role", label: "權限", _style: "width:17%; color: #7da8d3" },
-				{ key: "show_details", label: "", _style: "width:15%; color: #7da8d3" },
+				{ key: "account", label: "帳號", _style: "width:17%; color: #4C756A" },
+				{ key: "name", label: "姓名", _style: "width:17%; color: #4C756A" },
+				{ key: "job_number", label: "工號", _style: "width:17%; color: #4C756A" },
+				{ key: "dept", label: "部門", _style: "width:17%; color: #4C756A" },
+				{ key: "role", label: "權限", _style: "width:17%; color: #4C756A" },
+				{ key: "show_details", label: "", _style: "width:15%; color: #4C756A" },
 			],
 
 			showInsertModal: false,
@@ -483,5 +484,11 @@ export default {
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
+}
+.modal-color {
+	color: rgb(80, 78, 78);
+}
+.table {
+    color: white;
 }
 </style>

@@ -24,67 +24,6 @@ let statusDataCommon = {
 }                                    
 
 module.exports = {
-    /*========================================================== */
-    //  tcp client
-    /*========================================================== */
-    send_switch_socket: function(req, res) {
-
-        // console.log('[Back end] send_switch_socket');
-
-        var param = req.body.data;
-        var hexStr;
-
-        // console.log(param);
-
-        switch (param) {
-            case 'light_on':
-                hexStr = "54414349002100124B0018E4685410320000000000000006000300000010";
-                break;
-            case 'light_off':
-                hexStr = "54414349002100124B0018E4685410320000000000000006010300000010";
-                break;
-            case 'fan_on':
-                hexStr = "54414349002100124B0018E467A010320000000000000006000300000010";
-                break;
-            case 'fan_off':
-                hexStr = "54414349002100124B0018E467A010320000000000000006010300000010";
-                break;
-        }
-
-        let client = net.Socket();
-        let msg = '';
-
-        client.setTimeout(5000);
-
-        client.connect(15476, '192.168.4.11', () => {
-            const cmdData = Uint8Array.from(Buffer.from(hexStr, 'hex'));
-
-            client.write(cmdData);
-
-            msg = {status: 'success'};
-        })
-
-        client.on("timeout", () => {
-            msg = {status: 'Timeout'};
-            client.destroy();
-        })
-
-        client.on('error', (err) => {
-            msg = {status: err};
-            client.end();
-        })
-
-        /* 監聽end事件 */
-        client.on("data", function (data) {
-            // console.log("the data of server is " + data.toString());
-        })
-
-        client.on('end', () => {
-            // console.log('[Back end]' + msg);
-            res.send(msg);
-            client.end();
-        })
-    },
     
     /*========================================================== */
     //  enms api
@@ -129,7 +68,8 @@ module.exports = {
                     factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
                     ++ iy;
                 }
-                cumulativeElectricityConsumption.push(Object.keys(result.groupBy('factory'))[ix], factoryEle.toFixed(2));
+                // cumulativeElectricityConsumption.push(Object.keys(result.groupBy('factory'))[ix], factoryEle.toFixed(2));
+                cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
                 ++ ix;
             }
             res.status(statusData.successCode).send(cumulativeElectricityConsumption);
@@ -173,14 +113,14 @@ module.exports = {
             errorMsg: " Some error occurred while select_two_years_electricity_consumption "
         };
 
-        let sql =   " SELECT                                                        "+
-                    " history_month_info.electricity,                               "+
-                    " history_month_info.`datetime`,                                "+
-                    " history_month_info.watt,                                      "+
-                    " history_month_info.carbon_footprint,                          "+ 
-                    " history_month_info.carbon_negative                            "+
-                    " FROM history_month_info                                       "+
-                    " WHERE `datetime` > ? AND `datetime` < ? group by `datetime`   ";
+        let sql =   " SELECT "                                                       +
+                    " history_month_info.electricity, "                              +
+                    " history_month_info.`datetime`, "                               +
+                    " history_month_info.watt, "                                     +
+                    " history_month_info.carbon_footprint, "                         + 
+                    " history_month_info.carbon_negative "                           +
+                    " FROM history_month_info "                                      +
+                    " WHERE `datetime` > ? AND `datetime` < ? group by `datetime`";
         sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000', 
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
         console.log(sql);
@@ -290,7 +230,6 @@ module.exports = {
         dbFactory.action_db(sql, statusDataCommon, res);
     },
     select_equip_daily_elec_this_month: function(req, res) {
-        console.log('in select_equip_daily_elec_this_month...');
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
 
         let sql =   "SELECT history_day_info.electricity " +
@@ -303,7 +242,6 @@ module.exports = {
                     "ORDER BY history_day_info.`datetime`";
         sql = dbFactory.build_mysql_format(sql, 
                         [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
-        console.log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
     },    
     /* End of ProductionLineAnalysis API */

@@ -13,7 +13,6 @@
 				style="textalign: center; font-size: 125%"
 				:items-per-page="10"
 				:bordered="true"
-				column-filter
 				sorter
 				pagination
 			>
@@ -29,11 +28,11 @@ export default {
 		return {
 			items: [],
 			fields: [
-				{ key: "machine_sn", 		label: "序號", 			_style: "width:20%; color: #7da8d3" },
-				{ key: "machine_name",		label: "設備名稱", 		_style: "width:20%; color: #7da8d3" },
-				{ key: "start_datetime", 	label: "開始時間", 		_style: "width:20%; color: #7da8d3" },
-				{ key: "start_datetime", 	label: "結束時間", 		_style: "width:20%; color: #7da8d3" },
-				{ key: "event", 			label: "異常原因", 		_style: "width:20%; color: #7da8d3" },
+				{ key: "machine_sn", 		label: "序號", 			_style: "width:20%; color: #4C756A" },
+				{ key: "machine_name",		label: "設備名稱", 		_style: "width:20%; color: #4C756A" },
+				{ key: "start_datetime", 	label: "開始時間", 		_style: "width:20%; color: #4C756A" },
+				{ key: "start_datetime", 	label: "結束時間", 		_style: "width:20%; color: #4C756A" },
+				{ key: "event", 			label: "異常原因", 		_style: "width:20%; color: #4C756A" },
 			],
 		};
 	},
@@ -62,5 +61,8 @@ export default {
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
+}
+.table {
+    color: white;
 }
 </style>

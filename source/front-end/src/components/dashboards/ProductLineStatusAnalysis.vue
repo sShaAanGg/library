@@ -2,7 +2,7 @@
     <div class="c-main">
         <CCard class="card-base">
             <h4 class="ml-3" style="color: #98a8a0">
-                <CIcon name="cil-bar-chart" size="lg" /> 產線狀態分析
+                <CIcon name="cil-bar-chart" size="lg" /> 產線年度歷史分析
             </h4>
 			<CCol lg="8" class="pt-2 card-base">
                 <CRow lg="8">
@@ -35,17 +35,17 @@
                     <CRow>
                         <table class="equip-table ml-5 mt-2" >
                             <tr>
-                                <th class="equip-elec"> 本月耗電量: {{ equipElec }} KWh</th>
+                                <th class="equip-elec"> 月耗電量: {{ equipElec }} KWh</th>
                                 <th class="equip-elec"> 作動時間: {{ equipWorkHours }} </th>
                             </tr>
                             <tr>
                                 <th class="equip-elec"> 異常次數: {{ equipEventTimes }} </th>
-                                <th class="equip-elec"> 本月稼動率: {{ equipActivate }} %</th>
+                                <th class="equip-elec"> 月稼動率: {{ equipActivate }} %</th>
                             </tr>                        
                         </table>
                     </CRow>
                     <CRow>
-                        <div v-if(isShowChart) class="ml-3 mt-5" id="lineChartMonth" style="width:45vw;height:60vh"></div>                               
+                        <div class="ml-3 mt-5" id="lineChartMonth" style="width:45vw;height:60vh"></div>                               
                     </CRow>
                 </CCol>
                 <CCol>
@@ -56,7 +56,7 @@
                         :items="equipList"
                         :fields="equipFields"
                         style="textalign: center; font-size: 110%; color: #98a8a0"
-                        :items-per-page="15"
+                        :items-per-page="5"
                         :bordered="true"
                         pagination
                     >
@@ -79,7 +79,7 @@
                     <CDataTable
                         :items="equipEventList"
                         :fields="eventFields"
-                        style="textalign: center; font-size: 110%; color: green"
+                        style="textalign: center; font-size: 110%;"
                         :items-per-page="15"
                         :bordered="true"
                         pagination
@@ -127,18 +127,18 @@ export default {
 
             equipList: [],
             equipFields: [
-                {key: 'machine_name', label: '設備名稱', _style: "color: #98a8a0"},
-                {key: 'machine_sn', label: '財產編號', _style: "color: #98a8a0"},
-                {key: 'cur_month_elec', label: '耗電量', _style: "color: #98a8a0"},
-                {key: 'yoy_month_elec', label: '去年同期分析', _style: "color: #98a8a0"},
-                {key: 'activation', label: '稼動率', _style: "color: #98a8a0"},
+                {key: 'machine_name', label: '設備名稱', _style: "color: #4C756A"},
+                {key: 'machine_sn', label: 'S/N', _style: "color: #4C756A"},
+                {key: 'cur_month_elec', label: '耗電量', _style: "color: #4C756A"},
+                {key: 'yoy_month_elec', label: '去年同期分析', _style: "color: #4C756A"},
+                {key: 'activation', label: '稼動率', _style: "color: #4C756A"},
                 {key: 'update_chart', label: ''}
             ],
             equipEventList: '',
             eventFields: [
-                {key: 'event', label: '異常原因'},
-                {key: 'start_datetime', label: '開始時間'},
-                {key: 'end_datetime', label: '結束時間'}
+                {key: 'event', label: '異常原因', _style: "color: #4C756A"},
+                {key: 'start_datetime', label: '開始時間', _style: "color: #4C756A"},
+                {key: 'end_datetime', label: '結束時間', _style: "color: #4C756A"}
             ],
 
             lineChart: '',
@@ -158,6 +158,9 @@ export default {
                         type: 'line',
                         itemStyle: {
                                 color: '#92BED4'
+                        },
+                        label: {
+                            show: false
                         },
                     }
                 ]
@@ -187,9 +190,10 @@ export default {
         },
         get_equip_list(factory, month) {
             this.equipName = '請從右側選擇設備';
-            this.equipElec = '';
-            this.equipActivate = '';
+            this.equipElec = '-';
+            this.equipActivate = '-';
             this.equipEventList = '';
+            this.equipEventTimes  = '-';
             this.reset_chart();
 
             if (factory == '-' || month == '-') {
@@ -212,6 +216,7 @@ export default {
             this.equipName = item.machine_name;
             this.equipElec = item.cur_month_elec;
             this.equipActivate = item.activation;
+            
 
             this.get_equip_events(item);
             this.get_daily_elec(item);
@@ -223,6 +228,7 @@ export default {
                 .post('api/enms/select_equip_error_log', {data:data})
                 .then((res) => {
                     this.equipEventList = res.data;
+                    this.equipEventTimes = this.equipEventList.length;
                 })
                 .catch((error) => console.log(error));            
             
@@ -276,6 +282,9 @@ export default {
 .fullpage {
 	border-color: #272727;
 } */
+.table {
+    color: white;
+}
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
