@@ -333,10 +333,9 @@ module.exports = {
             errorMsg: " Some error occurred while select_data_year"
         }
 
-        let sql = " SELECT machine_info.machine_sn, machine_info.machine_name, DATE_FORMAT(error_log.start_datetime,'%Y-%m-%d %H:%i:%s') as start_datetime, "       +
-            " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %H:%i:%s') as end_datetime, error_log.event FROM "                                                       +
-            " ((error_log INNER JOIN equipment_info ON error_log.mac = equipment_info.mac)  INNER JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn) "
-
+        let sql =   " SELECT machine_info.machine_sn, machine_info.machine_name, DATE_FORMAT(error_log.start_datetime,'%Y-%m-%d %H:%i:%s') as start_datetime,                       "+
+                    " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %H:%i:%s') as end_datetime, error_log.event FROM                                                                 "+
+                    " ((error_log INNER JOIN equipment_info ON error_log.mac = equipment_info.mac)  INNER JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn) ";
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             res.status(statusData.successCode).send(result);
         });
@@ -442,5 +441,43 @@ module.exports = {
         let sql = " SELECT * FROM machine_info WHERE machine_sn = ? ";
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machineSn]);
         dbFactory.action_db(sql, statusData, res);
+    },
+
+    select_every_years_average: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_every_years_average"
+        };
+        let sql = "SELECT mac, SUBSTR(datetime, 5,2) AS `month`, electricity, watt, carbon_footprint, carbon_negative FROM history_month_info;";
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            Array.prototype.groupBy = function(prop) {
+                return this.reduce(function(groups, item) {
+                const val = item[prop]
+                groups[val] = groups[val] || []
+                groups[val].push(item)
+                return groups
+                }, {})
+            };
+
+            let ix = 0, iy = 0;
+            let eleAverage = [];
+            let average = [];
+            let totalELe = 0;
+            while(ix < Object.keys(result.groupBy('month')).length) {
+                average = [];
+                average = result.groupBy('month')[Object.keys(result.groupBy('month'))[ix]];
+                iy = 0;
+                totalELe = 0;
+                while(iy < average.length){
+                    totalELe += average[iy].electricity;
+                    ++ iy;
+                }
+                totalELe = totalELe / iy; 
+                eleAverage.push([{'month':Object.keys(result.groupBy('month'))[ix], 'electricity':totalELe.toFixed(2)}]);
+                ++ ix;
+            }
+            res.status(statusData.successCode).send(eleAverage);
+        });
     }
 }
