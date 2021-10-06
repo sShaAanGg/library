@@ -86,5 +86,9 @@ router.post('/select_machine_sn', function (req, res) {
     api.select_machine_sn(req, res);
 });
 
+router.get('/select_every_years_average', function (req, res) {
+    api.select_every_years_average(req, res);
+});
+
 
 module.exports = router;
