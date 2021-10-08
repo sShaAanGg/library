@@ -15,11 +15,10 @@
                 <CButton
                 class="btn-search"
                 size="lg"
-                style="color: #98a8a0"
                 @click="get_equip_list(factory, selectMonth)"
                 >
-                search
-                </CButton>                    
+                搜尋
+                </CButton>
                 </CRow>
                 
 			</CCol>
@@ -79,7 +78,7 @@
                     <CDataTable
                         :items="equipEventList"
                         :fields="eventFields"
-                        style="textalign: center; font-size: 110%; color: green;"
+                        style="textalign: center; font-size: 110%;"
                         :items-per-page="5"
                         :bordered="true"
                         pagination
@@ -356,7 +355,7 @@ export default {
     top: 1vw;
     color: white;
     height: 3vw;
-    background: rgb(77, 107, 77);
+    background: #1d7948;
 
 }
 .equip-table {

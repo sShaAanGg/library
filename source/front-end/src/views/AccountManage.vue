@@ -181,6 +181,7 @@
 			</CModal>
 
 			<CModal
+				class="modal-am"
 				size="lg"
 				:show.sync="showUpdatePasswordModal"
 				:closeOnBackdrop="false"
@@ -476,8 +477,12 @@ export default {
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
+	color: white;
 }
 .table {
     color: white;
+}
+.modal-am {
+	color: whte;
 }
 </style>

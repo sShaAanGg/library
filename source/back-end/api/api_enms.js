@@ -353,14 +353,20 @@ module.exports = {
             errorMsg: " Some error occurred while select_machine_manage"
         };
         
+        let sql = "SELECT * FROM machine_info";
         if (req.body.data.searchFactory.length !== 0){
-            let sql = " SELECT * FROM machine_info WHERE factory = ?";
+            sql = " SELECT * FROM machine_info WHERE factory = ?";
             sql = dbFactory.build_mysql_format(sql, [req.body.data.searchFactory]);
-            dbFactory.action_db(sql, statusData, res);
-        } else {
-            let sql = "SELECT * FROM machine_info";
-            dbFactory.action_db(sql, statusData, res);
         }
+
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            for(let ix = 0; ix < result.length; ++ix) {                
+                let dateStr = result[ix].establish_date.toString();
+                let formatDate = dateStr.substr(0, 4) + '-' + dateStr.substr(4, 2) + '-' + dateStr.substr(6, 2);
+                result[ix].establish_date = formatDate;                 
+            }
+            res.status(statusData.successCode).send(result);   
+        });        
     },
 
     insert_machine_manage: function(req, res) {

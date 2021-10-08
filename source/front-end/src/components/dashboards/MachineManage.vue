@@ -25,11 +25,11 @@
                             variant="ghost"
                             class="mr-2 mb-6"
                             style="float: right"
-
+                            color="success" 
                             v-bind = "{ shape: 'pill' }"
                             @click="show_modal('搜尋')"
                         >
-                            <CIcon name="cilZoom" size="4xl" />
+                            <CIcon name="cilZoom" size="3xl" />
                         </CButton>
                     </CRow>
                 </CCol>
@@ -40,11 +40,11 @@
                             variant="ghost"
                             class="mr-2 mb-6"
                             style="float: right"
-                            color="dark" 
+                            color="success" 
                             v-bind = "{ shape: 'pill' }"
                             @click="show_modal('新增')"
                         >
-                            <CIcon name="cil-medical-cross" size="4xl" />
+                            <CIcon name="cil-medical-cross" size="3xl" />
                         </CButton>
                     </CRow>
                 </CCol>
@@ -89,6 +89,7 @@
 
         <CModal
             size="lg"
+            style="color:white;"
             :show.sync="showInsertModal"
             :closeOnBackdrop="false"
         >
@@ -169,6 +170,7 @@
 
         <CModal
             size="lg"
+            style="color:white;"
             :show.sync="showUpdateModal"
             :closeOnBackdrop="false"
         >
@@ -230,7 +232,7 @@
             </CRow>
 
             <template #header>
-                <h3>修改機台資訊</h3>
+                <h3 style="color:white;">修改機台資訊</h3>
                 <CButtonClose @click="showUpdateModal = false, reset_modal()" color="text-white"/>
             </template>
             <template #footer>
