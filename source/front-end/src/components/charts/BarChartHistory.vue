@@ -82,8 +82,8 @@ export default {
     beforeUpdate() {
         this.option.series[0].data = this.barData[0];
         this.option.series[1].data = this.barData[1];
-        this.option.series[2].data = [180000, 170000, 190000, 160000, 150000, 170000, 
-                                        180800, 180600, 181000, 170000, 161000, 162000, ];        
+        this.option.series[2].data = this.barData[2];
+      
         this.myBarChart.setOption(this.option);
     },
     mounted() {

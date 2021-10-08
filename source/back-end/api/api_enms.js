@@ -114,10 +114,10 @@ module.exports = {
         };
 
         let sql =   " SELECT "                                                       +
-                    " history_month_info.electricity, "                              +
+                    " SUM(history_month_info.electricity) as electricity, "          +
                     " history_month_info.`datetime`, "                               +
                     " history_month_info.watt, "                                     +
-                    " history_month_info.carbon_footprint, "                         + 
+                    " SUM(history_month_info.carbon_footprint) as carbon_footprint, "+ 
                     " history_month_info.carbon_negative "                           +
                     " FROM history_month_info "                                      +
                     " WHERE `datetime` > ? AND `datetime` < ? group by `datetime`";
@@ -209,11 +209,17 @@ module.exports = {
     select_equip_error_log: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_error_log";
 
-        let sql =   "SELECT DISTINCT error_log.`event`, error_log.start_datetime, error_log.end_datetime " +
-                    "FROM error_log " +  
-                    "JOIN equipment_info ON error_log.mac = equipment_info.mac " +
-                    "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn " + 
-                    "WHERE machine_info.machine_sn = ?";
+        let sql =   " SELECT DISTINCT "                                                                     +
+                        " error_log.`event`, "                                                              +
+                        " DATE_FORMAT(error_log.start_datetime,'%Y-%m-%d %h:%m:%s') as start_datetime, "    +
+                        " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %h:%m:%s') as end_datetime "         +
+                    " FROM "                                                                                +
+                        " error_log "                                                                       +  
+                    " JOIN "                                                                                + 
+                        " equipment_info ON error_log.mac = equipment_info.mac "                            +
+                    " JOIN "                                                                                + 
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "             + 
+                    " WHERE " + " machine_info.machine_sn = ? ";
         
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         dbFactory.action_db(sql, statusDataCommon, res);                    
@@ -382,23 +388,23 @@ module.exports = {
             errorMsg: " Some error occurred while insert_machine_manage"
         };
         
-            let sql = " INSERT INTO machine_info (machine_name, machine_sn, `type`, "+ 
-                      " factory, establish_date, update_date, year_elec, month_elec,"+
-                      " voltage, work_years, work_hours, activation)                "+ 
-                      " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                 ";
-            sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName, 
-                                                        req.body.data.machineSn, 
-                                                        req.body.data.machineType, 
-                                                        req.body.data.factory, 
-                                                        req.body.data.establishDate,
-                                                        req.body.data.updateDate,
-                                                        req.body.data.yearElec,
-                                                        req.body.data.monthElec,
-                                                        req.body.data.machineVolt,
-                                                        req.body.data.machineAge,
-                                                        req.body.data.workHours,
-                                                        req.body.data.activation]);
-            dbFactory.action_db(sql, statusData, res);
+        let sql = " INSERT INTO machine_info (machine_name, machine_sn, `type`, "+ 
+                    " factory, establish_date, update_date, year_elec, month_elec,"+
+                    " voltage, work_years, work_hours, activation)                "+ 
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)                 ";
+        sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName, 
+                                                    req.body.data.machineSn, 
+                                                    req.body.data.machineType, 
+                                                    req.body.data.factory, 
+                                                    req.body.data.establishDate,
+                                                    req.body.data.updateDate,
+                                                    req.body.data.yearElec,
+                                                    req.body.data.monthElec,
+                                                    req.body.data.machineVolt,
+                                                    req.body.data.machineAge,
+                                                    req.body.data.workHours,
+                                                    req.body.data.activation]);
+        dbFactory.action_db(sql, statusData, res);
     },
 
     update_machine_manage: function(req, res) {
@@ -408,15 +414,15 @@ module.exports = {
             errorMsg: " Some error occurred while update_machine_manage"
         };
         
-            let sql = " UPDATE machine_info SET machine_name = ?, machine_sn = ?, `type` = ?, factory = ?, voltage = ?, work_years = ? WHERE id = ?";
-            sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName, 
-                                                        req.body.data.machineSn, 
-                                                        req.body.data.machineType, 
-                                                        req.body.data.factory, 
-                                                        req.body.data.machineVolt,
-                                                        req.body.data.machineAge,
-                                                        req.body.data.id]);
-            dbFactory.action_db(sql, statusData, res);
+        let sql = " UPDATE machine_info SET machine_name = ?, machine_sn = ?, `type` = ?, factory = ?, voltage = ?, work_years = ? WHERE id = ?";
+        sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName, 
+                                                    req.body.data.machineSn, 
+                                                    req.body.data.machineType, 
+                                                    req.body.data.factory, 
+                                                    req.body.data.machineVolt,
+                                                    req.body.data.machineAge,
+                                                    req.body.data.id]);
+        dbFactory.action_db(sql, statusData, res);
     },
 
     delete_machine_manage: function(req, res) {
@@ -449,32 +455,30 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while select_every_years_average"
         };
-        let sql = "SELECT mac, SUBSTR(datetime, 5,2) AS `month`, electricity, watt, carbon_footprint, carbon_negative FROM history_month_info;";
+        let sql =   " SELECT "+
+                    " mac, datetime, SUBSTR(datetime, 5,2) AS `month`, electricity, watt, sum(carbon_footprint) as carbon_footprint, carbon_negative " +
+                    " FROM history_month_info" +
+                    " GROUP BY datetime";
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
-            Array.prototype.groupBy = function(prop) {
-                return this.reduce(function(groups, item) {
-                const val = item[prop]
-                groups[val] = groups[val] || []
-                groups[val].push(item)
-                return groups
-                }, {})
-            };
-
             let ix = 0, iy = 0;
-            let eleAverage = [];
+            let eleAverage = new Array(12);
             let average = [];
-            let totalELe = 0;
-            while(ix < Object.keys(result.groupBy('month')).length) {
+            let totalEle = 0;
+            let groupByMonth = result.groupBy('month');
+            while(ix < Object.keys(groupByMonth).length) {
                 average = [];
-                average = result.groupBy('month')[Object.keys(result.groupBy('month'))[ix]];
+                average = groupByMonth[Object.keys(groupByMonth)[ix]];
                 iy = 0;
-                totalELe = 0;
+                totalEle = 0;
                 while(iy < average.length){
-                    totalELe += average[iy].electricity;
+                    totalEle += average[iy].carbon_footprint;
                     ++ iy;
+
                 }
-                totalELe = totalELe / iy; 
-                eleAverage.push([{'month':Object.keys(result.groupBy('month'))[ix], 'electricity':totalELe.toFixed(2)}]);
+                totalEle = totalEle / iy;
+
+                eleAverage[Object.keys(groupByMonth)[ix] - 1] = totalEle.toFixed(2);
+                // eleAverage.push([{'month':Object.keys(groupByMonth)[ix], 'electricity':totalEle.toFixed(2)}]);
                 ++ ix;
             }
             res.status(statusData.successCode).send(eleAverage);

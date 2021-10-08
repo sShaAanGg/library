@@ -25,7 +25,7 @@
                             variant="ghost"
                             class="mr-2 mb-6"
                             style="float: right"
-                            color="dark" 
+
                             v-bind = "{ shape: 'pill' }"
                             @click="show_modal('搜尋')"
                         >
@@ -89,7 +89,6 @@
 
         <CModal
             size="lg"
-            color="dark"
             :show.sync="showInsertModal"
             :closeOnBackdrop="false"
         >
@@ -159,18 +158,17 @@
             </CRow>
 
             <template #header>
-                <h3 class="modal-title">新增機台設備</h3>
-                <CButtonClose @click="showInsertModal = false, reset_modal();" class="text-white"/>
+                <h3>新增機台設備</h3>
+                <CButtonClose @click="showInsertModal = false, reset_modal();"/>
             </template>
             <template #footer>
-                <CButton @click="insert_machine_all()" color="info">新增</CButton>
-                <CButton @click="showInsertModal = false, reset_modal()" color="danger">返回</CButton>
+                <CButton @click="insert_machine_all()" color="success">新增</CButton>
+                <CButton @click="showInsertModal = false, reset_modal()" color="dark">返回</CButton>
             </template>
         </CModal>
 
         <CModal
             size="lg"
-            color="dark"
             :show.sync="showUpdateModal"
             :closeOnBackdrop="false"
         >
@@ -232,12 +230,12 @@
             </CRow>
 
             <template #header>
-                <h3 class="modal-title">修改機台資訊</h3>
-                <CButtonClose @click="showUpdateModal = false, reset_modal()" class="text-white"/>
+                <h3>修改機台資訊</h3>
+                <CButtonClose @click="showUpdateModal = false, reset_modal()" color="text-white"/>
             </template>
             <template #footer>
-                <CButton @click="send_edit_machine()" color="info">修改</CButton>
-                <CButton @click="showUpdateModal = false, reset_modal()" color="danger">返回</CButton>
+                <CButton @click="send_edit_machine()" color="success">修改</CButton>
+                <CButton @click="showUpdateModal = false, reset_modal()" color="dark">返回</CButton>
             </template>
         </CModal>
     </div>
@@ -255,8 +253,8 @@ export default {
 				{ key:  "factory",          label: "廠區",		    _style: "width:8%; color: #4C756A"},
 				{ key:  "machine_name",     label: "名稱",		    _style: "width:8%; color: #4C756A"},
                 { key:  "machine_sn",       label: "S/N",          _style: "width:8%; color: #4C756A"},
-                { key:  "type",             label: "種類",          _style: "width:8%; color: #4C756A"},
-                { key:  "voltage",          label: "額定電壓",      _style: "width:6%; color: #4C756A"},
+                { key:  "type",             label: "種類",          _style: "width:9%; color: #4C756A"},
+                { key:  "voltage",          label: "額定電壓",      _style: "width:5%; color: #4C756A"},
                 { key:  "work_years",       label: "年資",          _style: "width:6%; color: #4C756A"},
                 { key:  "establish_date",   label: "建立日期",      _style: "width:9%; color: #4C756A"},
                 { key:  "work_hours",       label: "運作時數(年)",  _style: "width:8%; color: #4C756A"},
@@ -507,27 +505,13 @@ export default {
 </script>
 
 <style scope>
-/* .background {
-	background-color: #272727;
-}
-.card-1 {
-	background-color:#000000;
-	border-color: #272727;
-}
-.fullpage {
-	border-color: #272727;
-} */
-.card-em {
-    background-color: #081d1b;
-    border-color: #0e2e2b;
-    color: white;
-}
 .em-input {
     color: white;
 }
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
+    color: white;
 }
 .table {
     color: white;

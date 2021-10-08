@@ -2,13 +2,13 @@
     <div>
         <CRow>
             <CCol lg = '12' class="pt-2">
-                <div class="card-h">
+                <div class="card-ana">
                     <CCardBody class="mr-1 mb-1 h-100">
-                        <h4 style="color:#98a8a0" class="card-font"><CIcon name="cil-chart-line" size="lg"/> {{AnalysisData.name}}</h4>
+                        <h4 style="color:#98a8a0" class="card-font-ana"><CIcon name="cil-chart-line" size="lg"/> {{AnalysisData.name}}</h4>
                         <hr class="mt-0 mb-2">
                         <CRow>
                             <CCol lg = '3' class="pt-2">
-                                <h4 class="card-font">
+                                <h4 class="card-font-ana">
                                     時間區間 : 
                                     <CButton v-bind="classColor['Y']" @click="switch_mode('year')">年</CButton>
                                     <CButton v-bind="classColor['M']" @click="switch_mode('month')">月</CButton> 
@@ -28,7 +28,7 @@
                                 />
                             </CCol>
                             <CCol lg = '3' class="pt-2">
-                                <h2 class="card-font">區域 :</h2>
+                                <h2 class="card-font-ana">區域 :</h2>
                                 <CSelect
                                     type="date"
                                     class="mr-2"
@@ -53,9 +53,9 @@
             </CCol>
 
             <CCol lg = '6' class="pt-2">
-                <div class="card-h h-100">
+                <div class="card-ana h-100">
                     <CCardBody>
-                        <h3 style="color:#98a8a0"  class="card-font"><CIcon name="cil-chart-pie" size="lg"/> 圖表數據</h3>
+                        <h3 style="color:#98a8a0"  class="card-font-ana"><CIcon name="cil-chart-pie" size="lg"/> 圖表數據</h3>
                         <CRow>
                             <CCol lg = '12' class="pt-2">
                                 <div id="analysisChart" style = "width: 38vw;height:60vh"/>
@@ -82,9 +82,9 @@
             </CCol>
 
             <CCol lg = '6' class="pt-2">
-                <div class="card-h h-100">
+                <div class="card-ana h-100">
                     <CCardBody>
-                        <h3 style="color:#98a8a0"  class="card-font"><CIcon name="cil-align-left" size="lg"/> 進階數據</h3>
+                        <h3 style="color:#98a8a0"  class="card-font-ana"><CIcon name="cil-align-left" size="lg"/> 進階數據</h3>
                         <CDataTable
                             :items="AnalysisData.items"
                             :fields="AnalysisData.fields"
@@ -108,7 +108,6 @@
             </CCol>
 
             <CModal
-                color="info"
                 size="xl"
                 :show.sync="showDetail"
                 :closeOnBackdrop="false"
@@ -117,7 +116,7 @@
                 <CDataTable
                     :items="AnalysisData.detailItems"
                     :fields="AnalysisData.detailFields"
-                    style="textAlign:center;font-size:125%"
+                    style="textAlign:center;font-size:125%;"
                     :items-per-page="10"
                     :bordered="true"
                     column-filter
@@ -126,7 +125,7 @@
                 >
                 </CDataTable>
                 <template #footer>
-                    <CButton @click="showDetail = false" color="danger">返回</CButton>
+                    <CButton @click="showDetail = false" color="dark">返回</CButton>
                 </template>
             </CModal>
         </CRow>
@@ -182,8 +181,8 @@ export default {
     
                 items:[],
                 fields:[
-                    { key: 'sort',                  label:'分類項目',           _style:'width:25%;  color: #4C756A'},
-                    { key: 'value',                 label:'減碳量',             _style:'width:25%;'},
+                    { key: 'sort',                  label:'分類項目',           _style:'width:25%;  color: #4C756A;'},
+                    { key: 'value',                 label:'減碳量',             _style:'width:25%; color: #4C756A;'},
                     { key: 'analysis',              label:'去年同期分析',       _style:'width:25%'           },
                     { key: 'show_details',          label:'',                   _style:'width:25%'           }
                 ],
@@ -204,10 +203,10 @@ export default {
                 this.AnalysisData.analysisSort = '耗電量';
                 this.AnalysisData.value = 0;
                 this.AnalysisData.fields = [
-                    { key: 'sort',                  label:'分類項目',           _style:'width:25%'            },
-                    { key: 'value',                 label:'耗電量(KW)',         _style:'width:25%'              },
-                    { key: 'analysis',              label:'去年同期分析',       _style:'width:25%'             },
-                    { key: 'show_details',          label:'',                   _style:'width:25%'            }
+                    { key: 'sort',                  label:'分類項目',           _style:'width:25%; color: #4C756A;'            },
+                    { key: 'value',                 label:'耗電量(KW)',         _style:'width:25%; color: #4C756A;'              },
+                    { key: 'analysis',              label:'去年同期分析',       _style:'width:25%; color: #4C756A;'             },
+                    { key: 'show_details',          label:'',                   _style:'width:25%; color: #4C756A;'            }
                 ];
                 this.AnalysisData.detailFields = [
                     { key: 'date',                  label:'日期',               _style:'width:20%'            },
@@ -225,10 +224,10 @@ export default {
                 this.AnalysisData.analysisSort = '碳排量';
                 this.AnalysisData.value = 0;
                 this.AnalysisData.fields = [
-                    { key: 'sort',                  label:'分類項目',           _style:'width:25%'            },
-                    { key: 'value',                 label:'碳排量',             _style:'width:25%'           },
-                    { key: 'analysis',              label:'去年同期分析',       _style:'width:25%'           },
-                    { key: 'show_details',          label:'',                   _style:'width:25%'           }
+                    { key: 'sort',                  label:'分類項目',           _style:'width:25%; color: #4C756A;'            },
+                    { key: 'value',                 label:'碳排量',             _style:'width:25%; color: #4C756A;'           },
+                    { key: 'analysis',              label:'去年同期分析',       _style:'width:25%; color: #4C756A;'           },
+                    { key: 'show_details',          label:'',                   _style:'width:25%; color: #4C756A;'           }
                 ];
                 this.AnalysisData.detailFields = [
                     { key: 'date',                  label:'日期',               _style:'width:20%'            },
@@ -246,9 +245,9 @@ export default {
                 this.AnalysisData.analysisSort = '減碳排';
                 this.AnalysisData.value = 0;
                 this.AnalysisData.fields = [
-                    { key: 'sort',                  label:'分類項目',           _style:'width:40%'            },
-                    { key: 'value',                 label:'減碳量',             _style:'width:40%'           },
-                    { key: 'show_details',          label:'',                   _style:'width:20%'           }
+                    { key: 'sort',                  label:'分類項目',           _style:'width:40%; color: #4C756A;'            },
+                    { key: 'value',                 label:'減碳量',             _style:'width:40%; color: #4C756A;'           },
+                    { key: 'show_details',          label:'',                   _style:'width:20%; color: #4C756A;'           }
                 ];
                 this.AnalysisData.detailFields = [
                     { key: 'date',                  label:'日期',               _style:'width:25%'            },
@@ -439,6 +438,7 @@ export default {
                                         }
 
                                         if (this.AnalysisData.mode === 'powerConsumption'){
+                                            console.log(data, data.toFixed(2));
                                             this.AnalysisData.detailItemsTemp.push({
                                                 date:result.datetime,
                                                 sort:result.type,
@@ -551,14 +551,14 @@ export default {
                         {
                             name: '今年度' + this.AnalysisData.analysisSort,
                             type: 'line',
-                            smooth: true,
+                            // smooth: true,
                             // prettier-ignore
                             data: this.AnalysisData.data,
                         },
                         {
                             name: '去年度' + this.AnalysisData.analysisSort,
                             type: 'line',
-                            smooth: true,
+                            // mooth: true,
                             // prettier-ignore
                             data: this.AnalysisData.compareData,
                         },
@@ -583,7 +583,7 @@ export default {
                         {
                             name: '今年度' + this.AnalysisData.analysisSort,
                             type: 'line',
-                            smooth: true,
+                            // smooth: true,
                             // prettier-ignore
                             data: this.AnalysisData.data,
                         }
@@ -618,7 +618,7 @@ export default {
                 var data = parseInt(result.value);
 
                 index = dateTotal.findIndex(x => x.datetime === result.date);
-    
+                console.log(dateTotal);
                 if (index < 0){
                     dateTotal.push({
                         datetime:result.date,
@@ -677,14 +677,14 @@ export default {
                     {
                         name: '今年度' + this.AnalysisData.analysisSort,
                         type: 'line',
-                        smooth: true,
+                        // smooth: true,
                         // prettier-ignore
                         data: this.AnalysisData.data,
                     },
                     {
                         name: '去年度' + this.AnalysisData.analysisSort,
                         type: 'line',
-                        smooth: true,
+                        // smooth: true,
                         // prettier-ignore
                         data: this.AnalysisData.compareData,
                     },
@@ -710,16 +710,22 @@ export default {
 </script>
 
 <style>
-.card-h {
-    background-color: #0e2e2b;
+.card-ana {
+    background-color: #081d1b;
 }
 
-.card-font {
+.card-font-ana {
     color: #98a8a0;
-    background-color: #0e2e2b;
-    border-bottom: 1px rgb(77, 107, 77) solid;
+    background-color: #081d1b;
+    /* border-bottom: 1px rgb(77, 107, 77) solid; */
 }
 .table {
     color: white;
+}
+.table-modal {
+    color: black;
+}
+.modal-color {
+	color: rgb(80, 78, 78);
 }
 </style>

@@ -2,7 +2,6 @@
 	<div>
 		<CCard class="card-base">
 			<CCardBody>
-			<CRow class="pt-2">				
 				<h4 style="color: #98a8a0">
 					<CIcon name="cil-people" size="lg" /> 帳號管理
 				</h4>
@@ -19,7 +18,7 @@
 					><CIcon name="cil-user-plus" /> 新增</CButton
 				>
 				</CCol>
-			</CRow>
+		
 
 			<CDataTable
 				:items="items"
@@ -62,9 +61,7 @@
 			</CDataTable>
 
 			<CModal
-				class="modal-color"
 				size="lg"
-				color="dark"
 				:show.sync="showInsertModal"
 				:closeOnBackdrop="false"
 			>
@@ -120,16 +117,14 @@
 				<CButtonClose @click="showInsertModal = false" class="text-white" />
 				</template>
 				<template #footer>
-				<CButton @click="insert_account()" color="info">新增</CButton>
-				<CButton @click="showInsertModal = false" color="danger"
-					>返回</CButton
+				<CButton @click="insert_account()" color="success">新增</CButton>
+				<CButton @click="showInsertModal = false" color="dark">返回</CButton
 				>
 				</template>
 			</CModal>
 
 			<CModal
 				size="lg"
-				color="dark"
 				:show.sync="showUpdateModal"
 				:closeOnBackdrop="false"
 			>
@@ -180,15 +175,13 @@
 				</template>
 				<template #footer>
 				<CButton @click="update_account()" color="success">更新</CButton>
-				<CButton @click="showUpdateModal = false" color="danger"
-					>返回</CButton
+				<CButton @click="showUpdateModal = false" color="dark">返回</CButton
 				>
 				</template>
 			</CModal>
 
 			<CModal
 				size="lg"
-				color="dark"
 				:show.sync="showUpdatePasswordModal"
 				:closeOnBackdrop="false"
 			>
@@ -224,9 +217,8 @@
 				/>
 				</template>
 				<template #footer>
-				<CButton @click="update_password()" color="primary">更新</CButton>
-				<CButton @click="showUpdatePasswordModal = false" color="danger"
-					>返回</CButton
+				<CButton @click="update_password()" color="success">更新</CButton>
+				<CButton @click="showUpdatePasswordModal = false" color="dark">返回</CButton
 				>
 				</template>
 			</CModal>
@@ -484,9 +476,6 @@ export default {
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
-}
-.modal-color {
-	color: rgb(80, 78, 78);
 }
 .table {
     color: white;

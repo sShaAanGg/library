@@ -1,14 +1,15 @@
 <template>
-    <div class="c-main">
+    <div>
         <CCard class="card-base">
-            <h4 class="ml-3" style="color: #98a8a0">
+            <CCardBody>
+            <h4 style="color: #98a8a0">
                 <CIcon name="cil-bar-chart" size="lg" /> 產線年度歷史分析
             </h4>
-			<CCol lg="8" class="pt-2 card-base">
+			<CCol lg="8" class="card-base">
                 <CRow lg="8">
                 <!-- <CSelect label="選擇年" :options="yearOptions" :value.sync="selectYear" /> -->
-                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" 
-                    :value.sync="selectMonth" @change="get_select_year_month(selectYear, selectMonth)"/>                                     
+                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8]" 
+                    :value.sync="selectMonth"/>                                     
                 <CSelect class="select-factory" label="廠區" :options="factoryOptions" 
                     :value.sync="factory" />
                 <CButton
@@ -22,16 +23,15 @@
                 </CRow>
                 
 			</CCol>
-         
+            </CCardBody>
         </CCard >
         <CCard class="card-base">
             <CRow>
                 <CCol lg="6">
-                    <CRow>
-                    <h4 class="ml-3" style="color: #98a8a0">
+                    <h4 class="ml-4 mt-4" style="color: #98a8a0">
                         <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
                     </h4>
-                    </CRow>
+                    
                     <CRow>
                         <table class="equip-table ml-5 mt-2" >
                             <tr>
@@ -48,8 +48,8 @@
                         <div class="ml-3 mt-5" id="lineChartMonth" style="width:45vw;height:60vh"></div>                               
                     </CRow>
                 </CCol>
-                <CCol>
-                    <h4 style="color: #98a8a0">
+                <CCol class="mr-4">
+                    <h4 class="mt-4" style="color: #98a8a0">
                         <CIcon name="cil-description" size="lg" /> 設備清單
                     </h4>
                     <CDataTable
@@ -88,15 +88,14 @@
                 </CCol> 
             </CRow>
             <CModal
-                title="系統提示"
                 size="sm"
-                color="dark"
                 :show.sync="showSearchHint"
                 :closeOnBackdrop="false"
 		    >
-               <CRow>
-                   <h6 style="color:gray;">請選擇月份與廠區</h6>
-                </CRow>
+               <CRow><h5 class="ml-5" style="color:white;">請選擇月份與廠區</h5></CRow>				
+				<template #footer>
+				<CButton @click="showSearchHint = false" color="dark">返回</CButton>
+                </template>
             </CModal>
             
         </CCard>
@@ -115,8 +114,9 @@ export default {
             factoryOptions: ['-', '廠區一', '廠區二', '廠區三'],
             yearOptions: [2021],
             yearMonth: '-',
-            selectYear: 2020,
-            selectMonth: '9',
+            selectYear: 2021,
+            selectYearYoy: '',
+            selectMonth: 8,
             factory: '-',
 
             equipName: '請從右側選擇設備',
@@ -162,7 +162,17 @@ export default {
                         label: {
                             show: false
                         },
-                    }
+                    },
+                    // {
+                    //     data: [150, 230, 224, 218, 135, 147, 260],
+                    //     type: 'line',
+                    //     itemStyle: {
+                    //             color: '#B9FAE6'
+                    //     },
+                    //     label: {
+                    //         show: false
+                    //     },
+                    // }                    
                 ]
             }
 
@@ -189,26 +199,28 @@ export default {
 
         },
         get_equip_list(factory, month) {
-            this.equipName = '請從右側選擇設備';
-            this.equipElec = '-';
-            this.equipActivate = '-';
-            this.equipEventList = [];
-            this.equipEventTimes  = '-';
-            this.reset_chart();
+            if (factory != '-' && month != '-') {
+                this.equipName = '請從右側選擇設備';
+                this.equipElec = '-';
+                this.equipActivate = '-';
+                this.equipEventList = [];
+                this.equipList = [];
+                this.equipEventTimes  = '-';
+                this.reset_chart();
 
-            if (factory == '-' || month == '-') {
+                this.get_select_year_month(this.selectYear, this.selectMonth);
+                let data = {factory:factory, datetime:this.yearMonth};
+                this.$http
+                    .post('api/enms/select_factory_machine_monthly_info', {data:data})
+                    .then((res) => {
+                        this.equipList = res.data;
+
+                    })
+                    .catch((error) => console.log(error));
+            }
+            else {
                 this.showSearchHint = true;
             }
-            this.yearMonth = month;
-            this.get_select_year_month(this.selectYear, this.selectMonth);
-            let data = {factory:factory, datetime:this.yearMonth};
-            this.$http
-                .post('api/enms/select_factory_machine_monthly_info', {data:data})
-                .then((res) => {
-                    this.equipList = res.data;
-
-                })
-                .catch((error) => console.log(error));
             
         },
         show_chart(item) {
@@ -219,6 +231,7 @@ export default {
 
             this.get_equip_events(item);
             this.get_daily_elec(item);
+            // this.get_daily_elec_yoy(item);
             this.lineChart.setOption(this.option);
         },
         get_equip_events(item) {
@@ -233,11 +246,14 @@ export default {
             
         },
         get_daily_elec(item) {
-            let endDate = this.selectYear.toString() + '0' + (this.selectMonth.toString()) + '32000000';
+            let endDate = '';
+            (this.selectMonth < 10) ? endDate = this.selectYear.toString() + '0' + (this.selectMonth.toString()) + '32000000'
+                                    : endDate = this.selectYear.toString() + (this.selectMonth.toString()) + '32000000';
+            console.log(this.yearMonth, endDate);
             let data = {machine_sn:item.machine_sn, start_date:this.yearMonth, end_date: endDate};
             this.$http
                 .post('api/enms/select_equip_daily_elec_yoy', {data:data})
-                .then((res) => {  
+                .then((res) => {
                     let chartData = [];
                     let xLabel = [];
                     let min = 10000;
@@ -254,9 +270,40 @@ export default {
                 .catch((error) => console.log(error));            
 
         },
+        get_daily_elec_yoy(item) {
+            this.selectYearYoy = this.selectYear - 1;
+            let startDate = '';
+            (this.selectMonth < 10) ? startDate = this.selectYearYoy.toString() + '0' + (this.selectMonth.toString()) + '00000000'
+                                    : startDate = this.selectYearYoy.toString() + (this.selectMonth.toString()) + '00000000';            
+            let endDate = '';
+            (this.selectMonth < 10) ? endDate = this.selectYearYoy.toString() + '0' + (this.selectMonth.toString()) + '32000000'
+                                    : endDate = this.selectYearYoy.toString() + (this.selectMonth.toString()) + '32000000';
+            console.log(startDate, endDate);
+            let data = {machine_sn:item.machine_sn, start_date:startDate, end_date: endDate};
+            this.$http
+                .post('api/enms/select_equip_daily_elec_yoy', {data:data})
+                .then((res) => {
+                    let chartData = [];
+                    let xLabel = [];
+                    let min = 10000;
+                    for (let ix = 0; ix < res.data.length; ++ix) {
+                        chartData.push(res.data[ix].electricity);
+                        xLabel.push(ix + 1);
+                        if (res.data[ix].electricity < min) min = res.data[ix].electricity;
+                    }
+                    console.log(chartData);
+                    this.option.series[1].data = chartData;
+                    // this.option.xAxis.data = xLabel;
+                    // this.option.yAxis.min = Math.floor(min);
+                    this.lineChart.setOption(this.option);
+                })
+                .catch((error) => console.log(error));            
+
+        },        
         reset_chart() {
             for (let ix = 0; ix < this.option.xAxis.data.length; ++ix) {
                 this.option.series[0].data[ix] = 0;
+                // this.option.series[1].data[ix] = 0;
             }
             this.option.yAxis.min = 0;
 
@@ -285,13 +332,6 @@ export default {
     background-color: #081d1b;
     border-color: #0e2e2b;
     color: white;
-}
-.placeholder {
-    background-color: #081d1b;
-    color: white;
-}
-.plsaTable {
-    color: #98a8a0;
 }
 .equip-elec {
     min-width: 20vw;

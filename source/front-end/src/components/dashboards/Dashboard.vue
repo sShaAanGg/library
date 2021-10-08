@@ -108,13 +108,14 @@ export default {
             reducedCEmission: '',
             
             // data to plot graph
+            cEmissionAvg: new Array(12),
             cEmissionLastYear: [],
             cEmissionThisYearBefore:[],
             cEmissionThisYear: [],
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            contractCapacity: 70000,
+            contractCapacity: 250000,
             elecCapacity: [50000, 15000, 5000], 
             getElecConsumData: [],
             getBarData: [],
@@ -193,8 +194,8 @@ export default {
                     // this.cEmissionThisYearBefore = [];
                     for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
                         if (ix > 22) break;
-                        (ix < 12)   ? this.cEmissionLastYear.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2)) 
-                                    : this.cEmissionThisYearBefore.push((0.554 * JSON.parse(res.data[ix].electricity)).toFixed(2));
+                        (ix < 12)   ? this.cEmissionLastYear.push((JSON.parse(res.data[ix].carbon_footprint)).toFixed(2)) 
+                                    : this.cEmissionThisYearBefore.push((JSON.parse(res.data[ix].carbon_footprint)).toFixed(2));
                     }
                     // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
                     // console.log('after:', this.cEmissionLastYear);
@@ -236,7 +237,13 @@ export default {
                     this.cEmissionThisYear = Object.assign([], this.cEmissionThisYearBefore);
 
                     this.cEmissionThisYear.push(this.cEmission);
-                    this.getBarData.push(this.cEmissionLastYear, this.cEmissionThisYear);
+                    this.$http
+                        .get('api/enms/select_every_years_average')
+                        .then(res=>{
+                            this.cEmissionAvg = res.data;
+                            this.getBarData.push(this.cEmissionLastYear, this.cEmissionThisYear, this.cEmissionAvg);
+                        })
+                    
                     this.reducedCEmission = (this.cEmissionLastTime - this.cEmission).toFixed(2);
                 });
             // let curDateAfter = new Date();
@@ -355,6 +362,7 @@ export default {
 .card-base {
     background-color: #081d1b;
     border-color: #0e2e2b;
+    color: white;
 }
 
 </style>
