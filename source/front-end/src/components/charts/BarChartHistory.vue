@@ -18,6 +18,7 @@ export default {
 
             myBarChart:'',
             option: {
+                legend: {},
                 grid: {
                     left: '7%',
                     bottom: '7%'

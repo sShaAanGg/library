@@ -14,6 +14,7 @@
 				:items-per-page="10"
 				:bordered="true"
 				sorter
+				column-filter
 				pagination
 			>
 			</CDataTable>
@@ -46,7 +47,6 @@ export default {
 			this.$http
 				.get('api/enms/select_error_log')
 				.then(res => {
-					console.log(res.data)
 					this.items = res.data;
 				})
 				.catch(err =>{

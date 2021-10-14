@@ -10,8 +10,8 @@
                             <CCol lg = '3' class="pt-2">
                                 <h4 class="card-font-ana">
                                     時間區間 : 
-                                    <CButton v-bind="classColor['Y']" @click="switch_mode('year')">年</CButton>
-                                    <CButton v-bind="classColor['M']" @click="switch_mode('month')">月</CButton> 
+                                    <CButton v-bind="classColor['Y']" @click="switch_mode('year')">依年份瀏覽</CButton>
+                                    <CButton v-bind="classColor['M']" @click="switch_mode('month')">依月份瀏覽</CButton> 
                                 </h4>
                                 <CSelect
                                     :value.sync="AnalysisData.year"
@@ -55,23 +55,23 @@
             <CCol lg = '6' class="pt-2">
                 <div class="card-ana h-100">
                     <CCardBody>
-                        <h3 style="color:#98a8a0"  class="card-font-ana"><CIcon name="cil-chart-pie" size="lg"/> 圖表數據</h3>
+                        <h4 style="color:#98a8a0"  class="card-font-ana"><CIcon name="cil-chart-pie" size="lg"/> 圖表數據</h4>
                         <CRow>
                             <CCol lg = '12' class="pt-2">
-                                <div id="analysisChart" style = "width: 38vw;height:60vh"/>
+                                <div id="analysisChart" style = "width: 45vw;height:50vh"/>
                             </CCol>
                             <CCol lg = '12' class="pt-2">
                                 <CRow>
                                     <CCol lg = '6'>
                                         <CCallout color="info">
                                             <small class="text-muted"><CIcon name="cil-industry" style="color:#3399FF"/> 分類</small><br>
-                                            <strong class="h4">{{AnalysisData.sort}}</strong>
+                                            <strong class="h4" style="color:#FFFFFF">{{AnalysisData.sort}}</strong>
                                         </CCallout>
                                     </CCol>
                                     <CCol lg = '6'>
                                         <CCallout color="success">
                                             <small class="text-muted"><CIcon name="cil-check-circle" style="color:green"/> {{AnalysisData.analysisSort}}</small><br>
-                                            <strong class="h5">{{AnalysisData.value}} KW</strong>
+                                            <strong class="h5" style="color:#FFFFFF">{{AnalysisData.value}} KW</strong>
                                         </CCallout>
                                     </CCol>
                                 </CRow>
@@ -84,7 +84,7 @@
             <CCol lg = '6' class="pt-2">
                 <div class="card-ana h-100">
                     <CCardBody>
-                        <h3 style="color:#98a8a0"  class="card-font-ana"><CIcon name="cil-align-left" size="lg"/> 進階數據</h3>
+                        <h4 style="color:#98a8a0"  class="card-font-ana"><CIcon name="cil-align-left" size="lg"/> 進階數據</h4>
                         <CDataTable
                             :items="AnalysisData.items"
                             :fields="AnalysisData.fields"
@@ -119,7 +119,6 @@
                     style="textAlign:center;font-size:125%;"
                     :items-per-page="10"
                     :bordered="true"
-                    column-filter
                     sorter
                     pagination
                 >
@@ -316,6 +315,7 @@ export default {
                 date:this.AnalysisData.date,
                 analysisMode:this.AnalysisData.analysisMode
             }
+            // if (data['factory'] === '全廠區') data['factory'] = '';
             this.$http
                 .post('api/enms/select_two_years_electricity_consumption_for_anslysis',{ data:data })
                 .then(res => {
@@ -438,7 +438,6 @@ export default {
                                         }
 
                                         if (this.AnalysisData.mode === 'powerConsumption'){
-                                            console.log(data, data.toFixed(2));
                                             this.AnalysisData.detailItemsTemp.push({
                                                 date:result.datetime,
                                                 sort:result.type,
@@ -500,9 +499,9 @@ export default {
                         if (this.AnalysisData.mode === 'powerConsumption'){
                             for (let i = 0; i < this.AnalysisData.items.length; ++i){
                                 this.AnalysisData.items[i].analysis = ((this.AnalysisData.items[i].analysis/509) * 1000).toFixed(2);
+                                console.log('analysis:', this.AnalysisData.items[i].analysis);
                             }
                         }
-
                         for (let i = 0; i < this.AnalysisData.data.length; ++i){
                             if (i === 0){
                                 this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
@@ -515,7 +514,7 @@ export default {
                             if (this.AnalysisData.data[i] < this.AnalysisData.min)
                                 this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
                         }
-
+                        
                         for (let i = 0; i < this.AnalysisData.compareData.length; ++i){
                             if (this.AnalysisData.data[i] > this.AnalysisData.max)
                                 this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
@@ -532,6 +531,7 @@ export default {
         },
 
         rendering_chart() {
+            this.compute_min_max_for_chart_data(this.AnalysisData.data);
             if (this.AnalysisData.compareData.length > 0){
                 this.option = {
                     tooltip: {
@@ -615,17 +615,16 @@ export default {
                     continue;
 
                 var result = this.AnalysisData.detailItemsTemp[i];
-                var data = parseInt(result.value);
+                var data = parseFloat(result.value);
 
                 index = dateTotal.findIndex(x => x.datetime === result.date);
-                console.log(dateTotal);
                 if (index < 0){
                     dateTotal.push({
                         datetime:result.date,
                         data:data
                     })
                 } else {
-                    dateTotal[index].data += parseInt(data.toFixed(2));
+                    dateTotal[index].data += parseFloat(data.toFixed(2));
                 }
 
                 if (this.AnalysisData.analysisMode === 'year')
@@ -634,6 +633,7 @@ export default {
             }
 
             for (let i = 0; i < dateTotal.length; ++i){
+                
                 if (this.AnalysisData.analysisMode === 'year'){
                     this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
                     this.AnalysisData.value += parseInt(dateTotal[i].data);
@@ -658,6 +658,10 @@ export default {
                 if (this.AnalysisData.data[i] < this.AnalysisData.min)
                     this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
             }
+           
+            
+            this.compute_min_max_for_chart_data(this.AnalysisData.data);
+            console.log(this.AnalysisData.min, this.AnalysisData.max);
 
             this.option = {
                 tooltip: {
@@ -690,7 +694,7 @@ export default {
                     },
                 ]
             };
-
+            
             this.myChart.setOption(this.option);
         },
 
@@ -705,6 +709,48 @@ export default {
             }
             this.showDetail = true;
         },
+
+        compute_min_max_for_chart_data(chartData) {
+            console.log(chartData);
+            let total = 0;
+            let maxElement = 0;
+            let minElement = Number.MAX_VALUE;
+
+            for (let ix = 0; ix < chartData.length; ++ix) {
+                let floatData = parseFloat(chartData[ix]);
+                if (floatData > maxElement) maxElement = floatData;
+                if (floatData < minElement) minElement = floatData;
+
+                total += floatData;
+            }
+            let avg = total / chartData.length;
+
+            let maxScale = (avg + Math.abs(maxElement - avg) * 0.5) / avg;
+            let minScale = (avg - Math.abs(minElement - avg) * 0.5) / avg;
+            this.AnalysisData.max = Math.round((maxElement + Math.abs(maxElement - avg) * 0.5) / 0.01) * 0.01;
+            this.AnalysisData.min = Math.round((minElement - Math.abs(minElement - avg) * 0.5) / 0.01) * 0.01;
+ 
+            console.log('avg:', avg, maxElement, minElement);
+            // diff percentage
+            // let maxDiff = 0;
+            // let minDiff = 1;
+            // for (let iy = 0; iy < chartData.length; ++iy) {
+            //     let floatData = parseFloat(chartData[iy]);
+            //     let diff = Math.abs(floatData - avg) / avg;
+            //     if (diff > maxDiff) maxDiff = diff;
+            //     if (diff < minDiff) minDiff = diff;
+
+            // }
+            // let maxScale = 1 + maxDiff * 1.5;
+            // let minScale = 1 + minDiff * 1.5;
+            // this.AnalysisData.max = parseFloat((maxElement * maxScale).toFixed(2));
+            // this.AnalysisData.min = parseFloat((minElement * minScale).toFixed(2));
+            console.log(avg, minScale, maxScale);
+
+            // this.AnalysisData.min = parseFloat((minElement*0.98).toFixed(2));
+            // this.AnalysisData.max = parseFloat((maxElement*1.02).toFixed(2));
+            console.log('(min, max)=', this.AnalysisData.min, this.AnalysisData.max);
+        }
     }
 }
 </script>

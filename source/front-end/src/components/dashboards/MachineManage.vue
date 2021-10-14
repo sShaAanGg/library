@@ -256,14 +256,14 @@ export default {
 				{ key:  "machine_name",     label: "名稱",		    _style: "width:8%; color: #4C756A"},
                 { key:  "machine_sn",       label: "S/N",          _style: "width:8%; color: #4C756A"},
                 { key:  "type",             label: "種類",          _style: "width:9%; color: #4C756A"},
-                { key:  "voltage",          label: "額定電壓",      _style: "width:5%; color: #4C756A"},
+                { key:  "voltage",          label: "額定電壓",      _style: "width:9%; color: #4C756A"},
                 { key:  "work_years",       label: "年資",          _style: "width:6%; color: #4C756A"},
                 { key:  "establish_date",   label: "建立日期",      _style: "width:9%; color: #4C756A"},
-                { key:  "work_hours",       label: "運作時數(年)",  _style: "width:8%; color: #4C756A"},
+                { key:  "work_hours",       label: "運作時數/年",  _style: "width:8%; color: #4C756A"},
 				{ key:  "year_elec",        label: "年耗電量",      _style: "width:7%; color: #4C756A"},
                 { key:  "month_elec",       label: "月耗電量",      _style: "width:7%; color: #4C756A"},
                 { key:  "activation",       label: "稼動率",        _style: "width:6%; color: #4C756A"},
-                { key:  "show_details",     label: "",             _style: "width:10%; color: #4C756A"}
+                { key:  "show_details",     label: "",             _style: "width:6%; color: #4C756A"}
 			],
 
             searchFactory:"",

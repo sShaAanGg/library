@@ -29,7 +29,7 @@ export default {
         }
     },
     mounted() {
-        // this.initialize_status();
+        this.initialize_status();
     },
     methods: {
         initialize_status() {

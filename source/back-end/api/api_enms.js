@@ -185,12 +185,12 @@ module.exports = {
         statusDataCommon['errorMsg'] = "Some error occurred while select_factory_machine_monthly_info";
 
         var sql = '';
-        if(req.body.data.factory == '' || req.body.data.datetime == '') {
+        if(req.body.data.factory.length == 0 || req.body.data.datetime.length == 0) {
             sql =   "SELECT DISTINCT machine_info.machine_name, machine_info.machine_sn, machine_info.month_elec AS cur_month_elec, (machine_info.month_elec -history_month_info.electricity) AS yoy_month_elec, machine_info.activation " + 
                     "FROM equipment_info " +
                     "JOIN machine_info ON equipment_info.machine_sn = machine_info.machine_sn " +
                     "JOIN history_month_info ON equipment_info.mac = history_month_info.mac " +
-                    "WHERE history_month_info.`datetime` = 20200900000000";;                
+                    "WHERE history_month_info.`datetime` = 20210800000000";;                
             sql = dbFactory.build_mysql_format(sql);                          
         }
         else {
