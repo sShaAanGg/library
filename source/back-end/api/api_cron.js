@@ -42,15 +42,29 @@ module.exports = {
         }
 
         //last month data
-        let sql =   " SELECT                                                                    "+
-                    " mac,                                                                      "+ 
-                    " SUM(CASE month(`datetime`) WHEN '?' THEN ampere ELSE 0 END) AS sum_ampere "+ 
-                    " FROM enms_info                                                            "+
-                    " WHERE year(`datetime`)= ? GROUP BY mac                                    ";
+        let sql =   " SELECT "                                  +
+                        " mac, "                                + 
+                        " SUM(CASE month(`datetime`) "          +
+                    " WHEN "                                    + 
+                        " '?' "                                 +
+                    " THEN "                                    +
+                        " ampere ELSE 0 END) AS sum_ampere "    + 
+                    " FROM "                                    +
+                        " enms_info "                           +
+                    " WHERE "                                   +
+                        " year(`datetime`) = ? "                + 
+                    " GROUP BY "                                + 
+                        " mac ";
         sql = dbFactory.build_mysql_format(sql, [month, year]);
         
         dbFactory.action_db_with_cb(sql, statusData, async(result) => {
-            let insertSql = " INSERT INTO history_info (mac, yearmonth, electricity) VALUES(?, ?, ?) ";
+            let insertSql = " INSERT INTO "         +
+                                " history_info "    +
+                                " (mac, "           +
+                                " yearmonth, "      +
+                                " electricity) "    +
+                            " VALUES "              +
+                                " (?, ?, ?) ";
             let ix = 0;
             let histiryResult = [];
 

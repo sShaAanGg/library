@@ -28,7 +28,12 @@ module.exports = {
             return;
         };
 
-        var sql = ' SELECT * FROM account WHERE account = ? AND password = ? ';
+        var sql =   " SELECT "      +
+                        " * "       +
+                    " FROM "        +
+                        " account " +
+                    " WHERE "       +
+                        " account = ? AND password = ? ";
 
         sql = dbFactory.build_mysql_format(sql,[req.body.data.account,sha256(req.body.data.password)]);
 
@@ -42,7 +47,10 @@ module.exports = {
     },
     select_accounts:function (req, res) {
 
-        var sql = ' SELECT * FROM account ';
+        var sql =   " SELECT "  + 
+                        " * "   +
+                    " FROM "    +
+                        " account ";
 
         let statusData = {
             successCode: 200,
@@ -60,7 +68,16 @@ module.exports = {
             return;
         };
 
-        var sql = ' INSERT INTO `account` (`account`,`password`,`name`,`job_number`,`dept`,`role`) VALUES (?,?,?,?,?,?) ';
+        var sql =   " INSERT INTO "         +
+                        " `account` "       +
+                        " (`account`,"      +
+                        " `password`,"      +
+                        " `name`,"          +
+                        " `job_number`,"    + 
+                        " `dept`,"          +
+                        " `role`) "         +
+                    " VALUES "              +
+                        " (?,?,?,?,?,?) ";
 
         sql = dbFactory.build_mysql_format(sql,
             [   req.body.data.account,
@@ -86,7 +103,15 @@ module.exports = {
             return;
         };
 
-        var sql = ' UPDATE `account` SET `name` = ? , `job_number` = ? , `dept` = ? , `role` = ? WHERE (`account` = ?) ';
+        var sql =   " UPDATE "                  +
+                        " `account` "           +
+                    " SET "                     +
+                        " `name` = ? , "        +        
+                        " `job_number` = ? , "  + 
+                        " `dept` = ? , "        +
+                        " `role` = ? "          +
+                    " WHERE "                   +
+                        " `account` = ? ";
 
         sql = dbFactory.build_mysql_format(sql,
             [   req.body.data.name,
@@ -111,7 +136,12 @@ module.exports = {
             return;
         };
 
-        var sql = ' UPDATE `account` SET `password` = ? WHERE (`account` = ?) ';
+        var sql =   " UPDATE "              +
+                        " `account` "       +
+                    " SET "                 +
+                        " `password` = ? "  + 
+                    " WHERE "               +
+                        " `account` = ? ";
 
         sql = dbFactory.build_mysql_format(sql,
             [   sha256(req.body.data.password),
@@ -133,7 +163,11 @@ module.exports = {
             return
         };
 
-        var sql = ' DELETE FROM `account` WHERE (`account` = ?) ';
+        var sql =   " DELETE "          +
+                    " FROM "            +
+                        " `account` "   + 
+                    " WHERE "           +
+                        " `account` = ? ";
 
         sql = dbFactory.build_mysql_format(sql,[   req.body.data.account  ]);
 
