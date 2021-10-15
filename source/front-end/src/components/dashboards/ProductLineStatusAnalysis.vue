@@ -57,7 +57,7 @@
                         style="textalign: center; font-size: 110%; color: #98a8a0"
                         :items-per-page="5"
                         :bordered="true"
-                        pagination
+                        pagination                        
                     >
                         <template #update_chart="{ item }">
                         <td class="p-2">
@@ -185,6 +185,7 @@ export default {
         this.lineChart = this.$echarts.init(document.getElementById("lineChartMonth"));
         this.get_equip_list('', '');
 
+
     },
     methods: {
         reset() {
@@ -223,6 +224,11 @@ export default {
             
         },
         show_chart(item) {
+            // let tempType = item.machine_name;
+            // item.machine_name = '123';
+            // item.machine_name = tempType;
+            // item._classes = 'table-secondary';
+            console.log(item);
             this.equipName = item.machine_name;
             this.equipElec = item.cur_month_elec;
             this.equipActivate = item.activation;
@@ -248,14 +254,13 @@ export default {
             let endDate = '';
             (this.selectMonth < 10) ? endDate = this.selectYear.toString() + '0' + (this.selectMonth.toString()) + '32000000'
                                     : endDate = this.selectYear.toString() + (this.selectMonth.toString()) + '32000000';
-            console.log(this.yearMonth, endDate);
             let data = {machine_sn:item.machine_sn, start_date:this.yearMonth, end_date: endDate};
             this.$http
                 .post('api/enms/select_equip_daily_elec_yoy', {data:data})
                 .then((res) => {
                     let chartData = [];
                     let xLabel = [];
-                    let min = 10000;
+                    let min = Number.MAX_VALUE;
                     for (let ix = 0; ix < res.data.length; ++ix) {
                         chartData.push(res.data[ix].electricity);
                         xLabel.push(ix + 1);
@@ -284,7 +289,7 @@ export default {
                 .then((res) => {
                     let chartData = [];
                     let xLabel = [];
-                    let min = 10000;
+                    let min = Number.MAX_VALUE;
                     for (let ix = 0; ix < res.data.length; ++ix) {
                         chartData.push(res.data[ix].electricity);
                         xLabel.push(ix + 1);

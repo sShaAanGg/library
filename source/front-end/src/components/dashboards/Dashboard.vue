@@ -132,7 +132,11 @@ export default {
             curAbnormalLog: '',
             abnormalStatus: {},
             abnormalLogs: [],
-            canGetNew: true
+            canGetNew: true,
+
+            // timer
+            timerData: '',
+            timerEvent: '',
 
         }
     },
@@ -160,24 +164,27 @@ export default {
         this.check_abnormal_event();
         
 
-        setInterval(() => {
+        this.timerData = setInterval(() => {
             this.get_cur_month_elec();
             this.get_real_time_elec();
             this.get_sensor_data();
             this.update_factory_status();
         }, 2000);
 
-        setInterval(() => {
+        this.timerEvent = setInterval(() => {
             this.get_cur_abnormal_event();
-        }, 100);
-        setInterval(() => {
             this.check_abnormal_event();
         }, 100);
+
 
         // update history data every day
         // setInterval(() => {
         //     this.get_history_data();
         // }, 86400000);
+    },
+    beforeDestroy() {
+        clearInterval(this.timerData);
+        clearInterval(this.timerEvent);
     },
     methods: {
         get_history_data() {
