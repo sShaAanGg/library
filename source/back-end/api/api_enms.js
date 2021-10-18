@@ -21,7 +21,7 @@ let statusDataCommon = {
     successCode: 200,
     errorCode: 500,
     errorMsg: " "
-}              
+}
 
 Array.prototype.groupBy = function(prop) {
     return this.reduce(function(groups, item) {
@@ -33,7 +33,7 @@ Array.prototype.groupBy = function(prop) {
 };
 
 module.exports = {
-    
+
     /*========================================================== */
     //  enms api
     /*========================================================== */
@@ -46,25 +46,25 @@ module.exports = {
         };
 
         let sql =   " SELECT "                                                                      +
-                        " machine_info.factory, "                                                   + 
+                        " machine_info.factory, "                                                   +
                         " equipment_info.machine_sn, "                                              +
                         " machine_info.voltage, "                                                   +
                         " SUM(ampere) AS 'sum_ampere' "                                             +
-                    " FROM "                                                                        + 
+                    " FROM "                                                                        +
                         " ((enms_info "                                                             +
-                    " INNER JOIN "                                                                  + 
+                    " INNER JOIN "                                                                  +
                         " equipment_info on enms_info.mac = equipment_info.mac) "                   +
-                    " INNER JOIN "                                                                  + 
+                    " INNER JOIN "                                                                  +
                         " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
-                    " WHERE "                                                                       + 
+                    " WHERE "                                                                       +
                         " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
-                    " GROUP BY "                                                                    + 
+                    " GROUP BY "                                                                    +
                         " machine_info.machine_sn ";
-        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()-1), 'yyyyMMddHHmmss'), 
+        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()-1), 'yyyyMMddHHmmss'),
                                                     utility.formattime(new Date().setMonth(new Date().getMonth()-1), 'yyyyMM01000000')]);
-        
+
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
-            let cumulativeElectricityConsumption = [];  
+            let cumulativeElectricityConsumption = [];
             let sumArray = [];
             let factoryEle = 0;
             let ix = 0, iy = 0;
@@ -96,38 +96,38 @@ module.exports = {
         let time = new Date().setMonth(new Date().getMonth()-1);
 
         let sql =   " SELECT "                                                                          +
-                        " real_time_total.mac, "                                                        +        
-                        " real_time_total.`datetime`, "                                                 + 
+                        " real_time_total.mac, "                                                        +
+                        " real_time_total.`datetime`, "                                                 +
                         " real_time_total.ampere, "                                                     +
-                        " real_time_total.machine_sn, "                                                 + 
+                        " real_time_total.machine_sn, "                                                 +
                         " machine_info.voltage "                                                        +
                     " FROM "                                                                            +
                         " machine_info, "                                                               +
-                        " (SELECT "                                                                     + 
+                        " (SELECT "                                                                     +
                             " real_time_info.mac, "                                                     +
-                            " real_time_info.`datetime`, "                                              + 
+                            " real_time_info.`datetime`, "                                              +
                             " real_time_info.ampere, "                                                  +
                             " equipment_info.machine_sn "                                               +
                         " FROM "                                                                        +
-                            " equipment_info, "                                                         + 
+                            " equipment_info, "                                                         +
                             " (SELECT * "                                                               +
                             " FROM "                                                                    +
-                                " (Select "                                                             + 
-                                    " id, "                                                             + 
-                                    " mac, "                                                            + 
+                                " (Select "                                                             +
+                                    " id, "                                                             +
+                                    " mac, "                                                            +
                                     " `datetime`, "                                                     +
                                     " ampere, "                                                         +
-                                    " ROW_NUMBER() Over "                                               + 
-                                    " (Partition By mac Order By `datetime` Desc) As Sort "             +    
+                                    " ROW_NUMBER() Over "                                               +
+                                    " (Partition By mac Order By `datetime` Desc) As Sort "             +
                                 " FROM "                                                                +
                                     " enms_info "                                                       +
-                                " WHERE "                                                               + 
+                                " WHERE "                                                               +
                                     " `datetime` < ? AND `datetime` > ? AND ampere != 0) enms_info "    +
-                            " WHERE "                                                                   + 
+                            " WHERE "                                                                   +
                                 " Sort = 1) real_time_info "                                            +
-                        " WHERE "                                                                       + 
+                        " WHERE "                                                                       +
                             " equipment_info.mac = real_time_info.mac) real_time_total "                +
-                    " WHERE "                                                                           + 
+                    " WHERE "                                                                           +
                         " machine_info.machine_sn = real_time_total.machine_sn ";
         sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date(time), 'yyyyMMddHHmmss'),
                                                     utility.formattime(new Date(time).setTime(time - 60000), 'yyyyMMddHHmmss')]);
@@ -140,7 +140,7 @@ module.exports = {
                 real_time_electricity_consumption += parseFloat((result[ix].ampere * result[ix].voltage / 1000).toFixed(2));
                 ++ix;
             }
-            
+
             res.status(statusData.successCode).send(real_time_electricity_consumption.toString());
         });
     },
@@ -156,15 +156,15 @@ module.exports = {
                         " SUM(history_month_info.electricity) as electricity, "             +
                         " history_month_info.`datetime`, "                                  +
                         " history_month_info.watt, "                                        +
-                        " SUM(history_month_info.carbon_footprint) as carbon_footprint, "   + 
+                        " SUM(history_month_info.carbon_footprint) as carbon_footprint, "   +
                         " history_month_info.carbon_negative "                              +
-                    " FROM "                                                                + 
+                    " FROM "                                                                +
                         " history_month_info "                                              +
-                    " WHERE "                                                               + 
+                    " WHERE "                                                               +
                         "`datetime` > ? AND `datetime` < ? "                                +
                     " GROUP BY "                                                            +
                         " `datetime` ";
-        sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000', 
+        sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
         console.log(sql);
         dbFactory.action_db(sql, statusData, res);
@@ -182,13 +182,13 @@ module.exports = {
                         " error_log.`event`, "                                                              +
                         " machine_info.factory "                                                            +
                     " FROM "                                                                                +
-                        " error_log "                                                                       +  
+                        " error_log "                                                                       +
                     " JOIN "                                                                                +
-                        " equipment_info ON equipment_info.mac = error_log.mac "                            + 
+                        " equipment_info ON equipment_info.mac = error_log.mac "                            +
                     " JOIN "                                                                                +
                         " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "             +
                     "WHERE "                                                                                +
-                        " `start_datetime` > ? AND `start_datetime` < ? ORDER BY `start_datetime` DESC ";        
+                        " `start_datetime` > ? AND `start_datetime` < ? ORDER BY `start_datetime` DESC ";
         let time = new Date().setTime(new Date() - 2000);
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);
@@ -198,13 +198,13 @@ module.exports = {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_buttons";
 
         let sql =   " SELECT "                                                                  +
-                        " DISTINCT equipment_controller.mac, "                                  + 
-                        " equipment_controller.button_name, "                                   + 
-                        " equipment_controller.button_type, "                                   + 
-                        " equipment_controller.button_port, "                                   + 
+                        " DISTINCT equipment_controller.mac, "                                  +
+                        " equipment_controller.button_name, "                                   +
+                        " equipment_controller.button_type, "                                   +
+                        " equipment_controller.button_port, "                                   +
                         " equipment_controller.button_pin "                                     +
                     " FROM "                                                                    +
-                        " equipment_controller "                                                + 
+                        " equipment_controller "                                                +
                     " JOIN "                                                                    +
                         " equipment_info ON equipment_controller.mac = equipment_info.mac "     +
                     " JOIN "                                                                    +
@@ -220,15 +220,15 @@ module.exports = {
         statusDataCommon['errorMsg'] = "Some error occurred while select_machine_list";
 
         let sql =   " SELECT "              +
-                        " machine_name, "   + 
+                        " machine_name, "   +
                         " `type`, "         +
-                        " year_elec, "      + 
-                        " month_elec, "     + 
-                        " voltage, "        + 
-                        " work_years, "     + 
-                        " work_hours, "     + 
-                        " activation "      + 
-                    " FROM "                + 
+                        " year_elec, "      +
+                        " month_elec, "     +
+                        " voltage, "        +
+                        " work_years, "     +
+                        " work_hours, "     +
+                        " activation "      +
+                    " FROM "                +
                         " enms.machine_info ";
         if(req.body.data.factory) {
             let factorySql = sql + " WHERE factory = ? ";
@@ -237,7 +237,7 @@ module.exports = {
         else {
             sql = dbFactory.build_mysql_format(sql);
         }
-        
+
         dbFactory.action_db(sql, statusDataCommon, res);
 
     },
@@ -246,7 +246,7 @@ module.exports = {
     select_factory_machine_monthly_info: function(req, res) {
         /* TODO
             change factory to production_line
-            because factory is for demo 
+            because factory is for demo
         */
         statusDataCommon['errorMsg'] = "Some error occurred while select_factory_machine_monthly_info";
 
@@ -257,16 +257,16 @@ module.exports = {
                         " machine_info.machine_sn, "                                                        +
                         " machine_info.month_elec AS cur_month_elec, "                                      +
                         " (machine_info.month_elec - history_month_info.electricity) AS yoy_month_elec, "   +
-                        " machine_info.activation "                                                         + 
+                        " machine_info.activation "                                                         +
                     " FROM "                                                                                +
-                        "equipment_info "                                                                   +
+                        " equipment_info "                                                                  +
                     " JOIN "                                                                                +
                         " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "             +
                     " JOIN "                                                                                +
-                        "history_month_info ON equipment_info.mac = history_month_info.mac "                +
+                        " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
-                        "history_month_info.`datetime` = 20210800000000";  
-            sql = dbFactory.build_mysql_format(sql);                          
+                        " history_month_info.`datetime` = 20210800000000";
+            sql = dbFactory.build_mysql_format(sql);
         }
         else {
             sql =   " SELECT DISTINCT "                                                                     +
@@ -274,7 +274,7 @@ module.exports = {
                         " machine_info.machine_sn, "                                                        +
                         " machine_info.month_elec AS cur_month_elec, "                                      +
                         " (machine_info.month_elec - history_month_info.electricity) AS yoy_month_elec, "   +
-                        " machine_info.activation "                                                         + 
+                        " machine_info.activation "                                                         +
                     " FROM "                                                                                +
                         " equipment_info "                                                                  +
                     " JOIN "                                                                                +
@@ -283,11 +283,11 @@ module.exports = {
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
                         " machine_info.factory = ? AND history_month_info.`datetime` = ?";
-            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);                        
-        }        
-    
+            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
+        }
+
         dbFactory.action_db(sql, statusDataCommon, res);
-        
+
     },
 
     select_equip_error_log: function(req, res) {
@@ -298,16 +298,16 @@ module.exports = {
                         " DATE_FORMAT(error_log.start_datetime,'%Y-%m-%d %H:%i:%s') as start_datetime, "                                           +
                         " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %H:%i:%s') as end_datetime "                                              +
                     " FROM "                                                                    +
-                        " error_log "                                                           +  
+                        " error_log "                                                           +
                     " JOIN "                                                                    +
                         " equipment_info ON error_log.mac = equipment_info.mac "                +
                     " JOIN "                                                                    +
-                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn " + 
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn " +
                     " WHERE "                                                                   +
                         " machine_info.machine_sn = ? ";
-        
+
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
-        dbFactory.action_db(sql, statusDataCommon, res);                    
+        dbFactory.action_db(sql, statusDataCommon, res);
     },
 
     select_equip_daily_elec_yoy: function(req, res) {
@@ -329,7 +329,7 @@ module.exports = {
                         " history_day_info.`datetime` <= ? "                                    +
                     " ORDER BY "                                                                +
                         " history_day_info.`datetime` ";
-        sql = dbFactory.build_mysql_format(sql, 
+        sql = dbFactory.build_mysql_format(sql,
                         [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
@@ -352,10 +352,10 @@ module.exports = {
                         " history_day_info.`datetime` <= ? "                                    +
                     " ORDER BY "                                                                +
                         " history_day_info.`datetime` ";
-        sql = dbFactory.build_mysql_format(sql, 
+        sql = dbFactory.build_mysql_format(sql,
                         [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
         dbFactory.action_db(sql, statusDataCommon, res);
-    },    
+    },
     /* End of ProductionLineAnalysis API */
 
     select_data_year: function(req, res){
@@ -367,9 +367,9 @@ module.exports = {
 
         let sql =   " SELECT "                                  +
                         " DATE_FORMAT(datetime,'%Y') as year "  +
-                    " FROM "                                    +    
-                        " history_month_info "                  + 
-                    " GROUP BY "                                + 
+                    " FROM "                                    +
+                        " history_month_info "                  +
+                    " GROUP BY "                                +
                         " year ";
 
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
@@ -383,7 +383,7 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while select_two_years_electricity_consumption"
         };
-        
+
         var param = req.body.data;
         let sql;
 
@@ -399,7 +399,7 @@ module.exports = {
                             " machine_info.type "                                                       +
                         " FROM "                                                                        +
                             " ((history_month_info "                                                    +
-                        " INNER JOIN "                                                                  +    
+                        " INNER JOIN "                                                                  +
                             " equipment_info ON history_month_info.mac = equipment_info.mac) "          +
                         " INNER JOIN "                                                                  +
                             " machine_info ON equipment_info.machine_sn = machine_info.machine_sn) "    +
@@ -408,8 +408,8 @@ module.exports = {
                         " AND "                                                                         +
                             " history_month_info.datetime < ? "                                         +
                         " AND "                                                                         +
-                            " machine_info.factory = ? ";                                                                           
-                sql = dbFactory.build_mysql_format(sql, [   new Date(param.date).getFullYear()-1  + '0100000000', 
+                            " machine_info.factory = ? ";
+                sql = dbFactory.build_mysql_format(sql, [   new Date(param.date).getFullYear()-1  + '0100000000',
                                                             new Date(param.date).getFullYear()+1 + '0100000000',
                                                             param.factory]);
             } else {
@@ -427,11 +427,11 @@ module.exports = {
                             " equipment_info ON history_month_info.mac = equipment_info.mac) "          +
                         " INNER JOIN "                                                                  +
                             " machine_info ON equipment_info.machine_sn = machine_info.machine_sn) "    +
-                        " WHERE "                                                                       + 
+                        " WHERE "                                                                       +
                             " history_month_info.datetime >= ? "                                        +
                         " AND "                                                                         +
-                            " history_month_info.datetime < ? ";                                
-                sql = dbFactory.build_mysql_format(sql, [   new Date(param.date).getFullYear()-1  + '0100000000', 
+                            " history_month_info.datetime < ? ";
+                sql = dbFactory.build_mysql_format(sql, [   new Date(param.date).getFullYear()-1  + '0100000000',
                                                             new Date(param.date).getFullYear()+1 + '0100000000']);
             }
         }
@@ -455,8 +455,8 @@ module.exports = {
                             " history_day_info.electricity, "                                           +
                             " history_day_info.carbon_footprint, "                                      +
                             " history_day_info.carbon_negative, "                                       +
-                            " machine_info.machine_name, "                                              + 
-                            " machine_info.factory,+ "                                                  + 
+                            " machine_info.machine_name, "                                              +
+                            " machine_info.factory,+ "                                                  +
                             " machine_info.type "                                                       +
                         " FROM "                                                                        +
                             " ((history_day_info "                                                      +
@@ -470,14 +470,14 @@ module.exports = {
                             " history_day_info.datetime < ? "                                           +
                         " AND "                                                                         +
                             " machine_info.factory = ? ";
-                sql = dbFactory.build_mysql_format(sql, [   date1, 
+                sql = dbFactory.build_mysql_format(sql, [   date1,
                                                             date2,
                                                             param.factory]);
             } else {
                 sql =   " SELECT "                                                                      +
                             " DATE_FORMAT(history_day_info.datetime,'%Y-%m-%d') as datetime, "          +
                             " history_day_info.electricity, "                                           +
-                            " history_day_info.carbon_footprint, "                                      + 
+                            " history_day_info.carbon_footprint, "                                      +
                             " history_day_info.carbon_negative, "                                       +
                             " machine_info.machine_name, "                                              +
                             " machine_info.factory, "                                                   +
@@ -487,10 +487,10 @@ module.exports = {
                         " INNER JOIN "                                                                  +
                             " equipment_info ON history_day_info.mac = equipment_info.mac) "            +
                         " INNER JOIN "                                                                  +
-                            " machine_info ON equipment_info.machine_sn = machine_info.machine_sn) "    + 
-                        " WHERE "                                                                       + 
-                            " history_day_info.datetime >= ? AND history_day_info.datetime < ? ";                                                                                            
-                sql = dbFactory.build_mysql_format(sql, [   date1, 
+                            " machine_info ON equipment_info.machine_sn = machine_info.machine_sn) "    +
+                        " WHERE "                                                                       +
+                            " history_day_info.datetime >= ? AND history_day_info.datetime < ? ";
+                sql = dbFactory.build_mysql_format(sql, [   date1,
                                                             date2]);
             }
         }
@@ -508,10 +508,10 @@ module.exports = {
         }
 
         let sql =   " SELECT "                                                                                          +
-                        " machine_info.machine_sn, "                                                                    +                                                                                                                                                                                                                                                                                                                                                   
-                        " machine_info.machine_name, "                                                                  +    
+                        " machine_info.machine_sn, "                                                                    +
+                        " machine_info.machine_name, "                                                                  +
                         " DATE_FORMAT(error_log.start_datetime,'%Y-%m-%d %H:%i:%s') as start_datetime, "                +
-                        " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %H:%i:%s') as end_datetime, error_log.event "    + 
+                        " DATE_FORMAT(error_log.end_datetime,'%Y-%m-%d %H:%i:%s') as end_datetime, error_log.event "    +
                     " FROM "                                                                                            +
                         " ((error_log "                                                                                 +
                     " INNER JOIN "                                                                                      +
@@ -529,12 +529,12 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while select_machine_manage"
         };
-        
+
         // if (req.body.data.searchFactory.length !== 0){
-        //     let sql =   " SELECT "              + 
+        //     let sql =   " SELECT "              +
         //                     " * "               +
         //                 " FROM "                +
-        //                     " machine_info "    + 
+        //                     " machine_info "    +
         //                 " WHERE "               +
         //                     " factory = ? ";
         //     sql = dbFactory.build_mysql_format(sql, [req.body.data.searchFactory]);
@@ -553,27 +553,27 @@ module.exports = {
         }
 
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
-            for(let ix = 0; ix < result.length; ++ix) {                
+            for(let ix = 0; ix < result.length; ++ix) {
                 let dateStr = result[ix].establish_date.toString();
                 let formatDate = dateStr.substr(0, 4) + '-' + dateStr.substr(4, 2) + '-' + dateStr.substr(6, 2);
-                result[ix].establish_date = formatDate;                 
+                result[ix].establish_date = formatDate;
             }
-            res.status(statusData.successCode).send(result);   
-        });        
+            res.status(statusData.successCode).send(result);
+        });
     },
 
     insert_machine_manage: function(req, res) {
-        let example = [ 'factory', 
-                        'machineName', 
-                        'machineSn', 
-                        'machineType', 
+        let example = [ 'factory',
+                        'machineName',
+                        'machineSn',
+                        'machineType',
                         'establishDate',
-                        'updateDate', 
-                        'machineVolt', 
-                        'yearElec', 
-                        'monthElec', 
-                        'machineAge', 
-                        'workHours', 
+                        'updateDate',
+                        'machineVolt',
+                        'yearElec',
+                        'monthElec',
+                        'machineAge',
+                        'workHours',
                         'activation'];
 
         if (false === utility.data_check(req.body.data, example)){
@@ -586,12 +586,12 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while insert_machine_manage"
         };
-        
+
             let sql =   " INSERT INTO "         +
-                            " machine_info "    + 
+                            " machine_info "    +
                             " (machine_name, "  +
                             " machine_sn, "     +
-                            " `type`, "         + 
+                            " `type`, "         +
                             " factory, "        +
                             " establish_date, " +
                             " update_date, "    +
@@ -600,13 +600,13 @@ module.exports = {
                             " voltage, "        +
                             " work_years, "     +
                             " work_hours, "     +
-                            " activation) "     + 
+                            " activation) "     +
                         " VALUES "              +
                             " (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
-            sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName, 
-                                                        req.body.data.machineSn, 
-                                                        req.body.data.machineType, 
-                                                        req.body.data.factory, 
+            sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName,
+                                                        req.body.data.machineSn,
+                                                        req.body.data.machineType,
+                                                        req.body.data.factory,
                                                         req.body.data.establishDate,
                                                         req.body.data.updateDate,
                                                         req.body.data.yearElec,
@@ -624,7 +624,7 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while update_machine_manage"
         };
-        
+
             let sql =   " UPDATE "                  +
                             " machine_info "        +
                         " SET "                     +
@@ -633,13 +633,13 @@ module.exports = {
                             " `type` = ?, "         +
                             " factory = ?, "        +
                             " voltage = ?, "        +
-                            " work_years = ? "      + 
-                        " WHERE "                   + 
+                            " work_years = ? "      +
+                        " WHERE "                   +
                             " id = ?";
-            sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName, 
-                                                        req.body.data.machineSn, 
-                                                        req.body.data.machineType, 
-                                                        req.body.data.factory, 
+            sql = dbFactory.build_mysql_format(sql, [   req.body.data.machineName,
+                                                        req.body.data.machineSn,
+                                                        req.body.data.machineType,
+                                                        req.body.data.factory,
                                                         req.body.data.machineVolt,
                                                         req.body.data.machineAge,
                                                         req.body.data.id]);
@@ -652,8 +652,8 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while insert_machine_manage"
         };
-        
-        let sql =   " DELETE "              + 
+
+        let sql =   " DELETE "              +
                     " FROM "                +
                         " machine_info "    +
                     " WHERE id = ? ";
@@ -667,12 +667,12 @@ module.exports = {
             errorCode: 500,
             errorMsg: " Some error occurred while insert_machine_manage"
         };
-        
+
         let sql =   " SELECT "              +
                         " * "               +
                     " FROM "                +
-                        " machine_info "    + 
-                    " WHERE "               + 
+                        " machine_info "    +
+                    " WHERE "               +
                         " machine_sn = ? ";
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machineSn]);
         dbFactory.action_db(sql, statusData, res);
