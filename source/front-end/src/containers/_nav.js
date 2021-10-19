@@ -10,8 +10,14 @@ export const admin = [
             },
             {
                 _name: 'CSidebarNavItem',
-                name: '產線歷史狀態分析',
+                name: '產線年度歷史分析',
                 to: '/product-line-status-analysis',
+                icon: 'cil-chart-line',
+            },
+            {
+                _name: 'CSidebarNavItem',
+                name: '需量預測',
+                to: '/demand-predict',
                 icon: 'cil-bar-chart',
             },
             {

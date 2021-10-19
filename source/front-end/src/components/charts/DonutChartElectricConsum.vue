@@ -11,7 +11,11 @@ export default {
     name: "DonutChartElectricConsum",
     data() {
         return {
-            myChart:'',
+            myChart: '',
+            factoryList: ['廠區一', '廠區二', '廠區三'],
+            maxElec: 0,
+            maxIdx: 0,
+            defaultFactory: '', // the maximum elec showing on centre
             option: {
                 tooltip: {
                     trigger: 'item'
@@ -34,10 +38,18 @@ export default {
                         radius: ['65%', '85%'],
                         avoidLabelOverlap: false,
                         label: {
-                            show: false,
-                            position: 'center'
+                            show: true,
+                            color: '#FFFFFF',
+                            fontSize: '20',
+                            textBorderWidth: 0,
+                            position: 'center',
+                            formatter: () => {
+                                return this.defaultFactory;
+                            },
                         },
+
                         // emphasis: {
+                        //     focus: 'series',
                         //     label: {
                         //         show: true,
                         //         fontSize: '20px',
@@ -55,7 +67,7 @@ export default {
                             '#175580',
                             '#346780',
                             '#3C968D',
-                            // '#388C6C'  
+                            // '#388C6C'
                         ]
                     }
                 ]
@@ -63,23 +75,32 @@ export default {
         }
     },
     beforeUpdate() {
-        this.option.series[0].data[0].value = this.elecConsumData[0];
-        this.option.series[0].data[1].value = this.elecConsumData[1];
-        this.option.series[0].data[2].value = this.elecConsumData[2];
+        let copyData = [];
+        for (let ix = 0; ix < this.elecConsumData.length; ++ix) {
+            copyData.push(this.elecConsumData[ix]);
+            this.option.series[0].data[ix].value = this.elecConsumData[ix];
+            if (this.maxElec < this.elecConsumData[ix]) {
+                this.maxElec = this.elecConsumData[ix];
+                this.maxIdx = ix;
+            }
+        }
+        this.defaultFactory = this.factoryList[this.maxIdx] + "\n" + this.maxElec.toString();
+
+        let sortElecData = copyData.sort((a, b) => b - a);
+        for (let iy = 0; iy < sortElecData.length; ++iy) {
+            let foundIdx = this.elecConsumData.findIndex(x => x == sortElecData[iy]);
+            this.option.series[0].data[iy].value = sortElecData[iy];
+            this.option.series[0].data[iy].name = this.factoryList[foundIdx] + '\n' + sortElecData[iy].toString();
+        }
+
         // this.option.series[0].data[3].value = this.elecConsumData[3];
         this.myChart.setOption(this.option);
 
-
     },
     mounted() {
-        this.draw_chart()
+        this.myChart = this.$echarts.init(document.getElementById("donutChart"));
     },
     methods: {
-        draw_chart() {
-
-            this.myChart = this.$echarts.init(document.getElementById("donutChart"));
-            this.myChart.setOption(this.option);
-        }
     },
 }
 </script>

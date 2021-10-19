@@ -15,6 +15,7 @@ const EquipmentManage = () => import('@/components/dashboards/EquipmentManage.vu
 const MachineManage = () => import('@/components/dashboards/MachineManage.vue')
 const AIAnalysis = () => import('@/components/dashboards/AIAnalysis.vue')
 const AbnormalAlert = () => import('@/components/dashboards/AbnormalAlert.vue')
+const DemandPredict = () => import ('@/components/dashboards/DemandPredict.vue')
 
 //Cards
 const Analysis = () => import('@/components/cards/Analysis')
@@ -74,6 +75,12 @@ function configRoutes() {
                     name: '產線狀態分析',
                     component: ProductLineStatusAnaylysis,
                     meta: { requiresAuth: true }
+                },
+                {
+                    path: 'demand-predict',
+                    name: '需量預測',
+                    component: DemandPredict,
+                    meta: { requireAuth: true}
                 },
                 {
                     path: '/equipment-manage',

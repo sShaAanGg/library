@@ -3,11 +3,10 @@
         <CCard class="card-base">
             <CCardBody>
             <h4 style="color: #98a8a0">
-                <CIcon name="cil-chart-line" size="lg" /> 產線年度歷史分析
+                <CIcon name="cil-bar-chart" size="lg"/> 需量預測
             </h4>
 			<CCol lg="8" class="card-base">
                 <CRow lg="8">
-                <!-- <CSelect label="選擇年" :options="yearOptions" :value.sync="selectYear" /> -->
                 <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8]"
                     :value.sync="selectMonth"/>
                 <CSelect class="select-factory" label="廠區" :options="factoryOptions"
@@ -30,21 +29,8 @@
                     <h4 class="ml-4 mt-4" style="color: #98a8a0">
                         <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
                     </h4>
-
                     <CRow>
-                        <table class="equip-table ml-5 mt-2" >
-                            <tr>
-                                <th class="equip-elec"> 月耗電量: {{ equipElec }} KWh</th>
-                                <th class="equip-elec"> 作動時間: {{ equipWorkHours }} </th>
-                            </tr>
-                            <tr>
-                                <th class="equip-elec"> 異常次數: {{ equipEventTimes }} </th>
-                                <th class="equip-elec"> 月稼動率: {{ equipActivate }} %</th>
-                            </tr>
-                        </table>
-                    </CRow>
-                    <CRow>
-                        <div class="ml-3 mt-5" id="lineChartMonth" style="width:45vw;height:60vh"></div>
+                        <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:60vh"></div>
                     </CRow>
                 </CCol>
                 <CCol class="mr-4">
@@ -72,21 +58,9 @@
                         </td>
                         </template>
                     </CDataTable>
-                    <h4 style="color: #98a8a0">
-                        <CIcon name="cil-description" size="lg" /> 異常清單
-                    </h4>
-                    <CDataTable
-                        :items="equipEventList"
-                        :fields="eventFields"
-                        style="textalign: center; font-size: 110%;"
-                        :items-per-page="5"
-                        :bordered="true"
-                        pagination
-                    >
-                    </CDataTable>
                 </CCol>
             </CRow>
-            <CModal
+            <!-- <CModal
                 size="sm"
                 :show.sync="showSearchHint"
                 :closeOnBackdrop="false"
@@ -95,7 +69,7 @@
 				<template #footer>
 				<CButton @click="showSearchHint = false" color="dark">返回</CButton>
                 </template>
-            </CModal>
+            </CModal> -->
 
         </CCard>
 
@@ -109,6 +83,7 @@
 export default {
     data() {
         return {
+            maxContract: 250000,
             showSearchHint: false,
             factoryOptions: ['全廠區', '廠區一', '廠區二', '廠區三'],
             yearOptions: [2021],
@@ -117,6 +92,7 @@ export default {
             selectYearYoy: '',
             selectMonth: 8,
             factory: '全廠區',
+            data: [],
 
             equipName: '請從右側選擇設備',
             equipElec: '-',
@@ -140,39 +116,66 @@ export default {
                 {key: 'end_datetime', label: '結束時間', _style: "color: #4C756A"}
             ],
 
-            lineChart: '',
-            isShowChart: false,
+            barChart: '',
             option: {
+                grid: {
+                    left: '0%',
+                    right: '5%',
+                    bottom: '15%',
+                    top: '3%',
+                    containLabel: true,
+                },
                 xAxis: {
-                    type: 'category',
-                    data: ['1', '2', '3', '4', '5', '6', '7']
+                    max: 'dataMax',
+                    axisLabel:{
+                        fontSize: this.$utils.adjustFontSize(0.16),
+                        color:'white'
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#A19991'
+                        }
+                    }
                 },
                 yAxis: {
-                    type: 'value',
-
+                    type: 'category',
+                    data: ['契約容量', '預測使用容量', '現使用容量'],
+                    inverse: true,
+                    animationDuration: 300,
+                    animationDurationUpdate: 300,
+                    max: 2,
+                    axisLabel:{
+                        fontSize: this.$utils.adjustFontSize(0.16),
+                        color:'white'
+                    }
                 },
-                series: [
-                    {
-                        data: [150, 230, 224, 218, 135, 147, 260],
-                        type: 'line',
-                        itemStyle: {
-                                color: '#92BED4'
-                        },
-                        label: {
-                            show: false
-                        },
+                visualMap: {
+                    orient: 'horizontal',
+                    left: 'center',
+                    min: 0,
+                    max: 150,
+                    text: ['High', 'Low'],
+                    dimension: 0,
+                    inRange: {
+                        color: ['#55A864', '#A89F5B','#AC2D2D']
                     },
-                    // {
-                    //     data: [150, 230, 224, 218, 135, 147, 260],
-                    //     type: 'line',
-                    //     itemStyle: {
-                    //             color: '#B9FAE6'
-                    //     },
-                    //     label: {
-                    //         show: false
-                    //     },
-                    // }
-                ]
+                },
+                series: [{
+                    realtimeSort: true,
+                    type: 'bar',
+                    data: [100, 50, 20],
+                    label: {
+                        show: true,
+                        valueAnimation: true,
+                        position: 'top',
+                        fontFamily: 'monospace',
+                        color:'#98a8a0',
+                        fontSize: this.$utils.adjustFontSize(0.14)
+                    }
+                }],
+                legend: {
+                    show: false
+                },
             }
 
         }
@@ -182,10 +185,9 @@ export default {
 
     },
     mounted() {
-        this.lineChart = this.$echarts.init(document.getElementById("lineChartMonth"));
-        this.initialize_page();
-        // this.get_equip_list('', '');
-
+        this.barChart = this.$echarts.init(document.getElementById("barChartDemand"));
+        this.barChart.setOption(this.option);
+        // this.initialize_page();
 
     },
     methods: {
@@ -194,7 +196,6 @@ export default {
 
         },
         get_select_year_month(selectYear, selectMonth) {
-
             (selectMonth < 10)  ? this.yearMonth = selectYear.toString() + '0' + (selectMonth.toString()) + '00000000'
                                 : this.yearMonth = selectYear.toString() + (selectMonth.toString()) + '00000000';
 
@@ -221,7 +222,7 @@ export default {
                 this.showSearchHint = true;
             }
             else if (factory === '全廠區') {
-                this.reset_chart();
+                // this.reset_chart();
 
                 this.get_select_year_month(this.selectYear, this.selectMonth);
                 let data = {factory:'', datetime:this.yearMonth};
@@ -234,7 +235,7 @@ export default {
                     .catch((error) => console.log(error));
             }
             else{
-                this.reset_chart();
+                // this.reset_chart();
 
                 this.get_select_year_month(this.selectYear, this.selectMonth);
                 let data = {factory:factory, datetime:this.yearMonth};
@@ -248,6 +249,19 @@ export default {
                     .catch((error) => console.log(error));
             }
 
+
+        },
+
+        get_contract_capacity(){
+            // get contract capacity for the next three month
+
+        },
+
+        get_predict_capacity(){
+
+        },
+
+        get_current_capacity(){
 
         },
 
@@ -274,79 +288,12 @@ export default {
             this.equipActivate = item.activation;
 
 
-            this.get_equip_events(item);
-            this.get_daily_elec(item);
+            // this.get_equip_events(item);
+            // this.get_daily_elec(item);
             // this.get_daily_elec_yoy(item);
-            this.lineChart.setOption(this.option);
+            this.barChart.setOption(this.option);
         },
 
-        get_equip_events(item) {
-            let data = {machine_sn:item.machine_sn};
-            this.$http
-                .post('api/enms/select_equip_error_log', {data:data})
-                .then((res) => {
-                    this.equipEventList = res.data;
-                    this.equipEventTimes = this.equipEventList.length;
-                })
-                .catch((error) => console.log(error));
-
-        },
-
-        get_daily_elec(item) {
-            let endDate = '';
-            (this.selectMonth < 10) ? endDate = this.selectYear.toString() + '0' + (this.selectMonth.toString()) + '32000000'
-                                    : endDate = this.selectYear.toString() + (this.selectMonth.toString()) + '32000000';
-            let data = {machine_sn:item.machine_sn, start_date:this.yearMonth, end_date: endDate};
-            this.$http
-                .post('api/enms/select_equip_daily_elec_yoy', {data:data})
-                .then((res) => {
-                    let chartData = [];
-                    let xLabel = [];
-                    let min = Number.MAX_VALUE;
-                    for (let ix = 0; ix < res.data.length; ++ix) {
-                        chartData.push(res.data[ix].electricity);
-                        xLabel.push(ix + 1);
-                        if (res.data[ix].electricity < min) min = res.data[ix].electricity;
-                    }
-                    this.option.series[0].data = chartData;
-                    this.option.xAxis.data = xLabel;
-                    this.option.yAxis.min = Math.floor(min);
-                    this.lineChart.setOption(this.option);
-                })
-                .catch((error) => console.log(error));
-
-        },
-
-        get_daily_elec_yoy(item) {
-            this.selectYearYoy = this.selectYear - 1;
-            let startDate = '';
-            (this.selectMonth < 10) ? startDate = this.selectYearYoy.toString() + '0' + (this.selectMonth.toString()) + '00000000'
-                                    : startDate = this.selectYearYoy.toString() + (this.selectMonth.toString()) + '00000000';
-            let endDate = '';
-            (this.selectMonth < 10) ? endDate = this.selectYearYoy.toString() + '0' + (this.selectMonth.toString()) + '32000000'
-                                    : endDate = this.selectYearYoy.toString() + (this.selectMonth.toString()) + '32000000';
-            console.log(startDate, endDate);
-            let data = {machine_sn:item.machine_sn, start_date:startDate, end_date: endDate};
-            this.$http
-                .post('api/enms/select_equip_daily_elec_yoy', {data:data})
-                .then((res) => {
-                    let chartData = [];
-                    let xLabel = [];
-                    let min = Number.MAX_VALUE;
-                    for (let ix = 0; ix < res.data.length; ++ix) {
-                        chartData.push(res.data[ix].electricity);
-                        xLabel.push(ix + 1);
-                        if (res.data[ix].electricity < min) min = res.data[ix].electricity;
-                    }
-                    console.log(chartData);
-                    this.option.series[1].data = chartData;
-                    // this.option.xAxis.data = xLabel;
-                    // this.option.yAxis.min = Math.floor(min);
-                    this.lineChart.setOption(this.option);
-                })
-                .catch((error) => console.log(error));
-
-        },
         reset_chart() {
             this.equipName = '請從右側選擇設備';
             this.equipElec = '-';
@@ -354,13 +301,13 @@ export default {
             this.equipEventList = [];
             this.equipList = [];
             this.equipEventTimes  = '-';
-            for (let ix = 0; ix < this.option.xAxis.data.length; ++ix) {
+            for (let ix = 0; ix < this.option.series[0].data.length; ++ix) {
                 this.option.series[0].data[ix] = 0;
                 // this.option.series[1].data[ix] = 0;
             }
             this.option.yAxis.min = 0;
 
-            this.lineChart.setOption(this.option);
+            this.barChart.setOption(this.option);
         }
     }
 }
@@ -420,6 +367,7 @@ export default {
 .table-dark {
     color: #000000;
 }
+
 
 
 </style>
