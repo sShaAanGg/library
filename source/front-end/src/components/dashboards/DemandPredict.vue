@@ -187,6 +187,7 @@ export default {
     mounted() {
         this.barChart = this.$echarts.init(document.getElementById("barChartDemand"));
         this.barChart.setOption(this.option);
+        this.get_predict_capacity();
         // this.initialize_page();
 
     },
@@ -258,7 +259,11 @@ export default {
         },
 
         get_predict_capacity(){
-
+            this.$http
+                .get('api/enms/select_predict_capacity')
+                .then(res=>{
+                    console.log('capacity', res);
+                });
         },
 
         get_current_capacity(){

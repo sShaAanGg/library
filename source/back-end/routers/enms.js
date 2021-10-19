@@ -90,5 +90,12 @@ router.get('/select_every_years_average', function (req, res) {
     api.select_every_years_average(req, res);
 });
 
+router.get('/select_two_years_elec', function (req, res) {
+    api.select_two_years_elec(req, res);
+});
+
+router.get('/select_predict_capacity', function (req, res) {
+    api.select_predict_capacity(req, res);
+});
 
 module.exports = router;

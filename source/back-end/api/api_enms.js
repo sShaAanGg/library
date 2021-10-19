@@ -94,6 +94,76 @@ module.exports = {
             res.status(statusData.successCode).send(cumulativeElectricityConsumption);
         });
     },
+    select_two_years_electricity_consumption: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
+        };
+
+        let sql =   " SELECT "                                                              +
+                        " SUM(history_month_info.electricity) as electricity, "             +
+                        " history_month_info.`datetime`, "                                  +
+                        " history_month_info.watt, "                                        +
+                        " SUM(history_month_info.carbon_footprint) as carbon_footprint, "   +
+                        " history_month_info.carbon_negative "                              +
+                    " FROM "                                                                +
+                        " history_month_info "                                              +
+                    " WHERE "                                                               +
+                        "`datetime` > ? AND `datetime` < ? "                                +
+                    " GROUP BY "                                                            +
+                        " `datetime` ";
+        sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
+                                                    utility.formattime(new Date(), 'yyyy1200000000')]);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    select_two_years_elec: function(req, res) {
+        /* select passed two years electricity consumption
+        @purpose
+            if current date is in 2021 August, it will select data between 2020-01 ~ 2021-08
+        @argument:
+            none, get system time to format sql
+        @return:
+            an array which length between 0-24
+        */
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
+        };
+
+        let sql =   " SELECT "                                                              +
+                        " SUM(history_month_info.electricity) as elec "                     +
+                    " FROM "                                                                +
+                        " history_month_info "                                              +
+                    " WHERE "                                                               +
+                        "`datetime` > ? AND `datetime` < ? "                                +
+                    " GROUP BY "                                                            +
+                        " `datetime` ";
+        sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
+                                                    utility.formattime(new Date(), 'yyyy1200000000')]);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    select_two_years_carbon_footprint: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
+        };
+
+        let sql =   " SELECT "                                                              +
+                        " SUM(history_month_info.carbon_footprint) as carbon_footprint "   +                             +
+                    " FROM "                                                                +
+                        " history_month_info "                                              +
+                    " WHERE "                                                               +
+                        "`datetime` > ? AND `datetime` < ? "                                +
+                    " GROUP BY "                                                            +
+                        " `datetime` ";
+        sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
+                                                    utility.formattime(new Date(), 'yyyy1200000000')]);
+        console.log(sql);
+        dbFactory.action_db(sql, statusData, res);
+    },
     select_real_time_electricity_consumption: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -234,30 +304,6 @@ module.exports = {
     /* End of Dashboard API */
 
     /* Analysis API */
-    select_two_years_electricity_consumption: function(req, res) {
-        let statusData = {
-            successCode: 200,
-            errorCode: 500,
-            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
-        };
-
-        let sql =   " SELECT "                                                              +
-                        " SUM(history_month_info.electricity) as electricity, "             +
-                        " history_month_info.`datetime`, "                                  +
-                        " history_month_info.watt, "                                        +
-                        " SUM(history_month_info.carbon_footprint) as carbon_footprint, "   +
-                        " history_month_info.carbon_negative "                              +
-                    " FROM "                                                                +
-                        " history_month_info "                                              +
-                    " WHERE "                                                               +
-                        "`datetime` > ? AND `datetime` < ? "                                +
-                    " GROUP BY "                                                            +
-                        " `datetime` ";
-        sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
-                                                    utility.formattime(new Date(), 'yyyy1200000000')]);
-        console.log(sql);
-        dbFactory.action_db(sql, statusData, res);
-    },
     select_data_year: function(req, res){
         let statusData = {
             successCode: 200,
@@ -513,6 +559,55 @@ module.exports = {
         dbFactory.action_db(sql, statusDataCommon, res);
     },
     /* End of ProductionLineAnalysis API */
+
+    /* DemandPredict API */
+    select_predict_capacity: function(req, res) {
+        /* select passed two years electricity consumption
+        @purpose
+            if current date is in 2021 August, it will select data between 2020-01 ~ 2021-08
+        @argument:
+            none, get system time to format sql
+        @return:
+            an array which length between 0-24
+        */
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
+        };
+
+        let sql =   " SELECT "                                                                      +
+                        " history_month_info.electricity AS elec "                                  +
+                    " FROM "                                                                        +
+                        "history_month_info "                                                       +
+                    " JOIN "                                                                        +
+                        " equipment_info ON equipment_info.mac = history_month_info.mac "           +
+                    " JOIN "                                                                        +
+                        " machine_info ON machine_info.machine_sn = equipment_info.machine_sn "     +
+                    " WHERE "                                                                       +
+                        " machine_info.machine_sn = ? "                                             +
+                    " AND "                                                                         +
+                        " `datetime` > '20201001000000' "                                           +
+                    " AND "                                                                         +
+                        " `datetime` < '20210200000000' ";
+        let curYear = new Date().getFullYear();
+        let curMonth = new Date().getMonth() + 1;
+        let next3Year = curYear;
+        let next3Month = (curMonth + 3) % 12;
+        (Math.floor((curMonth + 3) / 12) >= 1) ? next3Year = curYear + 1 : next3Year = curYear;
+        (curMonth < 10) ? curMonth = '0' + curMonth.toString() : curMonth = curMonth.toString();
+        (next3Month < 10) ? next3Month = '0' + next3Month.toString() : next3Month = next3Month.toString();
+        let startDate = curYear.toString() + curMonth + '01000000';
+        let endDate = next3Year.toString() + next3Month + '00000000';
+
+        // sql = dbFactory.build_mysql_format(sql, [startDate, endDate]);
+        console.log(sql);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    select_current_capacity: function(req, res) {
+
+    },
+    /* End of DemandPredict API */
 
     /* MachineManage API */
     select_machine_manage: function(req, res) {
