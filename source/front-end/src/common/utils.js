@@ -119,5 +119,41 @@ export function adjustFontSize(res){
 
 }
 
-export var factoryOptions = ["廠區一", "廠區二", "廠區三"];  
-export var machineTypeOptions = ["公共用電節能", "空調節能"];  
+export var factoryOptions = ["廠區一", "廠區二", "廠區三"];
+export var machineTypeOptions = ["公共用電節能", "空調節能"];
+
+export function float_computing(num1, num2, points, operations){
+    switch (operations){
+        case '+':
+            num1 *= Math.pow(10, points);
+            num2 *= Math.pow(10, points);
+
+            return parseFloat(((num1 + num2)/Math.pow(10, points)).toFixed(points));
+        break;
+
+        case '-':
+            num1 *= Math.pow(10, points);
+            num2 *= Math.pow(10, points);
+
+            return parseFloat(((num1 - num2)/Math.pow(10, points)).toFixed(points));
+        break;
+
+        case '*':
+            num1 *= Math.pow(10, points);
+            num2 *= Math.pow(10, points);
+
+            return parseFloat(((num1 * num2)/Math.pow(10, points)).toFixed(points));
+        break;
+
+        case '/':
+            num1 *= Math.pow(10, points);
+            num2 *= Math.pow(10, points);
+
+            return parseFloat(((num1 / num2)/Math.pow(10, points)).toFixed(points));
+        break;
+
+        default:
+            console.log("請確認運算符號!!!");
+        break;
+    }
+}

@@ -9,9 +9,9 @@
                         <CRow>
                             <CCol lg = '3' class="pt-2">
                                 <h4 class="card-font-ana">
-                                    時間區間 : 
+                                    時間區間 :
                                     <CButton v-bind="classColor['Y']" @click="switch_mode('year')">依年份瀏覽</CButton>
-                                    <CButton v-bind="classColor['M']" @click="switch_mode('month')">依月份瀏覽</CButton> 
+                                    <CButton v-bind="classColor['M']" @click="switch_mode('month')">依月份瀏覽</CButton>
                                 </h4>
                                 <CSelect
                                     :value.sync="AnalysisData.year"
@@ -177,7 +177,7 @@ export default {
                 compareData:[],
 
                 xAxis:[],
-    
+
                 items:[],
                 fields:[
                     { key: 'sort',                  label:'分類項目',           _style:'width:25%;  color: #4C756A;'},
@@ -185,9 +185,10 @@ export default {
                     { key: 'analysis',              label:'去年同期分析',       _style:'width:25%'           },
                     { key: 'show_details',          label:'',                   _style:'width:25%'           }
                 ],
-    
+
                 detailItems:[],
                 detailItemsTemp:[],
+                detailItemsTempCompare:[],
                 detailFields:[]
             }
         }
@@ -277,13 +278,13 @@ export default {
                 var newDate = new Date();
 
                 this.max = newDate.getFullYear() + '-' + (newDate.getMonth() + 1);
-                
+
                 this.AnalysisData.analysisMode = 'year';
-        
+
                 this.AnalysisData.year = (newDate.getFullYear()).toString();
 
-                this.select_chart_data();
                 this.myChart = this.$echarts.init(document.getElementById("analysisChart"));
+                this.select_chart_data();
             })
             .catch(err =>{
                 console.log(err);
@@ -315,10 +316,11 @@ export default {
                 date:this.AnalysisData.date,
                 analysisMode:this.AnalysisData.analysisMode
             }
+            console.log(data);
             // if (data['factory'] === '全廠區') data['factory'] = '';
             this.$http
                 .post('api/enms/select_two_years_electricity_consumption_for_anslysis',{ data:data })
-                .then(res => {
+                .then(async res => {
                         var newDate = new Date(this.AnalysisData.date);
 
                         this.xAxis = [];
@@ -329,7 +331,6 @@ export default {
                         this.AnalysisData.compareData = [];
                         this.AnalysisData.items = [];
                         this.AnalysisData.detailItemsTemp = [];
-
                         var dateTotal = [];
                         var index;
 
@@ -348,7 +349,7 @@ export default {
                                 case 'carbonNegative':
                                     data = result.carbon_negative;
                                 break;
-                                
+
                                 default:
                                 break;
                             }
@@ -364,14 +365,14 @@ export default {
                                         data:data
                                     })
                                 } else {
-                                    dateTotal[index].data += parseInt(data.toFixed(2));
+                                    dateTotal[index].data = this.$utils.float_computing(dateTotal[index].data, data, 2, "+");
+                                    // dateTotal[index].data += parseFloat(data.toFixed(2));
                                 }
-
                                 var year = new Date(result.datetime).getFullYear();
 
                                 if (year == newDate.getFullYear()){
                                     index = this.AnalysisData.items.findIndex(x => x.sort === result.type);
-    
+
                                     if (index < 0){
                                         this.AnalysisData.items.push({
                                             sort:result.type,
@@ -379,32 +380,39 @@ export default {
                                             analysis:result.carbon_negative
                                         })
                                     } else {
-                                        this.AnalysisData.items[index].value    += parseInt(data);
-                                        this.AnalysisData.items[index].analysis += parseInt(result.carbon_negative);
-                                    }
+                                        this.AnalysisData.items[index].value = this.$utils.float_computing( this.AnalysisData.items[index].value,
+                                                                                                            data,
+                                                                                                            2,
+                                                                                                            "+");
 
-                                    if (this.AnalysisData.mode === 'powerConsumption'){
-                                        this.AnalysisData.detailItemsTemp.push({
-                                            date:result.datetime,
-                                            sort:result.type,
-                                            equipment:result.machine_name,
-                                            factory:result.factory,
-                                            value:data.toFixed(2), 
-                                            analysis:((result.carbon_negative / 509) * 1000).toFixed(2),
-                                        })
-                                    } else {
-                                        this.AnalysisData.detailItemsTemp.push({
-                                            date:result.datetime,
-                                            sort:result.type,
-                                            equipment:result.machine_name,
-                                            factory:result.factory,
-                                            value:data.toFixed(2), 
-                                            analysis:result.carbon_negative,
-                                        })
+                                        this.AnalysisData.items[index].analysis = this.$utils.float_computing(  this.AnalysisData.items[index].analysis,
+                                                                                                                result.carbon_negative,
+                                                                                                                2,
+                                                                                                                "+");
                                     }
-                                    this.AnalysisData.value += parseInt(data);
+                                    this.AnalysisData.value = this.$utils.float_computing(this.AnalysisData.value, data, 2, "+");
                                 }
 
+                                if (this.AnalysisData.mode === 'powerConsumption'){
+                                    this.AnalysisData.detailItemsTemp.push({
+                                        date:result.datetime,
+                                        sort:result.type,
+                                        equipment:result.machine_name,
+                                        factory:result.factory,
+                                        value:data.toFixed(2),
+                                        analysis:((result.carbon_negative / 509) * 1000).toFixed(2),
+                                    })
+                                } else {
+                                    this.AnalysisData.detailItemsTemp.push({
+                                        date:result.datetime,
+                                        sort:result.type,
+                                        equipment:result.machine_name,
+                                        factory:result.factory,
+                                        value:data.toFixed(2),
+                                        analysis:result.carbon_negative,
+                                    })
+
+                                }
                             }
 
                             if (this.AnalysisData.analysisMode === 'month'){
@@ -416,16 +424,19 @@ export default {
                                         data:data
                                     })
                                 } else {
-                                    dateTotal[index].data += parseInt(data.toFixed(2));
+                                    dateTotal[index].data = this.$utils.float_computing(dateTotal[index].data, data, 2, "+");
+                                    // dateTotal[index].data += parseFloat(data.toFixed(2));
                                 }
 
 
                                 if (new Date(result.datetime).getFullYear() == new Date(newDate).getFullYear() &&
                                     new Date(result.datetime).getMonth()    == new Date(newDate).getMonth()){
-                                        this.AnalysisData.value += parseInt(data);
+                                        this.AnalysisData.value = this.$utils.float_computing(this.AnalysisData.value, data, 2, "+");
+                                        // this.AnalysisData.value += parseFloat(data.toFixed(2));
+
 
                                         index = this.AnalysisData.items.findIndex(x => x.sort === result.type);
-    
+
                                         if (index < 0){
                                             this.AnalysisData.items.push({
                                                 sort:result.type,
@@ -433,45 +444,56 @@ export default {
                                                 analysis:result.carbon_negative
                                             })
                                         } else {
-                                            this.AnalysisData.items[index].value    += parseInt(data.toFixed(2));
-                                            this.AnalysisData.items[index].analysis += parseInt(result.carbon_negative);
-                                        }
+                                            this.AnalysisData.items[index].value = this.$utils.float_computing( this.AnalysisData.items[index].value,
+                                                                                                                data,
+                                                                                                                2,
+                                                                                                                "+");
 
-                                        if (this.AnalysisData.mode === 'powerConsumption'){
-                                            this.AnalysisData.detailItemsTemp.push({
-                                                date:result.datetime,
-                                                sort:result.type,
-                                                equipment:result.machine_name,
-                                                factory:result.factory,
-                                                value:data.toFixed(2), 
-                                                analysis:((result.carbon_negative / 509) * 1000).toFixed(2),
-                                            })
-                                        } else {
-                                            this.AnalysisData.detailItemsTemp.push({
-                                                date:result.datetime,
-                                                sort:result.type,
-                                                equipment:result.machine_name,
-                                                factory:result.factory,
-                                                value:data.toFixed(2), 
-                                                analysis:result.carbon_negative,
-                                            })
-                                        }
+                                            this.AnalysisData.items[index].analysis = this.$utils.float_computing(  this.AnalysisData.items[index].analysis,
+                                                                                                                    result.carbon_negative,
+                                                                                                                    2,
+                                                                                                                    "+");
+                                            }
+
+                                }
+
+                                if (this.AnalysisData.mode === 'powerConsumption'){
+                                    this.AnalysisData.detailItemsTemp.push({
+                                        date:result.datetime,
+                                        sort:result.type,
+                                        equipment:result.machine_name,
+                                        factory:result.factory,
+                                        value:data.toFixed(2),
+                                        analysis:((result.carbon_negative / 509) * 1000).toFixed(2),
+                                    })
+                                } else {
+                                    this.AnalysisData.detailItemsTemp.push({
+                                        date:result.datetime,
+                                        sort:result.type,
+                                        equipment:result.machine_name,
+                                        factory:result.factory,
+                                        value:data.toFixed(2),
+                                        analysis:result.carbon_negative,
+                                    })
                                 }
                             }
 
                         }
-
+                        console.log(dateTotal)
+                        this.AnalysisData.compareData = [];
+                        this.AnalysisData.data = [];
 
                         for (let i = 0; i < dateTotal.length; ++i){
                             if (this.AnalysisData.analysisMode === 'year'){
                                 var year = new Date(dateTotal[i].datetime).getFullYear();
-    
                                 if (year == newDate.getFullYear()){
                                     this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
+                                    console.log("This is data::" + dateTotal[i].data.toFixed(2))
                                 }
-    
+
                                 if (year == newDate.getFullYear()-1){
                                     this.AnalysisData.compareData.push(dateTotal[i].data.toFixed(2));
+                                    console.log("This is compare::" + dateTotal[i].data.toFixed(2))
                                 }
                             }
 
@@ -490,6 +512,9 @@ export default {
                             }
                         }
 
+                        console.log(this.AnalysisData.compareData)
+                        console.log(this.AnalysisData.data)
+
                         if (this.AnalysisData.compareData.length === 0 && this.xAxis.length === 0){
                             for (let i = 0 ; i < this.AnalysisData.data.length; ++i){
                                 this.xAxis.push(i+1);
@@ -502,27 +527,7 @@ export default {
                                 console.log('analysis:', this.AnalysisData.items[i].analysis);
                             }
                         }
-                        for (let i = 0; i < this.AnalysisData.data.length; ++i){
-                            if (i === 0){
-                                this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
-                                this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
-                            }
-
-                            if (this.AnalysisData.data[i] > this.AnalysisData.max)
-                                this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
-
-                            if (this.AnalysisData.data[i] < this.AnalysisData.min)
-                                this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
-                        }
-                        
-                        for (let i = 0; i < this.AnalysisData.compareData.length; ++i){
-                            if (this.AnalysisData.data[i] > this.AnalysisData.max)
-                                this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
-
-                            if (this.AnalysisData.data[i] < this.AnalysisData.min)
-                                this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
-                        }
-
+                        this.AnalysisData.sort = '全部';
                         this.rendering_chart();
                 })
                 .catch(err =>{
@@ -531,8 +536,46 @@ export default {
         },
 
         rendering_chart() {
+            this.option = {};
             this.compute_min_max_for_chart_data(this.AnalysisData.data);
-            if (this.AnalysisData.compareData.length > 0){
+            console.log(typeof this.AnalysisData.compareData.length)
+            if (this.AnalysisData.compareData.length == 0){
+                this.option = {
+                    tooltip: {
+                        trigger: 'axis',
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: this.xAxis,
+                    },
+                    yAxis: {
+                        type: 'value',
+                        min: this.AnalysisData.min,
+                        max: this.AnalysisData.max,
+                    },
+                    series: [
+                        {
+                            name: '今年度' + this.AnalysisData.analysisSort,
+                            type: 'line',
+                            // smooth: true,
+                            // prettier-ignore
+                            data: this.AnalysisData.data,
+                        },
+                        {
+                            name: '去年度' + this.AnalysisData.analysisSort,
+                            type: 'line',
+                            toolbox: {
+                            show: false
+                            },
+                            // mooth: true,
+                            // prettier-ignore
+                            data: this.AnalysisData.compareData,
+                        },
+                    ]
+                };
+                this.myChart.setOption(this.option);
+            } else {
                 this.option = {
                     tooltip: {
                         trigger: 'axis',
@@ -564,37 +607,13 @@ export default {
                         },
                     ]
                 };
-            } else {
-                this.option = {
-                    tooltip: {
-                        trigger: 'axis',
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: this.xAxis,
-                    },
-                    yAxis: {
-                        type: 'value',
-                        min: this.AnalysisData.min,
-                        max: this.AnalysisData.max,
-                    },
-                    series: [
-                        {
-                            name: '今年度' + this.AnalysisData.analysisSort,
-                            type: 'line',
-                            // smooth: true,
-                            // prettier-ignore
-                            data: this.AnalysisData.data,
-                        }
-                    ]
-                };
+                this.myChart.setOption(this.option);
             }
-
-            this.myChart.setOption(this.option);
         },
 
         show_chart(item) {
+            var newDate = new Date(this.AnalysisData.date);
+
             var key = item.sort;
 
             this.AnalysisData.sort = key;
@@ -608,8 +627,7 @@ export default {
 
             var dateTotal = [];
             var index;
-
-
+            console.log(this.AnalysisData.detailItemsTemp);
             for (let i = 0; i < this.AnalysisData.detailItemsTemp.length; ++i){
                 if (this.AnalysisData.detailItemsTemp[i].sort !== key)
                     continue;
@@ -624,78 +642,47 @@ export default {
                         data:data
                     })
                 } else {
-                    dateTotal[index].data += parseFloat(data.toFixed(2));
+                    dateTotal[index].data = this.$utils.float_computing(dateTotal[index].data, data, 2, "+");
+                    // dateTotal[index].data += parseFloat(data.toFixed(2));
                 }
 
                 if (this.AnalysisData.analysisMode === 'year')
                     this.xAxis = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-                
+
             }
+            console.log(dateTotal);
 
             for (let i = 0; i < dateTotal.length; ++i){
-                
                 if (this.AnalysisData.analysisMode === 'year'){
-                    this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
-                    this.AnalysisData.value += parseInt(dateTotal[i].data);
+                    var year = new Date(dateTotal[i].datetime).getFullYear();
+
+                    if (year == newDate.getFullYear()){
+                        this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
+                        this.AnalysisData.value = this.$utils.float_computing(this.AnalysisData.value, dateTotal[i].data, 2, "+");
+                        // this.AnalysisData.value += parseFloat(dateTotal[i].data.toFixed(2));
+                    }
+
+                    if (year == newDate.getFullYear()-1){
+                        this.AnalysisData.compareData.push(dateTotal[i].data.toFixed(2));
+                    }
                 }
 
                 if (this.AnalysisData.analysisMode === 'month'){
-                    this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
-                    this.AnalysisData.value += parseInt(dateTotal[i].data);
-                    this.xAxis.push(new Date(dateTotal[i].datetime).getDate());
+                    if (new Date(dateTotal[i].datetime).getFullYear() == new Date(newDate).getFullYear() &&
+                        new Date(dateTotal[i].datetime).getMonth()    == new Date(newDate).getMonth()){
+                        this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
+                        this.AnalysisData.value = this.$utils.float_computing(this.AnalysisData.value, dateTotal[i].data, 2, "+");
+                    }
+
+                    if ((new Date(dateTotal[i].datetime).getFullYear())   == new Date(newDate).getFullYear()-1 &&
+                        new Date(dateTotal[i].datetime).getMonth()        == new Date(newDate).getMonth()){
+                        this.AnalysisData.compareData.push(dateTotal[i].data.toFixed(2));
+                        this.xAxis.push(new Date(dateTotal[i].datetime).getDate());
+                        continue;
+                    }
                 }
             }
-
-            for (let i = 0; i < this.AnalysisData.data.length; ++i){
-                if (i === 0){
-                    this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
-                    this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
-                }
-
-                if (this.AnalysisData.data[i] > this.AnalysisData.max)
-                    this.AnalysisData.max = Math.ceil(this.AnalysisData.data[i]);
-
-                if (this.AnalysisData.data[i] < this.AnalysisData.min)
-                    this.AnalysisData.min = Math.floor(this.AnalysisData.data[i]);
-            }
-           
-            
-            this.compute_min_max_for_chart_data(this.AnalysisData.data);
-            console.log(this.AnalysisData.min, this.AnalysisData.max);
-
-            this.option = {
-                tooltip: {
-                    trigger: 'axis',
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: this.xAxis,
-                },
-                yAxis: {
-                    type: 'value',
-                    min: this.AnalysisData.min,
-                    max: this.AnalysisData.max,
-                },
-                series: [
-                    {
-                        name: '今年度' + this.AnalysisData.analysisSort,
-                        type: 'line',
-                        // smooth: true,
-                        // prettier-ignore
-                        data: this.AnalysisData.data,
-                    },
-                    {
-                        name: '去年度' + this.AnalysisData.analysisSort,
-                        type: 'line',
-                        // smooth: true,
-                        // prettier-ignore
-                        data: this.AnalysisData.compareData,
-                    },
-                ]
-            };
-            
-            this.myChart.setOption(this.option);
+            this.rendering_chart();
         },
 
         show_data_details(item) {
@@ -711,12 +698,11 @@ export default {
         },
 
         compute_min_max_for_chart_data(chartData) {
-            console.log(chartData);
             let total = 0;
             let maxElement = 0;
             let minElement = Number.MAX_VALUE;
 
-            for (let ix = 0; ix < chartData.length; ++ix) {
+            for (let ix = 0; ix < chartData.length; ++ix){
                 let floatData = parseFloat(chartData[ix]);
                 if (floatData > maxElement) maxElement = floatData;
                 if (floatData < minElement) minElement = floatData;
@@ -727,9 +713,8 @@ export default {
 
             let maxScale = (avg + Math.abs(maxElement - avg) * 0.5) / avg;
             let minScale = (avg - Math.abs(minElement - avg) * 0.5) / avg;
-            this.AnalysisData.max = Math.round((maxElement + Math.abs(maxElement - avg) * 0.5) / 0.01) * 0.01;
-            this.AnalysisData.min = Math.round((minElement - Math.abs(minElement - avg) * 0.5) / 0.01) * 0.01;
- 
+            this.AnalysisData.max = (Math.round((maxElement + Math.abs(maxElement - avg) * 0.5) / 0.01) * 0.01).toFixed(2);
+            this.AnalysisData.min = (Math.round((minElement - Math.abs(minElement - avg) * 0.5) / 0.01) * 0.01).toFixed(2);
             console.log('avg:', avg, maxElement, minElement);
             // diff percentage
             // let maxDiff = 0;

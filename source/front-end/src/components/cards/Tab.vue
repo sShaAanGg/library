@@ -2,7 +2,7 @@
     <div class='tab' v-show='isActive'>
         <slot></slot>
         <div v-for="(item, index) in controlList">
-            <BtnSwitch :btnName=item.button_name :btnType=item.button_type :btnMac=item.mac></BtnSwitch>    
+            <BtnSwitch :btnName=item.button_name :btnType=item.button_type :btnMac=item.mac></BtnSwitch>
         </div>
     </div>
 </template>
@@ -37,8 +37,12 @@ export default {
                     //     "mac":"00124B0018E467A0"
                     // }
                 ]
-            }        
+            },
         }
+    },
+
+    created() {
+
     },
 
     mounted() {
@@ -51,13 +55,14 @@ export default {
             this.$http
                 .post('/api/enms/select_equip_controllers', {data:{factory:this.title}})
                 .then(res=> {
-                    // format of res.data: {{mac, name, type, port, pin}, {mac, name, type, port, pin}, ...} 
+                    // format of res.data: {{mac, name, type, port, pin}, {mac, name, type, port, pin}, ...}
                     this.controlList = res.data;
                     for (let ix = 0; ix < this.controlList.length; ix++) {
                         let pushMac = {'mac':this.controlList[ix]['mac']};
-                        this.data['devices'].push(pushMac);                        
+                        this.data['devices'].push(pushMac);
                         ++this.data['deviceCount'];
                     }
+
                     this.$http
                         .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
                         .then((response) => {
@@ -68,9 +73,9 @@ export default {
                                     this.availableList.push(this.controlList[iy]);
                                 }
 
-                            }   
+                            }
                         })
-                        .catch( (error) => console.log(error));                      
+                        .catch( (error) => console.log(error));
                 })
         }
     }
@@ -78,5 +83,5 @@ export default {
 </script>
 
 <style lang="css">
-  
+
 </style>
