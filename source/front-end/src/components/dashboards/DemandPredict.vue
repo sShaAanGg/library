@@ -86,9 +86,9 @@
 export default {
     data() {
         return {
-            maxContract: 62500,
+            maxContract: 125000,
             showSearchHint: false,
-            factoryOptions: ['全廠區', '廠區一', '廠區二', '廠區三'],
+            factoryOptions: ['全廠區'],
             typeOptions: ['全部項目'],
             yearOptions: [2021],
             yearMonth: '-',
@@ -207,15 +207,31 @@ export default {
         get_select_year_month(selectYear, selectMonth) {
             (selectMonth < 10)  ? this.yearMonth = selectYear.toString() + '0' + (selectMonth.toString()) + '00000000'
                                 : this.yearMonth = selectYear.toString() + (selectMonth.toString()) + '00000000';
+        },
+        get_select_options(resultData) {
+            for (let ix = 0; ix < resultData.length; ++ix) {
+                let foundIdx = this.factoryOptions.findIndex(x => x === resultData[ix].factory);
+                if (foundIdx < 0) {
+                    this.factoryOptions.push(resultData[ix].factory);
+                }
 
+                // search another array
+                foundIdx = this.typeOptions.findIndex(x => x === resultData[ix].type);
+                if (foundIdx < 0) {
+                    this.typeOptions.push(resultData[ix].type);
+                }
+            }
+            console.log(this.factoryOptions, this.typeOptions);
         },
 
         initialize_page() {
             this.get_select_year_month(this.selectYear, this.selectMonth);
-            let data = {factory:'', datetime:''};
+            let data = {factory:this.factory, datetime:''};
             this.$http
                 .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                 .then((res) => {
+                    console.log(res);
+                    this.get_select_options(res.data);
                     this.equipList = res.data;
                     this.show_chart(this.equipList[0]);
                     // this.equipList[0]._classes = '';
@@ -233,7 +249,7 @@ export default {
                 // this.reset_chart();
 
                 this.get_select_year_month(this.selectYear, this.selectMonth);
-                let data = {factory:'', datetime:this.yearMonth};
+                let data = {factory:this.factory, datetime:this.yearMonth};
                 this.$http
                     .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                     .then((res) => {
@@ -248,7 +264,7 @@ export default {
                 this.get_select_year_month(this.selectYear, this.selectMonth);
                 let data = {factory:factory, datetime:this.yearMonth};
                 this.$http
-                    .post('api/enms/select_factory_machine_monthly_info', {data:data})
+                    .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                     .then((res) => {
                         this.equipList = res.data;
                         this.show_chart(this.equipList[0]);
@@ -270,7 +286,6 @@ export default {
                         .post('api/enms/select_current_capacity', {data:data})
                         .then(res=>{
                             this.option.series[0].data[2] = res.data[0].elec;
-                            console.log(res)
                             this.barChart.setOption(this.option);
 
                         });
