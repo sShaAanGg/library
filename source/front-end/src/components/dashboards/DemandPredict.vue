@@ -2,62 +2,65 @@
     <div>
         <CCard class="card-base">
             <CCardBody>
-            <h4 style="color: #98a8a0">
-                <CIcon name="cil-bar-chart" size="lg"/> 需量預測
-            </h4>
-			<CCol lg="8" class="card-base">
-                <CRow lg="8">
-                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8]"
-                    :value.sync="selectMonth"/>
-                <CSelect class="select-factory" label="廠區" :options="factoryOptions"
-                    :value.sync="factory" />
-                <CButton
-                class="btn-search"
-                size="lg"
-                @click="get_equip_list(factory, selectMonth)"
-                >
-                搜尋
-                </CButton>
+                <h4 style="color: #98a8a0">
+                    <CIcon name="cil-bar-chart" size="lg"/> 需量預測
+                </h4>
+                <CRow lg="12">
+                    <CCol lg="6">
+                        <h4 class="ml-4 mt-4" style="color: #98a8a0">
+                            <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
+                        </h4>
+                        <CRow>
+                            <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:60vh"></div>
+                        </CRow>
+                    </CCol>
+                    <CCol lg="6" class="card-base">
+                        <CRow lg="8">
+                        <CSelect class="select-factory" label="廠區" :options="factoryOptions"
+                            :value.sync="factory" />
+                        <CSelect class="select-factory" label="分類項目" :options="typeOptions"
+                            :value.sync="machineType" />
+                        <CButton
+                        class="btn-search"
+                        size="lg"
+                        @click="get_equip_list(factory, selectMonth)"
+                        >
+                        搜尋
+                        </CButton>
+                        </CRow>
+                        <h4 class="mt-4" style="color: #98a8a0">
+                            <CIcon name="cil-description" size="lg" /> 設備清單
+                        </h4>
+                        <CDataTable
+                            :items="equipList"
+                            :fields="equipFields"
+                            style="textalign: center; font-size: 110%; color: #98a8a0"
+                            :items-per-page="5"
+                            :bordered="true"
+                            pagination
+                        >
+                            <template #update_chart="{ item }">
+                            <td class="p-2">
+                                <CButton
+                                square
+                                size="sm"
+                                style="color: #98a8a0"
+                                @click="show_chart(item)"
+                                >
+                                <CIcon size="xl" name="cil-chart-line" />
+                                </CButton>
+                            </td>
+                            </template>
+                        </CDataTable>
+                    </CCol>
                 </CRow>
-
-			</CCol>
             </CCardBody>
         </CCard >
         <CCard class="card-base">
             <CRow>
-                <CCol lg="6">
-                    <h4 class="ml-4 mt-4" style="color: #98a8a0">
-                        <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
-                    </h4>
-                    <CRow>
-                        <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:60vh"></div>
-                    </CRow>
-                </CCol>
+
                 <CCol class="mr-4">
-                    <h4 class="mt-4" style="color: #98a8a0">
-                        <CIcon name="cil-description" size="lg" /> 設備清單
-                    </h4>
-                    <CDataTable
-                        :items="equipList"
-                        :fields="equipFields"
-                        style="textalign: center; font-size: 110%; color: #98a8a0"
-                        :items-per-page="5"
-                        :bordered="true"
-                        pagination
-                    >
-                        <template #update_chart="{ item }">
-                        <td class="p-2">
-                            <CButton
-                            square
-                            size="sm"
-                            style="color: #98a8a0"
-                            @click="show_chart(item)"
-                            >
-                            <CIcon size="xl" name="cil-chart-line" />
-                            </CButton>
-                        </td>
-                        </template>
-                    </CDataTable>
+
                 </CCol>
             </CRow>
             <!-- <CModal
@@ -83,15 +86,17 @@
 export default {
     data() {
         return {
-            maxContract: 125000,
+            maxContract: 62500,
             showSearchHint: false,
             factoryOptions: ['全廠區', '廠區一', '廠區二', '廠區三'],
+            typeOptions: ['全部項目'],
             yearOptions: [2021],
             yearMonth: '-',
             selectYear: 2021,
             selectYearYoy: '',
             selectMonth: 8,
             factory: '全廠區',
+            machineType: '全部項目',
             data: [],
 
             equipName: '請從右側選擇設備',
@@ -104,9 +109,9 @@ export default {
             equipFields: [
                 {key: 'machine_name', label: '設備名稱', _style: "color: #4C756A"},
                 {key: 'machine_sn', label: 'S/N', _style: "color: #4C756A"},
+                {key: 'factory', label: '廠區', _style: "color: #4C756A"},
+                {key: 'type', label: '分類項目', _style: "color: #4C756A"},
                 {key: 'cur_month_elec', label: '耗電量', _style: "color: #4C756A"},
-                {key: 'yoy_month_elec', label: '去年同期分析', _style: "color: #4C756A"},
-                {key: 'activation', label: '稼動率', _style: "color: #4C756A"},
                 {key: 'update_chart', label: ''}
             ],
             equipEventList: [],
@@ -139,7 +144,7 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: ['契約容量', '預測使用容量', '現使用容量'],
+                    data: ['未來三個月\n契約容量', '未來三個月\n預測使用容量', '當前月\n使用容量'],
                     inverse: true,
                     animationDuration: 300,
                     animationDurationUpdate: 300,
@@ -150,6 +155,7 @@ export default {
                     }
                 },
                 visualMap: {
+                    show: false,
                     orient: 'horizontal',
                     left: 'center',
                     min: 0,
@@ -208,7 +214,7 @@ export default {
             this.get_select_year_month(this.selectYear, this.selectMonth);
             let data = {factory:'', datetime:''};
             this.$http
-                .post('api/enms/select_factory_machine_monthly_info', {data:data})
+                .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                 .then((res) => {
                     this.equipList = res.data;
                     this.show_chart(this.equipList[0]);
@@ -229,7 +235,7 @@ export default {
                 this.get_select_year_month(this.selectYear, this.selectMonth);
                 let data = {factory:'', datetime:this.yearMonth};
                 this.$http
-                    .post('api/enms/select_factory_machine_monthly_info', {data:data})
+                    .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                     .then((res) => {
                         this.equipList = res.data;
                         this.show_chart(this.equipList[0]);

@@ -1,7 +1,7 @@
 <template>
-    <div class="chart" id="main" style="width: 23vw;height:30vh;">   
+    <div class="chart" id="main" style="width: 23vw;height:30vh;">
         <div style="display:none">{{data}}</div>
-    </div>       
+    </div>
 </template>
 
 <script>
@@ -36,8 +36,8 @@ export default {
             this.option = {
                 grid: {
                     left: '0%',
-                    right: '5%',
-                    bottom: '15%',
+                    right: '8%',
+                    bottom: '1%',
                     top: '3%',
                     containLabel: true,
                 },
@@ -51,7 +51,7 @@ export default {
                         lineStyle: {
                             color: '#A19991'
                         }
-                    }                                        
+                    }
                 },
                 yAxis: {
                     type: 'category',
@@ -66,10 +66,11 @@ export default {
                     }
                 },
                 visualMap: {
+                    show: false,
                     orient: 'horizontal',
                     left: 'center',
                     min: 0,
-                    max: this.data[0],
+                    max: 250000,// this.data[0],
                     text: ['High', 'Low'],
                     dimension: 0,
                     inRange: {

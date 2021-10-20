@@ -115,8 +115,8 @@ export default {
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            contractCapacity: 250000,
-            elecCapacity: [50000, 15000, 5000],
+            contractCapacity: 500000,
+            elecCapacity: [50000, 0, 0],
             getElecConsumData: [],
             getBarData: [],
 
@@ -132,7 +132,11 @@ export default {
             curAbnormalLog: '',
             abnormalStatus: {},
             abnormalLogs: [],
-            canGetNew: true
+            canGetNew: true,
+
+            // timer
+            timerData: '',
+            timerEvent: '',
 
         }
     },
@@ -154,75 +158,57 @@ export default {
         this.curLogIndex = 0;
         this.get_history_data();
         this.get_cur_month_elec();
+        this.get_demand_response();
         this.update_factory_status();
         this.get_real_time_elec();
         this.get_sensor_data();
         this.check_abnormal_event();
 
-
-        setInterval(() => {
+        this.timerData = setInterval(() => {
             this.get_cur_month_elec();
             this.get_real_time_elec();
+            this.get_demand_response();
             this.get_sensor_data();
             this.update_factory_status();
         }, 2000);
 
-        setInterval(() => {
+        this.timerEvent = setInterval(() => {
             this.get_cur_abnormal_event();
             this.check_abnormal_event();
-        }, 500);
+        }, 100);
+
 
         // update history data every day
         // setInterval(() => {
         //     this.get_history_data();
         // }, 86400000);
     },
+
+    beforeDestroy() {
+        clearInterval(this.timerData);
+        clearInterval(this.timerEvent);
+    },
+
     methods: {
         get_history_data() {
-            // let curDate = new Date();
-            // let curTime = curDate.getHours() + ':' + curDate.getMinutes()
-            //                 + ':' + curDate.getSeconds() + ':' + curDate.getMilliseconds();
-            // console.log('***before API:', curTime);
             this.$http
                 .get('api/enms/select_two_years_electricity_consumption')
                 .then(res=> {
                     let todayDate = new Date();
                     let curMonth = todayDate.getMonth();
-                    // this.cEmissionLastYear = [];
-                    // this.cEmissionThisYearBefore = [];
                     for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
                         if (ix > 22) break;
                         (ix < 12)   ? this.cEmissionLastYear.push((JSON.parse(res.data[ix].carbon_footprint)).toFixed(2))
                                     : this.cEmissionThisYearBefore.push((JSON.parse(res.data[ix].carbon_footprint)).toFixed(2));
                     }
-                    // this.cEmissionLastYear = this.cEmissionLastYear.map(x=>x * 0.554);
-                    // console.log('after:', this.cEmissionLastYear);
                     this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
-                    // console.log(this.cEmissionThisYear);
                     this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
                     this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
-                    this.elecCapacity = [this.contractCapacity, 0, 0];
-                    for (let iy = 0; iy < 12; iy++){
-                        this.elecCapacity[1] += this.cEmissionLastYear[iy];
-                        if (iy < this.cEmissionThisYearBefore.length) {
-                            this.elecCapacity[2] += this.cEmissionThisYearBefore[iy];
-                        }
-                    }
-                    this.elecCapacity[1] = this.elecCapacity[1].toFixed(2);
-                    this.elecCapacity[2] = this.elecCapacity[2].toFixed(2);
                 });
-            // let curDateAfter = new Date();
-            // let curTimeAfter = curDateAfter.getHours() + ':' + curDateAfter.getMinutes()
-            //                     + ':' + curDateAfter.getSeconds() + ':' + curDateAfter.getMilliseconds();
-            // console.log('***after API:', curTimeAfter);
 
         },
 
         get_cur_month_elec() {
-            // let curDate = new Date();
-            // let curTime = curDate.getHours() + ':' + curDate.getMinutes()
-            //                 + ':' + curDate.getSeconds() + ':' + curDate.getMilliseconds();
-            // console.log('***before API get_cur_month_elec:', curTime);
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
@@ -244,12 +230,21 @@ export default {
 
                     this.reducedCEmission = (this.cEmissionLastTime - this.cEmission).toFixed(2);
                 });
-            // let curDateAfter = new Date();
-            // let curTimeAfter = curDateAfter.getHours() + ':' + curDateAfter.getMinutes()
-            //                     + ':' + curDateAfter.getSeconds() + ':' + curDateAfter.getMilliseconds();
-            // console.log('***after API get_cur_month_elec:', curTimeAfter);
-            // console.log('barData:', this.getBarData);
 
+        },
+
+        get_demand_response() {
+            this.$http
+                .get('api/enms/select_two_years_elec')
+                .then(res=>{
+                    this.elecCapacity = [this.contractCapacity, 0, 0];
+                    for (let ix = 0; ix < res.data.length; ++ix) {
+                        (ix < 12)   ? (this.elecCapacity[1] += res.data[ix].elec)
+                                    : (this.elecCapacity[2] += res.data[ix].elec);
+                    }
+                    this.elecCapacity[1] = this.elecCapacity[1].toFixed(2);
+                    this.elecCapacity[2] = this.elecCapacity[2].toFixed(2);
+                })
         },
 
         update_factory_status() {
@@ -327,11 +322,6 @@ export default {
 
 
                 });
-            // for(let iz = 0; iz < this.abnormalLogs.length; ++iz) {
-            //     let nowDate = new Date();
-            //     let getTime = nowDate.getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds();
-            //     console.log(getTime, iz, this.abnormalLogs[iz].event, this.abnormalLogs[iz].time);
-            // }
         },
 
         get_real_time_elec() {
@@ -349,6 +339,7 @@ export default {
             this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
             this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
         }
+
 
     }
 }

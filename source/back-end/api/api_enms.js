@@ -45,7 +45,6 @@ module.exports = {
     //      Unused
     /*========================================================== */
 
-
     /* Dashboard API */
     select_current_month_cumulative_electricity_consumption: function(req, res) {
         let statusData = {
@@ -637,6 +636,52 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         console.log(sql);
         dbFactory.action_db(sql, statusData, res);
+    },
+    select_machine_info_for_demand_predict: function(req, res) {
+        /* TODO
+            change factory to production_line
+            because factory is for demo
+        */
+        statusDataCommon['errorMsg'] = "Some error occurred while select_factory_machine_monthly_info";
+
+        var sql = '';
+        if(req.body.data.factory.length == 0 || req.body.data.datetime.length == 0) {
+            sql =   " SELECT DISTINCT "                                                                     +
+                        " machine_info.machine_name, "                                                      +
+                        " machine_info.machine_sn, "                                                        +
+                        " machine_info.factory, "                                                           +
+                        " machine_info.type, "                                                              +
+                        " machine_info.month_elec AS cur_month_elec "                                       +
+                    " FROM "                                                                                +
+                        " equipment_info "                                                                  +
+                    " JOIN "                                                                                +
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "             +
+                    " JOIN "                                                                                +
+                        " history_month_info ON equipment_info.mac = history_month_info.mac "               +
+                    " WHERE "                                                                               +
+                        " history_month_info.`datetime` = 20210800000000";
+            sql = dbFactory.build_mysql_format(sql);
+        }
+        else {
+            sql =   " SELECT DISTINCT "                                                                     +
+                        " machine_info.machine_name, "                                                      +
+                        " machine_info.machine_sn, "                                                        +
+                        " machine_info.factory, "                                                           +
+                        " machine_info.type, "                                                              +
+                        " machine_info.month_elec AS cur_month_elec "                                       +
+                    " FROM "                                                                                +
+                        " equipment_info "                                                                  +
+                    " JOIN "                                                                                +
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "             +
+                    " JOIN "                                                                                +
+                        " history_month_info ON equipment_info.mac = history_month_info.mac "               +
+                    " WHERE "                                                                               +
+                        " machine_info.factory = ? AND history_month_info.`datetime` = ?";
+            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
+        }
+
+        dbFactory.action_db(sql, statusDataCommon, res);
+
     },
     /* End of DemandPredict API */
 
