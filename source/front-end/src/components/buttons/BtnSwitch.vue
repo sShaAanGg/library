@@ -8,7 +8,7 @@
         >
             {{ statusLight }}
         </CButton>
-    </h6>    
+    </h6>
 </template>
 
 <script>
@@ -25,7 +25,8 @@ export default {
                 "control":1,
                 "deviceCount":1,
                 "devices":[{'mac':this.btnMac}]
-            }
+            },
+            checkTimer:'',
         }
     },
     mounted() {
@@ -40,12 +41,28 @@ export default {
                         .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
                         .then((res) => {
                             this.statusLight = res.data['comms'][0]['gpioStatus'];
-                            if(!this.statusLight) this.statusLight = 'KO';
+                            if(!this.statusLight)
+                                this.statusLight = 'KO';
                         })
                         .catch((error) => console.log(error))
+
+                    setInterval(() => {
+                        this.$http
+                            .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
+                            .then((res) => {
+                                let lastStatus = res.data['comms'][0]['gpioStatus'];
+                                if (this.statusLight == lastStatus){
+                                    return;
+                                }
+                                this.statusLight = res.data['comms'][0]['gpioStatus'];
+                                console.log(this.statusLight);
+                            })
+                            .catch((error) => console.log(error))
+                    }, 2000);
                 })
                 .catch( (error) => console.log(error));
         },
+
         set_switch() {
             // this.data['devices'].push({'mac':this.mac});
             this.$http
@@ -78,7 +95,8 @@ export default {
                 })
                 .catch( (error) => console.log(error));
         },
-    }
+    },
+
 }
 
 </script>
