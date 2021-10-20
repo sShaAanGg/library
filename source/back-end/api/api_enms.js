@@ -93,6 +93,7 @@ module.exports = {
             res.status(statusData.successCode).send(cumulativeElectricityConsumption);
         });
     },
+
     select_two_years_electricity_consumption: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -116,6 +117,7 @@ module.exports = {
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
         dbFactory.action_db(sql, statusData, res);
     },
+
     select_two_years_elec: function(req, res) {
         /* select passed two years electricity consumption
         @purpose
@@ -143,6 +145,7 @@ module.exports = {
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
         dbFactory.action_db(sql, statusData, res);
     },
+
     select_two_years_carbon_footprint: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -163,6 +166,7 @@ module.exports = {
         console.log(sql);
         dbFactory.action_db(sql, statusData, res);
     },
+
     select_real_time_electricity_consumption: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -221,6 +225,7 @@ module.exports = {
             res.status(statusData.successCode).send(real_time_electricity_consumption.toString());
         });
     },
+
     select_event_log: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -244,6 +249,7 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date(time), 'yyyyMMddHHmmss'), utility.formattime(new Date(), 'yyyyMMddHHmmss')]);
         dbFactory.action_db(sql, statusData, res);
     },
+
     select_every_years_average: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -279,6 +285,7 @@ module.exports = {
             res.status(statusData.successCode).send(eleAverage);
         });
     },
+
     select_equip_controllers: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_buttons";
 
@@ -298,8 +305,23 @@ module.exports = {
                         " machine_info.factory = ?";
         sql = dbFactory.build_mysql_format(sql, [req.body.data.factory]);
         dbFactory.action_db(sql, statusDataCommon, res);
-
     },
+
+    select_envirnmental: function(req, res) {
+        statusDataCommon['errorMsg'] = "Some error occurred while select_envirmental";
+
+        let sql =   " SELECT "                  +
+                        " * "                   +
+                    " FROM "                    +
+                        " enms_environment "    +
+                    " ORDER BY "                +
+                        " `time` "              +
+                    " DESC "                    +
+                    " LIMIT 1 ";
+console.log(sql)
+        dbFactory.action_db(sql, statusDataCommon, res);
+    },
+
     /* End of Dashboard API */
 
     /* Analysis API */
@@ -321,6 +343,7 @@ module.exports = {
             res.status(statusData.successCode).send(result);
         });
     },
+
     select_two_years_electricity_consumption_for_anslysis: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -443,6 +466,7 @@ module.exports = {
             res.status(statusData.successCode).send(result);
         });
     },
+
     /* End of Analysis API */
 
     /* ProductionLineAnalysis API */
@@ -492,6 +516,7 @@ module.exports = {
         dbFactory.action_db(sql, statusDataCommon, res);
 
     },
+
     select_equip_error_log: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_error_log";
 
@@ -511,6 +536,7 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
+
     select_equip_daily_elec_yoy: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
 
@@ -534,6 +560,7 @@ module.exports = {
                         [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
+
     select_equip_daily_elec_this_month: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
 
@@ -557,6 +584,7 @@ module.exports = {
                         [req.body.data.machine_sn, req.body.data.start_date, req.body.data.end_date]);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
+
     /* End of ProductionLineAnalysis API */
 
     /* DemandPredict API */
@@ -611,6 +639,7 @@ module.exports = {
         });
         // dbFactory.action_db(sql, statusData, res);
     },
+
     select_current_capacity: function(req, res) {
         /* select electricity consumption of current month
         @purpose
@@ -636,6 +665,7 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         dbFactory.action_db(sql, statusData, res);
     },
+
     select_machine_info_for_demand_predict: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_machine_info_for_demand_predict";
 
@@ -675,6 +705,7 @@ module.exports = {
         }
         dbFactory.action_db(sql, statusDataCommon, res);
     },
+
     /* End of DemandPredict API */
 
     /* MachineManage API */
@@ -716,6 +747,7 @@ module.exports = {
             res.status(statusData.successCode).send(result);
         });
     },
+
     insert_machine_manage: function(req, res) {
         let example = [ 'factory',
                         'machineName',
@@ -771,6 +803,7 @@ module.exports = {
                                                         req.body.data.activation]);
             dbFactory.action_db(sql, statusData, res);
     },
+
     update_machine_manage: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -798,6 +831,7 @@ module.exports = {
                                                         req.body.data.id]);
             dbFactory.action_db(sql, statusData, res);
     },
+
     delete_machine_manage: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -812,6 +846,7 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [req.body.data.id]);
         dbFactory.action_db(sql, statusData, res);
     },
+
     select_machine_sn: function(req, res) {
         let statusData = {
             successCode: 200,
@@ -828,6 +863,7 @@ module.exports = {
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machineSn]);
         dbFactory.action_db(sql, statusData, res);
     },
+
     /* End of MachineManage API */
 
     /* AbnormalAlert API */
