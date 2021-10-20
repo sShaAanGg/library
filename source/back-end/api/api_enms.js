@@ -587,25 +587,56 @@ module.exports = {
                     " WHERE "                                                                       +
                         " machine_info.machine_sn = ? "                                             +
                     " AND "                                                                         +
-                        " `datetime` > '20201001000000' "                                           +
+                        " `datetime` > ? "                                           +
                     " AND "                                                                         +
-                        " `datetime` < '20210200000000' ";
-        let curYear = new Date().getFullYear();
+                        " `datetime` < ? ";
+        let lastYear = new Date().getFullYear() - 1;
         let curMonth = new Date().getMonth() + 1;
-        let next3Year = curYear;
-        let next3Month = (curMonth + 3) % 12;
-        (Math.floor((curMonth + 3) / 12) >= 1) ? next3Year = curYear + 1 : next3Year = curYear;
+        let next3MonthYear = lastYear;
+        let next3Month = (curMonth + 4) % 12;
+        (Math.floor((curMonth + 3) / 12) >= 1) ? next3MonthYear = lastYear + 1 : next3MonthYear = lastYear;
         (curMonth < 10) ? curMonth = '0' + curMonth.toString() : curMonth = curMonth.toString();
         (next3Month < 10) ? next3Month = '0' + next3Month.toString() : next3Month = next3Month.toString();
-        let startDate = curYear.toString() + curMonth + '01000000';
-        let endDate = next3Year.toString() + next3Month + '00000000';
+        let startDate = lastYear.toString() + curMonth + '01000000';
+        let endDate = next3MonthYear.toString() + next3Month + '00000000';
 
-        // sql = dbFactory.build_mysql_format(sql, [startDate, endDate]);
-        console.log(sql);
-        dbFactory.action_db(sql, statusData, res);
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn, startDate, endDate]);
+
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            let predictCapicity = 0;
+            for (let ix = 0; ix < result.length; ++ix){
+                predictCapicity += result[ix].elec;
+            }
+            predictCapicity = parseFloat(predictCapicity.toFixed(2));
+            res.status(statusData.successCode).send([predictCapicity]);
+        });
+        // dbFactory.action_db(sql, statusData, res);
     },
     select_current_capacity: function(req, res) {
+        /* select electricity consumption of current month
+        @purpose
+            if current date is in 2021 August, it will select data between 2020-01 ~ 2021-08
+        @argument:
+            none, get system time to format sql
+        @return:
+            an array which length between 0-24
+        */
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
+        };
 
+        let sql =   " SELECT "                                  +
+                        " machine_info.month_elec AS elec "     +
+                    " FROM "                                                                        +
+                        " machine_info "                                                       +
+                    " WHERE "                                                                       +
+                        " machine_info.machine_sn = ? ";
+
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
+        console.log(sql);
+        dbFactory.action_db(sql, statusData, res);
     },
     /* End of DemandPredict API */
 

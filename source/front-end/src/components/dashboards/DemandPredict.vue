@@ -83,7 +83,7 @@
 export default {
     data() {
         return {
-            maxContract: 250000,
+            maxContract: 125000,
             showSearchHint: false,
             factoryOptions: ['全廠區', '廠區一', '廠區二', '廠區三'],
             yearOptions: [2021],
@@ -187,8 +187,10 @@ export default {
     mounted() {
         this.barChart = this.$echarts.init(document.getElementById("barChartDemand"));
         this.barChart.setOption(this.option);
-        this.get_predict_capacity();
-        // this.initialize_page();
+        this.option.visualMap.max = this.maxContract;
+        this.option.series[0].data[0] = this.maxContract;
+        // this.get_predict_capacity();
+        this.initialize_page();
 
     },
     methods: {
@@ -209,7 +211,6 @@ export default {
                 .post('api/enms/select_factory_machine_monthly_info', {data:data})
                 .then((res) => {
                     this.equipList = res.data;
-                    console.log('1', this.equipList[0]);
                     this.show_chart(this.equipList[0]);
                     // this.equipList[0]._classes = '';
 
@@ -253,25 +254,24 @@ export default {
 
         },
 
-        get_contract_capacity(){
-            // get contract capacity for the next three month
-
-        },
-
-        get_predict_capacity(){
+        get_predict_capacity(machine_sn){
+            let data = {machine_sn: machine_sn}
             this.$http
-                .get('api/enms/select_predict_capacity')
+                .post('api/enms/select_predict_capacity', {data:data})
                 .then(res=>{
-                    console.log('capacity', res);
+                    this.option.series[0].data[1] = res.data[0];
+                    this.$http
+                        .post('api/enms/select_current_capacity', {data:data})
+                        .then(res=>{
+                            this.option.series[0].data[2] = res.data[0].elec;
+                            console.log(res)
+                            this.barChart.setOption(this.option);
+
+                        });
                 });
         },
 
-        get_current_capacity(){
-
-        },
-
         show_chart(item) {
-            console.log('2', item);
             let rowColor = 'table-active';
             // reset row color
             let foundIdx = this.equipList.findIndex(x => x._classes === rowColor);
@@ -282,7 +282,6 @@ export default {
             // change row color to show selected
             // change existed attributes to force rendering
             //  this.equipList[foundIdx]._classes = '';
-            console.log('3', item);
             let tempName = item.machine_name;
             item.machine_name = '123';
             item.machine_name = tempName;
@@ -292,11 +291,7 @@ export default {
             this.equipElec = item.cur_month_elec;
             this.equipActivate = item.activation;
 
-
-            // this.get_equip_events(item);
-            // this.get_daily_elec(item);
-            // this.get_daily_elec_yoy(item);
-            this.barChart.setOption(this.option);
+            this.get_predict_capacity(item.machine_sn);
         },
 
         reset_chart() {

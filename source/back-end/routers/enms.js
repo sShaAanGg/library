@@ -94,8 +94,15 @@ router.get('/select_two_years_elec', function (req, res) {
     api.select_two_years_elec(req, res);
 });
 
-router.get('/select_predict_capacity', function (req, res) {
+/* DemandPredict API */
+router.post('/select_predict_capacity', function (req, res) {
     api.select_predict_capacity(req, res);
 });
+router.post('/select_current_capacity', function (req, res) {
+    api.select_current_capacity(req, res);
+});
+/* End of DemandPredict API */
+
+
 
 module.exports = router;
