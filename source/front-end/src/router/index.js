@@ -11,11 +11,13 @@ const AccountManage = () => import('@/views/AccountManage')
 // Dashboard
 const Dashboard = () => import('@/components/dashboards/Dashboard.vue')
 const ProductLineStatusAnaylysis = () => import('@/components/dashboards/ProductLineStatusAnalysis.vue')
+const ElectricBill = () => import ('@/components/dashboards/ElectricBill.vue')
+const DemandPredict = () => import ('@/components/dashboards/DemandPredict.vue')
 const EquipmentManage = () => import('@/components/dashboards/EquipmentManage.vue')
 const MachineManage = () => import('@/components/dashboards/MachineManage.vue')
 const AIAnalysis = () => import('@/components/dashboards/AIAnalysis.vue')
 const AbnormalAlert = () => import('@/components/dashboards/AbnormalAlert.vue')
-const DemandPredict = () => import ('@/components/dashboards/DemandPredict.vue')
+
 
 //Cards
 const Analysis = () => import('@/components/cards/Analysis')
@@ -75,6 +77,12 @@ function configRoutes() {
                     name: '產線狀態分析',
                     component: ProductLineStatusAnaylysis,
                     meta: { requiresAuth: true }
+                },
+                {
+                    path: 'electric-bill',
+                    name: '電費計算',
+                    component: ElectricBill,
+                    meta: { requireAuth: true}
                 },
                 {
                     path: 'demand-predict',

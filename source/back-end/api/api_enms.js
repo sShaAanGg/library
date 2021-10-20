@@ -634,45 +634,46 @@ module.exports = {
                         " machine_info.machine_sn = ? ";
 
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
-        console.log(sql);
         dbFactory.action_db(sql, statusData, res);
     },
     select_machine_info_for_demand_predict: function(req, res) {
-        /* TODO
-            1. change factory to production_line
-               because factory is for demo
-            2. change default month to current month
-        */
         statusDataCommon['errorMsg'] = "Some error occurred while select_machine_info_for_demand_predict";
 
         let sql = "";
-        let commonSql =    " SELECT DISTINCT "                                                                     +
-                                " machine_info.machine_name, "                                                      +
-                                " machine_info.machine_sn, "                                                        +
-                                " machine_info.factory, "                                                           +
-                                " machine_info.type, "                                                              +
-                                " machine_info.month_elec AS cur_month_elec "                                       +
-                            " FROM "                                                                                +
-                                " equipment_info "                                                                  +
-                            " JOIN "                                                                                +
-                                " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "             +
-                            " JOIN "                                                                                +
-                                " history_month_info ON equipment_info.mac = history_month_info.mac ";
-        if(req.body.data.factory === '全廠區' || req.body.data.datetime.length == 0) {
-            sql =   commonSql                                               +
-                    " WHERE "                                               +
-                        " history_month_info.`datetime` = 20210800000000";
-            sql = dbFactory.build_mysql_format(sql);
+        let commonSql = " SELECT DISTINCT "                                                                     +
+                            " machine_info.machine_name, "                                                      +
+                            " machine_info.machine_sn, "                                                        +
+                            " machine_info.factory, "                                                           +
+                            " machine_info.type, "                                                              +
+                            " machine_info.month_elec AS cur_month_elec "                                       +
+                        " FROM "                                                                                +
+                            " equipment_info "                                                                  +
+                        " JOIN "                                                                                +
+                            " machine_info ON equipment_info.machine_sn = machine_info.machine_sn ";
+
+        if(req.body.data.factory === '全廠區' && req.body.data.type === '全部項目') {
+            sql = dbFactory.build_mysql_format(commonSql);
         }
-        else {
+        else if (req.body.data.factory != '全廠區' && req.body.data.type === '全部項目') {
             sql =   commonSql                                                               +
                     " WHERE "                                                               +
-                        " machine_info.factory = ? AND history_month_info.`datetime` = ?";
-            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
+                        " machine_info.factory = ? ";
+            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory]);
         }
-        console.log(sql);
+        else if (req.body.data.factory === '全廠區' && req.body.data.type != '全部項目') {
+            sql =   commonSql                                                               +
+                    " WHERE "                                                               +
+                        " machine_info.`type` = ? ";
+            sql = dbFactory.build_mysql_format(sql, [req.body.data.type]);
+        }
+        else {
+            // given factory and type
+            sql =   commonSql                                                               +
+                    " WHERE "                                                               +
+                        " machine_info.factory = ? AND machine_info.type = ?";
+            sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.type]);
+        }
         dbFactory.action_db(sql, statusDataCommon, res);
-
     },
     /* End of DemandPredict API */
 

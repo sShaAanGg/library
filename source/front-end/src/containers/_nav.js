@@ -16,6 +16,12 @@ export const admin = [
             },
             {
                 _name: 'CSidebarNavItem',
+                name: '電費計算',
+                to: '/electric-bill',
+                icon: 'cil-lightbulb',
+            },
+            {
+                _name: 'CSidebarNavItem',
                 name: '需量預測',
                 to: '/demand-predict',
                 icon: 'cil-bar-chart',

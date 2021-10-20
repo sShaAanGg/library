@@ -3,7 +3,7 @@
         <CCard class="card-base">
             <CCardBody>
                 <h4 style="color: #98a8a0">
-                    <CIcon name="cil-bar-chart" size="lg"/> 需量預測
+                    <CIcon name="cil-lightbulb" size="lg"/> 電費計算
                 </h4>
                 <CRow lg="12">
                     <CCol lg="6">
