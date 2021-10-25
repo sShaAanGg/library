@@ -56,14 +56,6 @@
                 </CRow>
             </CCardBody>
         </CCard >
-        <CCard class="card-base">
-            <CRow>
-
-                <CCol class="mr-4">
-
-                </CCol>
-            </CRow>
-        </CCard>
     </div>
 </template>
 
@@ -84,7 +76,7 @@ export default {
                 {key: 'machine_sn', label: 'S/N', _style: "color: #4C756A"},
                 {key: 'factory', label: '廠區', _style: "color: #4C756A"},
                 {key: 'type', label: '分類項目', _style: "color: #4C756A"},
-                {key: 'cur_month_elec', label: '耗電量', _style: "color: #4C756A"},
+                {key: 'cur_month_elec', label: '需量(KW)', _style: "color: #4C756A"},
                 {key: 'update_chart', label: ''}
             ],
 
@@ -111,7 +103,7 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: ['未來三個月\n契約容量', '未來三個月\n預測使用容量', '當前月\n使用容量'],
+                    data: ['未來三個月\n契約容量', '未來三個月\n預測需量', '當前月\n需量'],
                     inverse: true,
                     animationDuration: 300,
                     animationDurationUpdate: 300,

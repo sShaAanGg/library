@@ -538,7 +538,7 @@ console.log(sql)
     },
 
     select_equip_daily_elec_yoy: function(req, res) {
-        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
+        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_yoy";
 
         let sql =   " SELECT "                                                                  +
                         " history_day_info.electricity "                                        +
@@ -562,7 +562,7 @@ console.log(sql)
     },
 
     select_equip_daily_elec_this_month: function(req, res) {
-        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_a_month";
+        statusDataCommon['errorMsg'] = "Some error occurred while select_equip_daily_elec_this_month";
 
         let sql =   " SELECT "                                                                  +
                         " history_day_info.electricity "                                        +
@@ -597,11 +597,7 @@ console.log(sql)
         @return:
             an array which length between 0-24
         */
-        let statusData = {
-            successCode: 200,
-            errorCode: 500,
-            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
-        };
+        statusDataCommon['errorMsg'] = " Some error occurred while select_predict_capacity ";
 
         let sql =   " SELECT "                                                                      +
                         " history_month_info.electricity AS elec "                                  +
@@ -629,13 +625,13 @@ console.log(sql)
 
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn, startDate, endDate]);
 
-        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+        dbFactory.action_db_with_cb(sql, statusDataCommon, (result) => {
             let predictCapicity = 0;
             for (let ix = 0; ix < result.length; ++ix){
                 predictCapicity += result[ix].elec;
             }
             predictCapicity = parseFloat(predictCapicity.toFixed(2));
-            res.status(statusData.successCode).send([predictCapicity]);
+            res.status(statusDataCommon.successCode).send([predictCapicity]);
         });
         // dbFactory.action_db(sql, statusData, res);
     },
@@ -649,11 +645,8 @@ console.log(sql)
         @return:
             an array which length between 0-24
         */
-        let statusData = {
-            successCode: 200,
-            errorCode: 500,
-            errorMsg: " Some error occurred while select_two_years_electricity_consumption "
-        };
+        statusDataCommon['errorMsg'] = " Some error occurred while select_current_capacity ";
+
 
         let sql =   " SELECT "                                  +
                         " machine_info.month_elec AS elec "     +
@@ -663,7 +656,7 @@ console.log(sql)
                         " machine_info.machine_sn = ? ";
 
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
-        dbFactory.action_db(sql, statusData, res);
+        dbFactory.action_db(sql, statusDataCommon, res);
     },
 
     select_machine_info_for_demand_predict: function(req, res) {

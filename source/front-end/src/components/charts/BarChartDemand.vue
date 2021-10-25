@@ -55,7 +55,7 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: ['契約容量', '前年度', '現使用容量'],
+                    data: ['契約容量(KW)', '前年度需量(KW)', '當前需量(KW)'],
                     inverse: true,
                     animationDuration: 300,
                     animationDurationUpdate: 300,

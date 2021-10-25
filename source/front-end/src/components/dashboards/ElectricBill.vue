@@ -8,17 +8,51 @@
                 <CRow lg="12">
                     <CCol lg="6">
                         <h4 class="ml-4 mt-4" style="color: #98a8a0">
-                            <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
+                            <CIcon name="cil-calculator" size="lg" /> 計價設定-夏季
                         </h4>
                         <CRow>
-                            <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:60vh"></div>
+                            <h5 class="ml-5 mt-1"> 契約容量 (月)</h5>
+                            <CInput class="ml-2" size="sm"/>
+                            <h5 class="ml-3 mt-1"> kW </h5>
+                        </CRow>
+                        <CRow>
+                            <h5 class="ml-5 mt-1"> 需量 (月)</h5>
+                            <CInput class="ml-5" size="sm"/>
+                            <h5 class="ml-3 mt-1"> kW </h5>
+                            <h5 class="ml-5 mt-1"> 基本電費 </h5>
+                            <CInput class="ml-5" size="sm"/>
+                            <h5 class="ml-3 mt-1"> 元 / 月 </h5>
+                        </CRow>
+                        <CRow>
+                            <h5 class="ml-5 mt-1"> 流動費率 </h5>
+                            <CInput class="ml-5" size="sm"/>
+                            <h5 class="ml-3 mt-1"> 元 / 度 </h5>
+                            <h5 class="ml-5 mt-1"> 流動電費 </h5>
+                            <CInput class="ml-5" size="sm"/>
+                            <h5 class="ml-3 mt-1"> 元 / 月 </h5>
+                        </CRow>
+                        <CRow>
+                            <CButton
+                            class="mr-1 btn-search"
+                            size="lg"
+                            >
+                            儲存設定
+                            </CButton>
+                        </CRow>
+                        <CRow>
+                            <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:50vh"></div>
                         </CRow>
                     </CCol>
                     <CCol lg="6" class="card-base">
+                        <h4 class="mt-4" style="color: #98a8a0">
+                            <CIcon name="cil-description" size="lg" /> 廠區用電
+                        </h4>
                         <CRow lg="8">
                         <CSelect class="select-factory" label="廠區" :options="factoryOptions"
                             :value.sync="factory" />
-                        <CSelect class="select-factory" label="分類項目" :options="typeOptions"
+                        <CSelect class="select-factory" label="年" :options="typeOptions"
+                            :value.sync="machineType" />
+                        <CSelect class="select-factory" label="月" :options="typeOptions"
                             :value.sync="machineType" />
                         <CButton
                         class="btn-search"
@@ -28,9 +62,6 @@
                         搜尋
                         </CButton>
                         </CRow>
-                        <h4 class="mt-4" style="color: #98a8a0">
-                            <CIcon name="cil-description" size="lg" /> 設備清單
-                        </h4>
                         <CDataTable
                             :items="equipList"
                             :fields="equipFields"
@@ -56,14 +87,6 @@
                 </CRow>
             </CCardBody>
         </CCard >
-        <CCard class="card-base">
-            <CRow>
-
-                <CCol class="mr-4">
-
-                </CCol>
-            </CRow>
-        </CCard>
     </div>
 </template>
 
@@ -80,75 +103,69 @@ export default {
             equipName: '',
             equipList: [],
             equipFields: [
-                {key: 'machine_name', label: '設備名稱', _style: "color: #4C756A"},
-                {key: 'machine_sn', label: 'S/N', _style: "color: #4C756A"},
                 {key: 'factory', label: '廠區', _style: "color: #4C756A"},
-                {key: 'type', label: '分類項目', _style: "color: #4C756A"},
-                {key: 'cur_month_elec', label: '耗電量', _style: "color: #4C756A"},
-                {key: 'update_chart', label: ''}
+                {key: 'contract', label: '契約容量(KW)', _style: "color: #4C756A"},
+                {key: 'demand', label: '需量(KW)', _style: "color: #4C756A"},
+                {key: 'power_consum', label: '耗電量(KWh)', _style: "color: #4C756A"},
+                {key: 'elec_bill', label: '流動電費', _style: "color: #4C756A"},
             ],
 
             barChart: '',
             option: {
-                grid: {
-                    left: '0%',
-                    right: '5%',
-                    bottom: '15%',
-                    top: '3%',
-                    containLabel: true,
+                tooltip: {
+                    trigger: 'item'
                 },
-                xAxis: {
-                    max: 'dataMax',
-                    axisLabel:{
-                        fontSize: this.$utils.adjustFontSize(0.16),
-                        color:'white'
-                    },
-                    splitLine: {
-                        lineStyle: {
-                            color: '#A19991'
-                        }
-                    }
-                },
-                yAxis: {
-                    type: 'category',
-                    data: ['未來三個月\n契約容量', '未來三個月\n預測使用容量', '當前月\n使用容量'],
-                    inverse: true,
-                    animationDuration: 300,
-                    animationDurationUpdate: 300,
-                    max: 2,
-                    axisLabel:{
-                        fontSize: this.$utils.adjustFontSize(0.16),
-                        color:'white'
-                    }
-                },
-                visualMap: {
-                    show: false,
-                    orient: 'horizontal',
-                    left: 'center',
-                    min: 0,
-                    max: 150,
-                    text: ['High', 'Low'],
-                    dimension: 0,
-                    inRange: {
-                        color: ['#55A864', '#A89F5B','#AC2D2D']
-                    },
-                },
-                series: [{
-                    realtimeSort: true,
-                    type: 'bar',
-                    data: [100, 50, 20],
-                    label: {
-                        show: true,
-                        valueAnimation: true,
-                        position: 'top',
-                        fontFamily: 'monospace',
-                        color:'#98a8a0',
-                        fontSize: this.$utils.adjustFontSize(0.14)
-                    }
-                }],
                 legend: {
-                    show: false
+                    show: true,
+                    orient: 'vertical',
+                    textStyle: {
+                        fontSize: this.$utils.adjustFontSize(0.16),
+                        color:'white',
+                        padding: [5, 10, 5, 10]
+                    },
+                    right: '5%',
+
                 },
+                series: [
+                    {
+                        type: 'pie',
+                        right: '30%',
+                        radius: ['65%', '85%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: true,
+                            color: '#FFFFFF',
+                            fontSize: '20',
+                            textBorderWidth: 0,
+                            position: 'center',
+                            formatter: () => {
+                                return this.defaultFactory;
+                            },
+                        },
+
+                        // emphasis: {
+                        //     focus: 'series',
+                        //     label: {
+                        //         show: true,
+                        //         fontSize: '20px',
+                        //     }
+                        // },
+                        labelLine: {
+                            show: false
+                        },
+                        data: [
+                            {value: 1000, name: '廠區一'},
+                            {value: 1000, name: '廠區二'},
+                            {value: 1000, name: '廠區三'},
+                        ],
+                        color: [
+                            '#175580',
+                            '#346780',
+                            '#3C968D',
+                            // '#388C6C'
+                        ]
+                    }
+                ]
             }
 
         }

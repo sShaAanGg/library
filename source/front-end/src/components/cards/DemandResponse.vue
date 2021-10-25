@@ -1,19 +1,19 @@
 <template>
     <div class='card-h'>
-        <h2 class='card-font'>需量管理</h2>
+        <h2 class='card-font'>本月需量管理</h2>
         <CCardBody align='center'>
-            <LineChartElectricConsum :data="fromDataDr"></LineChartElectricConsum>
+            <BarChartDemand :data="fromDataDr"></BarChartDemand>
         </CCardBody>
     </div>
 </template>
 
 <script>
-import LineChartElectricConsum from '@/components/charts/LineChartElectricConsum';
+import BarChartDemand from '@/components/charts/BarChartDemand';
 export default {
     inject: ['reload'],
     props: [ 'fromDataDr' ],
     components: {
-        LineChartElectricConsum
+        BarChartDemand
     },
     data() {
         return {
