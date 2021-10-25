@@ -3,6 +3,7 @@ var db = require('../utility/DbFactory');
 var utility = require('../utility/utils');
 const net = require("net");
 const { time } = require('console');
+const axios = require('axios');
 
 const dotenvAbsolutePath = path.join(__dirname, '../.env');
 const dotenv = require('dotenv').config({path: dotenvAbsolutePath});
@@ -21,7 +22,20 @@ let statusDataCommon = {
     successCode: 200,
     errorCode: 500,
     errorMsg: " "
-}
+};
+
+const axiosConfig = {
+    headers: {
+        "License-Key": '2ebed68cc4c1d3ad38d3ca348b468f93cf3833a1a9cb7d29adb1a277fde79b72'
+    }
+};
+
+let readGpioData = {
+    "port": "",
+    "pin": 0,
+    "deviceCount": 0,
+    "devices": []
+};
 
 Array.prototype.groupBy = function(prop) {
     return this.reduce(function(groups, item) {
@@ -294,7 +308,8 @@ module.exports = {
                         " equipment_controller.button_name, "                                   +
                         " equipment_controller.button_type, "                                   +
                         " equipment_controller.button_port, "                                   +
-                        " equipment_controller.button_pin "                                     +
+                        " equipment_controller.button_pin, "                                    +
+                        " equipment_controller.button_status "                                  +
                     " FROM "                                                                    +
                         " equipment_controller "                                                +
                     " JOIN "                                                                    +
@@ -318,8 +333,43 @@ module.exports = {
                         " `time` "              +
                     " DESC "                    +
                     " LIMIT 1 ";
-console.log(sql)
+
         dbFactory.action_db(sql, statusDataCommon, res);
+    },
+
+    update_btn_swicth: function(req, res) {
+        statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
+
+        let sql =   " UPDATE "                      +
+                        " equipment_controller "    +
+                    " SET "                         +
+                        " button_status = ? "       +
+                    " WHERE mac = ? ";
+        sql = dbFactory.build_mysql_format( sql, [ req.body.data.btnStatus,
+                                            req.body.data.btnMac]);
+        dbFactory.action_db_with_cb(sql, statusDataCommon, result => {
+            let setGpioData = {
+                "port":req.body.data.btnPort,
+                "pin":parseInt(req.body.data.btnPin),
+                "control":req.body.data.btnStatus,
+                "deviceCount":1,
+                "devices":[{"mac":req.body.data.btnMac}]
+            };
+            axios
+                .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
+                .then( (setgpioRes) => {
+                    axios
+                        .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
+                        .then((readgpioRes) => {
+                            if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
+                                res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
+                            }
+                            res.status(statusDataCommon.successCode).send("200OK");
+                        })
+                        .catch((error) => console.log(error))
+                })
+                .catch( (error) => console.log(error));
+        });
     },
 
     /* End of Dashboard API */

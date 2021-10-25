@@ -55,6 +55,10 @@ router.get('/select_envirnmental', function (req, res) {
     api.select_envirnmental(req, res);
 });
 
+router.post('/update_btn_swicth', function (req, res) {
+    api.update_btn_swicth(req, res);
+});
+
 /* End of Dashboard API */
 
 /* Analysis API */
