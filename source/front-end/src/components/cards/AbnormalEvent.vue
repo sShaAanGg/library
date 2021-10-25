@@ -4,9 +4,9 @@
         <div class="sensor-data">
             <h6>溫度：{{curTemp}} &#8451;</h6>
             <h6>濕度：{{curHumidity}} % </h6>
-            <h6>照度：{{curIllumi}} LUX </h6>
+            <!-- <h6>照度：{{curIllumi}} LUX </h6> -->
             <h6>CO<sub>2</sub>：{{curCO2}} ppm</h6>
-            <h6>PM2.5：{{curPm2dot5}} &#956;g/m<sup>3</sup></h6>
+            <!-- <h6>PM2.5：{{curPm2dot5}} &#956;g/m<sup>3</sup></h6> -->
         </div>
         <ul v-if="isNormal" class="status-normal">{{normalLog[logIndex]}}</ul>
         <ul v-else class="status-abnormal"> {{abnoramlLog}}</ul>
@@ -16,7 +16,7 @@
 <script>
 export default {
     inject: ['reload'],
-    props: ['fromDataAe', 'curTemp', 'curHumidity', 'curIllumi','curCO2', 'curPm2dot5', 
+    props: ['fromDataAe', 'curTemp', 'curHumidity', 'curIllumi','curCO2', 'curPm2dot5',
             'isNormal', 'logIndex', 'abnoramlLog', 'abLogIdx'],
     data() {
         return {
@@ -50,7 +50,7 @@ export default {
     text-align: center;
     padding-top: 10px;
     padding-bottom: 10px;
-    
+
 }
 .sensor-data {
     position:relative;

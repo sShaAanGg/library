@@ -25,13 +25,13 @@
                                 :fromDataAe="eventLog"
                                 :curTemp="temperature"
                                 :curHumidity="humidity"
-                                :curIllumi="illuminance"
                                 :curCO2="carbonDioxide"
-                                :curPm2dot5="pm2dot5"
                                 :isNormal="curIsNormal"
                                 :logIndex="curLogIndex"
                                 :abnoramlLog="curAbnormalLog"
                             />
+                            <!-- :curIllumi="illuminance"
+                            :curPm2dot5="pm2dot5" -->
                         </div>
                     </CCol>
                     <!-- <CCol lg = '12'>
@@ -137,6 +137,7 @@ export default {
             // timer
             timerData: '',
             timerEvent: '',
+            timerenvirnmentalData:'',
 
         }
     },
@@ -150,11 +151,11 @@ export default {
         // this.cEmissionLastYear = [170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120,
         //                                 200, 190, 280, 340, 620, 750, 290, 310];
         // get carbon emission of this month last year
-        this.temperature = (Math.random() * 15 + 20).toFixed(1);
-        this.humidity = (Math.random() * 20 + 40).toFixed(2);
-        this.illuminance = (Math.random() * 100 + 500).toFixed(2);
-        this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
-        this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
+        // this.temperature = (Math.random() * 15 + 20).toFixed(1);
+        // this.humidity = (Math.random() * 20 + 40).toFixed(2);
+        // this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
+        // this.illuminance = (Math.random() * 100 + 500).toFixed(2);
+        // this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
         this.curLogIndex = 0;
         this.get_history_data();
         this.get_cur_month_elec();
@@ -168,9 +169,12 @@ export default {
             this.get_cur_month_elec();
             this.get_real_time_elec();
             this.get_demand_response();
-            this.get_sensor_data();
             this.update_factory_status();
         }, 2000);
+
+        this.timerenvirnmentalData = setInterval(() => {
+            this.get_sensor_data();
+        }, 1000);
 
         this.timerEvent = setInterval(() => {
             this.get_cur_abnormal_event();
@@ -186,6 +190,7 @@ export default {
 
     beforeDestroy() {
         clearInterval(this.timerData);
+        clearInterval(this.timerenvirnmentalData);
         clearInterval(this.timerEvent);
     },
 
@@ -333,11 +338,13 @@ export default {
         },
 
         get_sensor_data() {
-            this.temperature = (Math.random() * 15 + 20).toFixed(1);
-            this.humidity = (Math.random() * 20 + 40).toFixed(2);
-            this.illuminance = (Math.random() * 100 + 500).toFixed(2);
-            this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
-            this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
+            this.$http
+                .get('/api/enms/select_envirnmental')
+                .then(res=> {
+                    this.temperature = res.data[0].D0;
+                    this.humidity = res.data[0].D1;
+                    this.carbonDioxide = res.data[0].D2;
+                });
         }
 
 

@@ -2,31 +2,23 @@
     <h6> {{btnName}}
         <CButton
             show:false
-            :class="[(statusLight == 'ON') ? 'btn-switch-on' : 'btn-switch-off']"
+            :class="btnSwitch.btnClass"
             size='sm'
             @click="set_switch()"
         >
-            {{ statusLight }}
+            {{ btnSwitch.btnText }}
         </CButton>
     </h6>
 </template>
 
 <script>
 export default {
-    props:['btnName', 'btnType', 'btnMac'],
+    props:['btnName', 'btnType', 'btnMac', 'btnPort', 'btnPin' , 'btnStatus', 'btnSwitch'],
     data() {
         return {
             mac: this.btnMac,
-            statusLight: 'OFF',
             isAlive: true,
-            data: {
-                "port":"D",
-                "pin":4,
-                "control":1,
-                "deviceCount":1,
-                "devices":[{'mac':this.btnMac}]
-            },
-            checkTimer:'',
+            btnCheck:true,
         }
     },
     mounted() {
@@ -34,66 +26,37 @@ export default {
     },
     methods: {
         initialize_status() {
-            this.$http
-                .post('http://192.168.4.17/restful.service.cgi?setgpio', this.data, this.$axiosConfig)
-                .then( (res) => {
-                    this.$http
-                        .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
-                        .then((res) => {
-                            this.statusLight = res.data['comms'][0]['gpioStatus'];
-                            if(!this.statusLight)
-                                this.statusLight = 'KO';
-                        })
-                        .catch((error) => console.log(error))
-
-                    setInterval(() => {
-                        this.$http
-                            .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
-                            .then((res) => {
-                                let lastStatus = res.data['comms'][0]['gpioStatus'];
-                                if (this.statusLight == lastStatus){
-                                    return;
-                                }
-                                this.statusLight = res.data['comms'][0]['gpioStatus'];
-                                console.log(this.statusLight);
-                            })
-                            .catch((error) => console.log(error))
-                    }, 2000);
-                })
-                .catch( (error) => console.log(error));
         },
 
         set_switch() {
-            // this.data['devices'].push({'mac':this.mac});
+            if (this.btnCheck == false)
+                return;
+
+            this.btnCheck = false;
+
+            if (this.btnStatus == 2){
+                alert("控制開關出現問題，請洽管理員!!!");
+                return;
+            }
+
+            let data =  {
+                btnMac:this.btnMac,
+                btnPort:this.btnPort,
+                btnPin:this.btnPin,
+                btnStatus:this.btnSwitch.btnText == 'ON' ? 0 : 1
+            };
+
             this.$http
-                .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
+                .post('/api/enms/update_btn_swicth', {data : data})
                 .then((res) => {
-                    if (res.data['comms'][0]['status'] == 'OK') {
-                        let curStat = res.data['comms'][0]['gpioStatus'];
-                        if (curStat == 'ON') {
-                            this.data['control'] = 0;
-                        }
-                        else {
-                            this.data['control'] = 1;
-                        }
-                        this.$http
-                            .post('http://192.168.4.17/restful.service.cgi?setgpio', this.data, this.$axiosConfig)
-                            .then( (res) => {
-                                this.$http
-                                    .post('http://192.168.4.17/restful.service.cgi?readgpio', this.data, this.$axiosConfig)
-                                    .then((res) => {
-                                        this.statusLight = res.data['comms'][0]['gpioStatus'];
-                                    })
-                                    .catch((error) => console.log(error))
-                            })
-                            .catch( (error) => console.log(error));
-                    }
-                    else {
-                        console.log('Status of switch is KO:::');
-                        this.isAlive = false;
-                    }
+                    if( res.status !== 200)
+                        alert("開關操作出現問題，請洽管理員!!!");
+
+                    console.log(res.data);
+
+                    this.btnCheck = true;
                 })
-                .catch( (error) => console.log(error));
+                .catch((error) => console.log(error));
         },
     },
 
