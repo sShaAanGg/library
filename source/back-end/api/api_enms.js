@@ -82,9 +82,8 @@ module.exports = {
                         " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
                     " GROUP BY "                                                                    +
                         " machine_info.machine_sn ";
-        console.log('month:', new Date().getMonth(), new Date().setMonth(new Date().getMonth()));
-        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
-                                                    utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMM01000000')]);
+        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth() - 1), 'yyyyMMddHHmmss'),
+                                                    utility.formattime(new Date().setMonth(new Date().getMonth() - 1), 'yyyyMM01000000')]);
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let cumulativeElectricityConsumption = [];
             let sumArray = [];
@@ -189,7 +188,7 @@ module.exports = {
             errorMsg: " Some error occurred while select_real_time_electricity_consumption"
         };
 
-        let time = new Date().setMonth(new Date().getMonth());
+        let time = new Date().setMonth(new Date().getMonth() - 1);
 
         let sql =   " SELECT "                                                                          +
                         " real_time_total.mac, "                                                        +
@@ -338,7 +337,7 @@ module.exports = {
     },
 
     update_btn_swicth: function(req, res) {
-        console.log('update_btn_switch...');
+        console.log('update_btn_switch...', process.env.RESTFUL_IP + 'setgpio');
         statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
 
         var sql =   " UPDATE "                      +
@@ -355,6 +354,7 @@ module.exports = {
                 "deviceCount":1,
                 "devices":[{"mac":req.body.data.btnMac}]
             };
+            console.log(setGpioData);
             axios
                 .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
                 .then( (setgpioRes) => {
@@ -546,7 +546,7 @@ module.exports = {
                     " JOIN "                                                                                +
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
-                        " history_month_info.`datetime` = 20210901000000";
+                        " history_month_info.`datetime` = 20200800000000";
             sql = dbFactory.build_mysql_format(sql);
         }
         else {

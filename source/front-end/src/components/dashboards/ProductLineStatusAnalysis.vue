@@ -8,7 +8,7 @@
 			<CCol lg="8" class="card-base">
                 <CRow lg="8">
                 <!-- <CSelect label="選擇年" :options="yearOptions" :value.sync="selectYear" /> -->
-                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8]"
                     :value.sync="selectMonth"/>
                 <CSelect class="select-factory" label="廠區" :options="factoryOptions"
                     :value.sync="factory" />
@@ -115,7 +115,7 @@ export default {
             yearMonth: '-',
             selectYear: 2021,
             selectYearYoy: '',
-            selectMonth: 9,
+            selectMonth: 8,
             factory: '全廠區',
 
             equipName: '請從右側選擇設備',
@@ -195,8 +195,8 @@ export default {
         },
         get_select_year_month(selectYear, selectMonth) {
 
-            (selectMonth < 10)  ? this.yearMonth = selectYear.toString() + '0' + (selectMonth.toString()) + '01000000'
-                                : this.yearMonth = selectYear.toString() + (selectMonth.toString()) + '01000000';
+            (selectMonth < 10)  ? this.yearMonth = selectYear.toString() + '0' + (selectMonth.toString()) + '00000000'
+                                : this.yearMonth = selectYear.toString() + (selectMonth.toString()) + '00000000';
 
         },
 

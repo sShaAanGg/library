@@ -64,9 +64,9 @@
                         </div>
                     </CCol>
                     <CCol lg = '4'>
-                        <!-- <div class="mb-1 mr-1 cardstyle">
+                        <div class="mb-1 mr-1 cardstyle">
                             <EquipControl></EquipControl>
-                        </div> -->
+                        </div>
                     </CCol>
                 </CRow>
             </CCol>
@@ -170,13 +170,13 @@ export default {
         this.illuminance = (Math.random() * 100 + 500).toFixed(2);
         this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
         this.curLogIndex = 0;
-        // this.get_history_data();
-        // this.get_cur_month_elec();
-        // this.get_demand_response();
-        // this.update_factory_status();
+        this.get_history_data();
+        this.get_cur_month_elec();
+        this.get_demand_response();
+        this.update_factory_status();
         this.get_real_time_elec();
-        // this.get_sensor_data();
-        // this.check_abnormal_event();
+        this.get_sensor_data();
+        this.check_abnormal_event();
 
         // this.timerLoading = setInterval(() => {
         //     this.check_are_ready();
@@ -185,21 +185,21 @@ export default {
         //     clearInterval(this.timerLoading);
         // }, 30000);
 
-        // this.timerData = setInterval(() => {
-        //     this.get_cur_month_elec();
-        //     // this.get_real_time_elec();
-        //     this.get_demand_response();
-        //     this.update_factory_status();
-        // }, 2000);
+        this.timerData = setInterval(() => {
+            this.get_cur_month_elec();
+            // this.get_real_time_elec();
+            this.get_demand_response();
+            this.update_factory_status();
+        }, 2000);
 
-        // this.timerenvirnmentalData = setInterval(() => {
-        //     this.get_sensor_data();
-        // }, 1000);
+        this.timerenvirnmentalData = setInterval(() => {
+            this.get_sensor_data();
+        }, 1000);
 
-        // this.timerEvent = setInterval(() => {
-        //     this.get_cur_abnormal_event();
-        //     this.check_abnormal_event();
-        // }, 1000);
+        this.timerEvent = setInterval(() => {
+            this.get_cur_abnormal_event();
+            this.check_abnormal_event();
+        }, 1000);
 
 
         // update history data every day
