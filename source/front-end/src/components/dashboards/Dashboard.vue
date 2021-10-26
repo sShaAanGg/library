@@ -64,13 +64,20 @@
                         </div>
                     </CCol>
                     <CCol lg = '4'>
-                        <div class="mb-1 mr-1 cardstyle">
+                        <!-- <div class="mb-1 mr-1 cardstyle">
                             <EquipControl></EquipControl>
-                        </div>
+                        </div> -->
                     </CCol>
                 </CRow>
             </CCol>
         </CRow>
+      <CElementCover
+        v-if="!isReady"
+        :boundaries="[{ sides: ['top', 'left'], query: '.media-body' }]"
+        :opacity="0.8"
+      >
+        <h1 class="d-inline">Loading... </h1><CSpinner size="5xl" color="success"/>
+      </CElementCover>
     </div>
 
 </template>
@@ -102,6 +109,9 @@ export default {
 
     data(){
         return{
+            //
+            readyArr: [],
+            isReady: '',
             // data to show on dashboard
             elecStore: 0,
             cEmission: '',
@@ -135,6 +145,7 @@ export default {
             canGetNew: true,
 
             // timer
+            timerLoading: '',
             timerData: '',
             timerEvent: '',
             timerenvirnmentalData:'',
@@ -151,35 +162,44 @@ export default {
         // this.cEmissionLastYear = [170, 220, 340, 460, 580, 700, 460, 230, 450, 780, 340, 120,
         //                                 200, 190, 280, 340, 620, 750, 290, 310];
         // get carbon emission of this month last year
-        // this.temperature = (Math.random() * 15 + 20).toFixed(1);
-        // this.humidity = (Math.random() * 20 + 40).toFixed(2);
-        // this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
-        // this.illuminance = (Math.random() * 100 + 500).toFixed(2);
-        // this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
+        this.readyArr = [false, false, false, false];
+        this.isReady = true;
+        this.temperature = (Math.random() * 15 + 20).toFixed(1);
+        this.humidity = (Math.random() * 20 + 40).toFixed(2);
+        this.carbonDioxide = (Math.random() * 100 + 300).toFixed(2);
+        this.illuminance = (Math.random() * 100 + 500).toFixed(2);
+        this.pm2dot5 = (Math.random() * 20 + 10).toFixed(2);
         this.curLogIndex = 0;
-        this.get_history_data();
-        this.get_cur_month_elec();
-        this.get_demand_response();
-        this.update_factory_status();
+        // this.get_history_data();
+        // this.get_cur_month_elec();
+        // this.get_demand_response();
+        // this.update_factory_status();
         this.get_real_time_elec();
-        this.get_sensor_data();
-        this.check_abnormal_event();
+        // this.get_sensor_data();
+        // this.check_abnormal_event();
 
-        this.timerData = setInterval(() => {
-            this.get_cur_month_elec();
-            this.get_real_time_elec();
-            this.get_demand_response();
-            this.update_factory_status();
-        }, 2000);
+        // this.timerLoading = setInterval(() => {
+        //     this.check_are_ready();
+        // }, 1000);
+        // setInterval(()=> {
+        //     clearInterval(this.timerLoading);
+        // }, 30000);
 
-        this.timerenvirnmentalData = setInterval(() => {
-            this.get_sensor_data();
-        }, 1000);
+        // this.timerData = setInterval(() => {
+        //     this.get_cur_month_elec();
+        //     // this.get_real_time_elec();
+        //     this.get_demand_response();
+        //     this.update_factory_status();
+        // }, 2000);
 
-        this.timerEvent = setInterval(() => {
-            this.get_cur_abnormal_event();
-            this.check_abnormal_event();
-        }, 100);
+        // this.timerenvirnmentalData = setInterval(() => {
+        //     this.get_sensor_data();
+        // }, 1000);
+
+        // this.timerEvent = setInterval(() => {
+        //     this.get_cur_abnormal_event();
+        //     this.check_abnormal_event();
+        // }, 1000);
 
 
         // update history data every day
@@ -199,6 +219,7 @@ export default {
             this.$http
                 .get('api/enms/select_two_years_electricity_consumption')
                 .then(res=> {
+                    console.log(res);
                     let todayDate = new Date();
                     let curMonth = todayDate.getMonth();
                     for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
@@ -209,6 +230,7 @@ export default {
                     this.cEmissionLastTime = this.cEmissionLastYear[curMonth];
                     this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
                     this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
+                    this.readyArr[0] = true;
                 });
 
         },
@@ -217,6 +239,7 @@ export default {
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
+                    console.log(res)
                     this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2])];
                     this.cEmission = (0.509 * (this.getElecConsumData[0]
                                                 + this.getElecConsumData[1]
@@ -234,6 +257,7 @@ export default {
                         })
 
                     this.reducedCEmission = (this.cEmissionLastTime - this.cEmission).toFixed(2);
+                    this.readyArr[1] = true;
                 });
 
         },
@@ -249,6 +273,7 @@ export default {
                     }
                     this.elecCapacity[1] = this.elecCapacity[1].toFixed(2);
                     this.elecCapacity[2] = this.elecCapacity[2].toFixed(2);
+                    this.readyArr[2] = true;
                 })
         },
 
@@ -324,8 +349,7 @@ export default {
 
                         }
                     }
-
-
+                    this.readyArr[3] = true;
                 });
         },
 
@@ -334,6 +358,8 @@ export default {
                 .get('/api/enms/select_real_time_electricity_consumption')
                 .then(res=> {
                     this.realTimeKilowattHourData = parseFloat(res.data).toFixed(2);
+                    console.log('realtime:', res);
+                    this.readyArr[4] = true;
                 });
         },
 
@@ -344,9 +370,19 @@ export default {
                     this.temperature = res.data[0].D0;
                     this.humidity = res.data[0].D1;
                     this.carbonDioxide = res.data[0].D2;
+                    this.readyArr[5] = true;
                 });
+        },
+        check_are_ready() {
+            let count = 0;
+            for (let ix = 0; ix < this.readyArr.length; ++ix) {
+                if (this.readyArr[ix]){
+                    ++count;
+                }
+            }
+            if (count === this.readyArr.length) this.isReady = true;
+            console.log(count);
         }
-
 
     }
 }

@@ -184,6 +184,7 @@ export default {
                 .catch((error) => console.log(error));
         },
         get_equip_list() {
+            this.equipList = [];
             let data = {factory:this.factory, type:this.machineType};
             this.$http
                 .post('api/enms/select_machine_info_for_demand_predict', {data:data})

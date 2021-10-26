@@ -82,9 +82,9 @@ module.exports = {
                         " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
                     " GROUP BY "                                                                    +
                         " machine_info.machine_sn ";
-        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()-1), 'yyyyMMddHHmmss'),
-                                                    utility.formattime(new Date().setMonth(new Date().getMonth()-1), 'yyyyMM01000000')]);
-
+        console.log('month:', new Date().getMonth(), new Date().setMonth(new Date().getMonth()));
+        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
+                                                    utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMM01000000')]);
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let cumulativeElectricityConsumption = [];
             let sumArray = [];
@@ -104,6 +104,7 @@ module.exports = {
                 cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
                 ++ ix;
             }
+            console.log(cumulativeElectricityConsumption)
             res.status(statusData.successCode).send(cumulativeElectricityConsumption);
         });
     },
@@ -188,7 +189,7 @@ module.exports = {
             errorMsg: " Some error occurred while select_real_time_electricity_consumption"
         };
 
-        let time = new Date().setMonth(new Date().getMonth()-1);
+        let time = new Date().setMonth(new Date().getMonth());
 
         let sql =   " SELECT "                                                                          +
                         " real_time_total.mac, "                                                        +
@@ -226,7 +227,7 @@ module.exports = {
                         " machine_info.machine_sn = real_time_total.machine_sn ";
         sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date(time), 'yyyyMMddHHmmss'),
                                                     utility.formattime(new Date(time).setTime(time - 60000), 'yyyyMMddHHmmss')]);
-
+        console.log(sql);
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let real_time_electricity_consumption = 0;
             let ix = 0;
@@ -302,7 +303,6 @@ module.exports = {
 
     select_equip_controllers: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while select_equip_buttons";
-
         let sql =   " SELECT "                                                                  +
                         " DISTINCT equipment_controller.mac, "                                  +
                         " equipment_controller.button_name, "                                   +
@@ -338,6 +338,7 @@ module.exports = {
     },
 
     update_btn_swicth: function(req, res) {
+        console.log('update_btn_switch...');
         statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
 
         let sql =   " UPDATE "                      +
@@ -376,6 +377,7 @@ module.exports = {
 
     /* Analysis API */
     select_data_year: function(req, res){
+        console.log('in select_data_year...')
         let statusData = {
             successCode: 200,
             errorCode: 500,
@@ -542,7 +544,7 @@ module.exports = {
                     " JOIN "                                                                                +
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
-                        " history_month_info.`datetime` = 20210800000000";
+                        " history_month_info.`datetime` = 20210901000000";
             sql = dbFactory.build_mysql_format(sql);
         }
         else {
@@ -562,7 +564,7 @@ module.exports = {
                         " machine_info.factory = ? AND history_month_info.`datetime` = ?";
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
         }
-
+        console.log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
 
     },

@@ -8,7 +8,7 @@
 			<CCol lg="8" class="card-base">
                 <CRow lg="8">
                 <!-- <CSelect label="選擇年" :options="yearOptions" :value.sync="selectYear" /> -->
-                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8]"
+                <CSelect class="select-month" label="選擇月" :options="['-', 1, 2, 3, 4, 5, 6, 7, 8, 9]"
                     :value.sync="selectMonth"/>
                 <CSelect class="select-factory" label="廠區" :options="factoryOptions"
                     :value.sync="factory" />
@@ -115,7 +115,7 @@ export default {
             yearMonth: '-',
             selectYear: 2021,
             selectYearYoy: '',
-            selectMonth: 8,
+            selectMonth: 9,
             factory: '全廠區',
 
             equipName: '請從右側選擇設備',
@@ -195,8 +195,8 @@ export default {
         },
         get_select_year_month(selectYear, selectMonth) {
 
-            (selectMonth < 10)  ? this.yearMonth = selectYear.toString() + '0' + (selectMonth.toString()) + '00000000'
-                                : this.yearMonth = selectYear.toString() + (selectMonth.toString()) + '00000000';
+            (selectMonth < 10)  ? this.yearMonth = selectYear.toString() + '0' + (selectMonth.toString()) + '01000000'
+                                : this.yearMonth = selectYear.toString() + (selectMonth.toString()) + '01000000';
 
         },
 
@@ -206,8 +206,8 @@ export default {
             this.$http
                 .post('api/enms/select_factory_machine_monthly_info', {data:data})
                 .then((res) => {
+                    console.log(res);
                     this.equipList = res.data;
-                    console.log('1', this.equipList[0]);
                     this.show_chart(this.equipList[0]);
                     // this.equipList[0]._classes = '';
 
@@ -216,12 +216,13 @@ export default {
         },
 
         get_equip_list(factory, month) {
+            this.equipList = [];
             if (month === '-') {
                 // user does not select month
                 this.showSearchHint = true;
             }
             else if (factory === '全廠區') {
-                this.reset_chart();
+                // this.reset_chart();
 
                 this.get_select_year_month(this.selectYear, this.selectMonth);
                 let data = {factory:'', datetime:this.yearMonth};
@@ -234,7 +235,7 @@ export default {
                     .catch((error) => console.log(error));
             }
             else{
-                this.reset_chart();
+                // this.reset_chart();
 
                 this.get_select_year_month(this.selectYear, this.selectMonth);
                 let data = {factory:factory, datetime:this.yearMonth};
@@ -247,27 +248,27 @@ export default {
                     })
                     .catch((error) => console.log(error));
             }
-
-
         },
 
         show_chart(item) {
-            console.log('2', item);
             let rowColor = 'table-active';
             // reset row color
             let foundIdx = this.equipList.findIndex(x => x._classes === rowColor);
             if (foundIdx >= 0) {
                 this.equipList[foundIdx]._classes = '';
             }
+            console.log(this.equipList);
 
             // change row color to show selected
             // change existed attributes to force rendering
-            //  this.equipList[foundIdx]._classes = '';
-            console.log('3', item);
             let tempName = item.machine_name;
+
+            item._classes = rowColor;
             item.machine_name = '123';
             item.machine_name = tempName;
-            item._classes = rowColor;
+            console.log('after', this.equipList);
+            console.log('after item', item);
+
 
             this.equipName = item.machine_name;
             this.equipElec = item.cur_month_elec;
@@ -311,6 +312,7 @@ export default {
                     this.option.series[0].data = chartData;
                     this.option.xAxis.data = xLabel;
                     this.option.yAxis.min = Math.floor(min);
+                    // console.log('plot in get_daily_elec',this.option);
                     this.lineChart.setOption(this.option);
                 })
                 .catch((error) => console.log(error));
@@ -325,7 +327,6 @@ export default {
             let endDate = '';
             (this.selectMonth < 10) ? endDate = this.selectYearYoy.toString() + '0' + (this.selectMonth.toString()) + '32000000'
                                     : endDate = this.selectYearYoy.toString() + (this.selectMonth.toString()) + '32000000';
-            console.log(startDate, endDate);
             let data = {machine_sn:item.machine_sn, start_date:startDate, end_date: endDate};
             this.$http
                 .post('api/enms/select_equip_daily_elec_yoy', {data:data})
@@ -338,7 +339,6 @@ export default {
                         xLabel.push(ix + 1);
                         if (res.data[ix].electricity < min) min = res.data[ix].electricity;
                     }
-                    console.log(chartData);
                     this.option.series[1].data = chartData;
                     // this.option.xAxis.data = xLabel;
                     // this.option.yAxis.min = Math.floor(min);

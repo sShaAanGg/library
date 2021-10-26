@@ -2,7 +2,14 @@
     <div class='tab' v-show='isActive'>
         <slot></slot>
         <div v-for="(item, index) in controlList">
-            <BtnSwitch :btnName=item.button_name :btnType=item.button_type :btnMac=item.mac :btnPort=item.button_port :btnPin=item.button_pin :btnSwitch="siwtch_status(item.button_status)"></BtnSwitch>
+            <BtnSwitch
+                :btnName=item.button_name
+                :btnType=item.button_type
+                :btnMac=item.mac
+                :btnPort=item.button_port
+                :btnPin=item.button_pin
+                :btnSwitch="switch_status(item.button_status)">
+            </BtnSwitch>
         </div>
     </div>
 </template>
@@ -46,7 +53,7 @@ export default {
                 })
         },
 
-        siwtch_status(btnStatus) {
+        switch_status(btnStatus) {
             switch (btnStatus){
                 case '0':
                     return {

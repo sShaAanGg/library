@@ -29,8 +29,10 @@ export default {
         },
 
         set_switch() {
-            if (this.btnCheck == false)
+            if (this.btnCheck == false){
+                console.log('btnCheck false');
                 return;
+            }
 
             this.btnCheck = false;
 
