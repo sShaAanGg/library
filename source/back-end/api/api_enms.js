@@ -341,14 +341,13 @@ module.exports = {
         console.log('update_btn_switch...');
         statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
 
-        let sql =   " UPDATE "                      +
+        var sql =   " UPDATE "                      +
                         " equipment_controller "    +
                     " SET "                         +
                         " button_status = ? "       +
                     " WHERE mac = ? ";
         sql = dbFactory.build_mysql_format( sql, [ req.body.data.btnStatus,
                                             req.body.data.btnMac]);
-        dbFactory.action_db_with_cb(sql, statusDataCommon, result => {
             let setGpioData = {
                 "port":req.body.data.btnPort,
                 "pin":parseInt(req.body.data.btnPin),
@@ -359,18 +358,21 @@ module.exports = {
             axios
                 .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
                 .then( (setgpioRes) => {
+                    if (setgpioRes.data.comms[0].status != 'OK')
+                        res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+
                     axios
                         .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
                         .then((readgpioRes) => {
                             if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
                                 res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
                             }
-                            res.status(statusDataCommon.successCode).send("200OK");
+
+                            dbFactory.action_db(sql, statusDataCommon, res);
                         })
-                        .catch((error) => console.log(error))
+                        .catch((error) => console.log(error));
                 })
                 .catch( (error) => console.log(error));
-        });
     },
 
     /* End of Dashboard API */
