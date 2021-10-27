@@ -66,60 +66,72 @@ module.exports = {
             errorCode: 500,
             errorMsg: "Some error occurred while select_current_cumulative_electricity_consumption"
         };
-        let sql =   " SELECT "+
-                        " SUM(electricity) AS elec "+
-                    " FROM "+
-                        " ((history_day_info "+
+        let sql =   " SELECT "                                                                              +
+                        " machine_info.factory, "                                                           +
+                        " SUM(electricity) AS elec "                                                        +
+                    " FROM "                                                                                +
+                        " ((history_day_info "                                                              +
                             " INNER JOIN "                                                                  +
                                 " equipment_info ON history_day_info.mac = equipment_info.mac) "            +
                             " INNER JOIN "                                                                  +
                                 " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
                     " WHERE "                                                                               +
-                        " history_day_info.`datetime` < '20211027101509' "+
-                    " AND "+
-                        " history_day_info.`datetime` > '20211000000000' ";
-        console.log(sql);
+                        " history_day_info.`datetime` < '20211027101509' "                                  +
+                    " AND "                                                                                 +
+                        " history_day_info.`datetime` > '20211000000000' "                                  +
+                    " GROUP BY "                                                                            +
+                        " machine_info.factory";
 
-        dbFactory.action_db(sql, statusData, res);
-        // let sql =   " SELECT "                                                                      +
-        //                 " machine_info.factory, "                                                   +
-        //                 " equipment_info.machine_sn, "                                              +
-        //                 " machine_info.voltage, "                                                   +
-        //                 " SUM(ampere) AS 'sum_ampere' "                                             +
-        //             " FROM "                                                                        +
-        //                 " ((enms_info "                                                             +
-        //             " INNER JOIN "                                                                  +
-        //                 " equipment_info on enms_info.mac = equipment_info.mac) "                   +
-        //             " INNER JOIN "                                                                  +
-        //                 " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
-        //             " WHERE "                                                                       +
-        //                 " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
-        //             " GROUP BY "                                                                    +
-        //                 " machine_info.machine_sn ";
-        // sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
-        //                                             utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMM01000000')]);
-        // dbFactory.action_db_with_cb(sql, statusData, (result) => {
-        //     let cumulativeElectricityConsumption = [];
-        //     let sumArray = [];
-        //     let factoryEle = 0;
-        //     let ix = 0, iy = 0;
-        //     let groupByFactory = result.groupBy('factory');
+        dbFactory.action_db_with_cb(sql, statusData, (resPreDays) => {
+            let secondSql =     " SELECT "                                                                      +
+                                    " machine_info.factory, "                                                   +
+                                    " equipment_info.machine_sn, "                                              +
+                                    " machine_info.voltage, "                                                   +
+                                    " SUM(ampere) AS 'sum_ampere' "                                             +
+                                " FROM "                                                                        +
+                                    " ((enms_info "                                                             +
+                                " INNER JOIN "                                                                  +
+                                    " equipment_info on enms_info.mac = equipment_info.mac) "                   +
+                                " INNER JOIN "                                                                  +
+                                    " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
+                                " WHERE "                                                                       +
+                                    " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
+                                " GROUP BY "                                                                    +
+                                    " machine_info.machine_sn ";
+            secondSql = dbFactory.build_mysql_format(secondSql, [utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
+                                                                utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMdd000000')]);
+            dbFactory.action_db_with_cb(secondSql, statusData, (resToday) => {
+                let cumulativeElectricityConsumption = [];
+                let sumArray = [];
+                let factoryEle = 0;
+                let ix = 0, iy = 0;
+                let groupByFactory = resToday.groupBy('factory');
 
-        //     while(ix < Object.keys(groupByFactory).length){
-        //         sumArray = [];
-        //         sumArray = groupByFactory[Object.keys(groupByFactory)[ix]];
-        //         iy = 0;
-        //         factoryEle = 0;
-        //         while(iy < sumArray.length){
-        //             factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
-        //             ++ iy;
-        //         }
-        //         cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
-        //         ++ ix;
-        //     }
-        //     console.log(cumulativeElectricityConsumption)
-        //     res.status(statusData.successCode).send(cumulativeElectricityConsumption);
-        // });
+                while(ix < Object.keys(groupByFactory).length){
+                    sumArray = [];
+                    sumArray = groupByFactory[Object.keys(groupByFactory)[ix]];
+                    iy = 0;
+
+                    for (let iy = 0; iy < resPreDays.length; ++iy) {
+                        if(resPreDays[iy]['factory'] === Object.keys(groupByFactory)[ix]) {
+                            factoryEle = resPreDays[iy]['elec'];
+                            break;
+                        }
+                    }
+                    if(factoryEle === 0) {
+                        console.log('No previous daily elec for', Object.keys(groupByFactory)[ix]);
+                    }
+                    while(iy < sumArray.length){
+                        factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
+                        ++ iy;
+                    }
+                    cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
+                    ++ ix;
+                }
+                res.status(statusData.successCode).send(cumulativeElectricityConsumption);
+            });
+
+        });
     },
 
     select_two_years_electricity_consumption: function(req, res) {
