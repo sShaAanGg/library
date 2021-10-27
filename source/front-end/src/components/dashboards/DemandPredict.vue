@@ -63,7 +63,7 @@
 export default {
     data() {
         return {
-            maxContract: 125000,
+            maxContract: 1800000,
             factoryOptions: ['全廠區'],
             typeOptions: ['全部項目'],
             factory: '全廠區',

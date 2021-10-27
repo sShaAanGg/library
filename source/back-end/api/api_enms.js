@@ -66,46 +66,60 @@ module.exports = {
             errorCode: 500,
             errorMsg: "Some error occurred while select_current_cumulative_electricity_consumption"
         };
+        let sql =   " SELECT "+
+                        " SUM(electricity) AS elec "+
+                    " FROM "+
+                        " ((history_day_info "+
+                            " INNER JOIN "                                                                  +
+                                " equipment_info ON history_day_info.mac = equipment_info.mac) "            +
+                            " INNER JOIN "                                                                  +
+                                " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
+                    " WHERE "                                                                               +
+                        " history_day_info.`datetime` < '20211027101509' "+
+                    " AND "+
+                        " history_day_info.`datetime` > '20211000000000' ";
+        console.log(sql);
 
-        let sql =   " SELECT "                                                                      +
-                        " machine_info.factory, "                                                   +
-                        " equipment_info.machine_sn, "                                              +
-                        " machine_info.voltage, "                                                   +
-                        " SUM(ampere) AS 'sum_ampere' "                                             +
-                    " FROM "                                                                        +
-                        " ((enms_info "                                                             +
-                    " INNER JOIN "                                                                  +
-                        " equipment_info on enms_info.mac = equipment_info.mac) "                   +
-                    " INNER JOIN "                                                                  +
-                        " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
-                    " WHERE "                                                                       +
-                        " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
-                    " GROUP BY "                                                                    +
-                        " machine_info.machine_sn ";
-        sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth() - 1), 'yyyyMMddHHmmss'),
-                                                    utility.formattime(new Date().setMonth(new Date().getMonth() - 1), 'yyyyMM01000000')]);
-        dbFactory.action_db_with_cb(sql, statusData, (result) => {
-            let cumulativeElectricityConsumption = [];
-            let sumArray = [];
-            let factoryEle = 0;
-            let ix = 0, iy = 0;
-            let groupByFactory = result.groupBy('factory');
+        dbFactory.action_db(sql, statusData, res);
+        // let sql =   " SELECT "                                                                      +
+        //                 " machine_info.factory, "                                                   +
+        //                 " equipment_info.machine_sn, "                                              +
+        //                 " machine_info.voltage, "                                                   +
+        //                 " SUM(ampere) AS 'sum_ampere' "                                             +
+        //             " FROM "                                                                        +
+        //                 " ((enms_info "                                                             +
+        //             " INNER JOIN "                                                                  +
+        //                 " equipment_info on enms_info.mac = equipment_info.mac) "                   +
+        //             " INNER JOIN "                                                                  +
+        //                 " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
+        //             " WHERE "                                                                       +
+        //                 " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
+        //             " GROUP BY "                                                                    +
+        //                 " machine_info.machine_sn ";
+        // sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
+        //                                             utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMM01000000')]);
+        // dbFactory.action_db_with_cb(sql, statusData, (result) => {
+        //     let cumulativeElectricityConsumption = [];
+        //     let sumArray = [];
+        //     let factoryEle = 0;
+        //     let ix = 0, iy = 0;
+        //     let groupByFactory = result.groupBy('factory');
 
-            while(ix < Object.keys(groupByFactory).length){
-                sumArray = [];
-                sumArray = groupByFactory[Object.keys(groupByFactory)[ix]];
-                iy = 0;
-                factoryEle = 0;
-                while(iy < sumArray.length){
-                    factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
-                    ++ iy;
-                }
-                cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
-                ++ ix;
-            }
-            console.log(cumulativeElectricityConsumption)
-            res.status(statusData.successCode).send(cumulativeElectricityConsumption);
-        });
+        //     while(ix < Object.keys(groupByFactory).length){
+        //         sumArray = [];
+        //         sumArray = groupByFactory[Object.keys(groupByFactory)[ix]];
+        //         iy = 0;
+        //         factoryEle = 0;
+        //         while(iy < sumArray.length){
+        //             factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
+        //             ++ iy;
+        //         }
+        //         cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
+        //         ++ ix;
+        //     }
+        //     console.log(cumulativeElectricityConsumption)
+        //     res.status(statusData.successCode).send(cumulativeElectricityConsumption);
+        // });
     },
 
     select_two_years_electricity_consumption: function(req, res) {
@@ -188,7 +202,7 @@ module.exports = {
             errorMsg: " Some error occurred while select_real_time_electricity_consumption"
         };
 
-        let time = new Date().setMonth(new Date().getMonth() - 1);
+        let time = new Date().setMonth(new Date().getMonth());
 
         let sql =   " SELECT "                                                                          +
                         " real_time_total.mac, "                                                        +
@@ -226,7 +240,6 @@ module.exports = {
                         " machine_info.machine_sn = real_time_total.machine_sn ";
         sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date(time), 'yyyyMMddHHmmss'),
                                                     utility.formattime(new Date(time).setTime(time - 60000), 'yyyyMMddHHmmss')]);
-        console.log(sql);
         dbFactory.action_db_with_cb(sql, statusData, (result) => {
             let real_time_electricity_consumption = 0;
             let ix = 0;
@@ -337,7 +350,6 @@ module.exports = {
     },
 
     update_btn_swicth: function(req, res) {
-        console.log('update_btn_switch...', process.env.RESTFUL_IP + 'setgpio');
         statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
 
         var sql =   " UPDATE "                      +
@@ -347,32 +359,32 @@ module.exports = {
                     " WHERE mac = ? ";
         sql = dbFactory.build_mysql_format( sql, [ req.body.data.btnStatus,
                                             req.body.data.btnMac]);
-            let setGpioData = {
-                "port":req.body.data.btnPort,
-                "pin":parseInt(req.body.data.btnPin),
-                "control":req.body.data.btnStatus,
-                "deviceCount":1,
-                "devices":[{"mac":req.body.data.btnMac}]
-            };
-            console.log(setGpioData);
-            axios
-                .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
-                .then( (setgpioRes) => {
-                    if (setgpioRes.data.comms[0].status != 'OK')
-                        res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+        let setGpioData = {
+            "port":req.body.data.btnPort,
+            "pin":parseInt(req.body.data.btnPin),
+            "control":req.body.data.btnStatus,
+            "deviceCount":1,
+            "devices":[{"mac":req.body.data.btnMac}]
+        };
+        console.log(setGpioData);
+        axios
+            .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
+            .then( (setgpioRes) => {
+                if (setgpioRes.data.comms[0].status != 'OK')
+                    res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
 
-                    axios
-                        .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
-                        .then((readgpioRes) => {
-                            if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
-                                res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
-                            }
+                axios
+                    .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
+                    .then((readgpioRes) => {
+                        if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
+                            res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
+                        }
 
-                            dbFactory.action_db(sql, statusDataCommon, res);
-                        })
-                        .catch((error) => console.log(error));
-                })
-                .catch( (error) => console.log(error));
+                        dbFactory.action_db(sql, statusDataCommon, res);
+                    })
+                    .catch((error) => console.log(error));
+            })
+            .catch( (error) => console.log(error));
     },
 
     /* End of Dashboard API */
@@ -546,7 +558,7 @@ module.exports = {
                     " JOIN "                                                                                +
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
-                        " history_month_info.`datetime` = 20200800000000";
+                        " history_month_info.`datetime` = 20210901000000";
             sql = dbFactory.build_mysql_format(sql);
         }
         else {
