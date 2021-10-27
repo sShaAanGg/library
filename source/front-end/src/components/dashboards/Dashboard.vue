@@ -187,7 +187,7 @@ export default {
 
         this.timerData = setInterval(() => {
             this.get_cur_month_elec();
-            // this.get_real_time_elec();
+            this.get_real_time_elec();
             this.get_demand_response();
             this.update_factory_status();
         }, 2000);
@@ -232,14 +232,19 @@ export default {
                     this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
                     this.readyArr[0] = true;
                 });
-
         },
 
         get_cur_month_elec() {
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
-                    console.log(res)
+                    console.log('cumulative:', res.data[0]);
+                    let total = 0;
+                    for (let ix = 0; ix < res.data.length; ++ix) {
+                        console.log(res.data[ix].electricity);
+                        total += res.data[ix].electricity;
+                    }
+                    console.log('total:', total);
                     this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2])];
                     this.cEmission = (0.509 * (this.getElecConsumData[0]
                                                 + this.getElecConsumData[1]
