@@ -78,7 +78,6 @@ module.exports = {
                         " history_day_info.`datetime` < '20211027101509' "+
                     " AND "+
                         " history_day_info.`datetime` > '20211000000000' ";
-        console.log(sql);
 
         dbFactory.action_db(sql, statusData, res);
         // let sql =   " SELECT "                                                                      +
@@ -191,7 +190,6 @@ module.exports = {
                         " `datetime` ";
         sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
-        console.log(sql);
         dbFactory.action_db(sql, statusData, res);
     },
 
@@ -366,7 +364,6 @@ module.exports = {
             "deviceCount":1,
             "devices":[{"mac":req.body.data.btnMac}]
         };
-        console.log(setGpioData);
         axios
             .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
             .then( (setgpioRes) => {
@@ -578,7 +575,6 @@ module.exports = {
                         " machine_info.factory = ? AND history_month_info.`datetime` = ?";
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
         }
-        console.log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
 
     },
