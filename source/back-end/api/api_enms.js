@@ -53,6 +53,7 @@ module.exports = {
     //      Dashboard
     //      Analysis
     //      ProductionLineAnalysis
+    //      ElectricBill
     //      DemandPredict
     //      MachineManage
     //      AbnormalAlert
@@ -76,12 +77,13 @@ module.exports = {
                             " INNER JOIN "                                                                  +
                                 " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
                     " WHERE "                                                                               +
-                        " history_day_info.`datetime` < '20211027101509' "                                  +
+                        " history_day_info.`datetime` < ? "                                  +
                     " AND "                                                                                 +
-                        " history_day_info.`datetime` > '20211000000000' "                                  +
+                        " history_day_info.`datetime` > ? "                                  +
                     " GROUP BY "                                                                            +
                         " machine_info.factory";
-
+        sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
+                        utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMdd000000')]);
         dbFactory.action_db_with_cb(sql, statusData, (resPreDays) => {
             let secondSql =     " SELECT "                                                                      +
                                     " machine_info.factory, "                                                   +
@@ -403,7 +405,6 @@ module.exports = {
 
     /* Analysis API */
     select_data_year: function(req, res){
-        console.log('in select_data_year...')
         let statusData = {
             successCode: 200,
             errorCode: 500,
@@ -558,6 +559,7 @@ module.exports = {
         var sql = '';
         if(req.body.data.factory.length == 0 || req.body.data.datetime.length == 0) {
             sql =   " SELECT DISTINCT "                                                                     +
+                        " machine_info.factory, "                                                           +
                         " machine_info.machine_name, "                                                      +
                         " machine_info.machine_sn, "                                                        +
                         " machine_info.month_elec AS cur_month_elec, "                                      +
@@ -571,10 +573,13 @@ module.exports = {
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
                         " history_month_info.`datetime` = 20210901000000";
+            let curDate = new Date().getFullYear() + new Date().getMonth() + "01000000";
+            // sql = dbFactory.build_mysql_format(sql, curDate);
             sql = dbFactory.build_mysql_format(sql);
         }
         else {
             sql =   " SELECT DISTINCT "                                                                     +
+                        " machine_info.factory, "                                                           +
                         " machine_info.machine_name, "                                                      +
                         " machine_info.machine_sn, "                                                        +
                         " machine_info.month_elec AS cur_month_elec, "                                      +
@@ -590,7 +595,6 @@ module.exports = {
                         " machine_info.factory = ? AND history_month_info.`datetime` = ?";
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
         }
-        console.log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
 
     },
@@ -664,6 +668,79 @@ module.exports = {
     },
 
     /* End of ProductionLineAnalysis API */
+
+    /* ElectricBill API */
+    select_options: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_options"
+        };
+        let sql = " SELECT `datetime` from history_month_info GROUP BY `datetime` ";
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            let yearList = [];
+            for(let ix = 0; ix < result.length; ++ix) {
+                let itemYear = result[ix].datetime.toString().substring(0, 4);
+                let foundIdx = yearList.findIndex(x => x === itemYear);
+                if (foundIdx < 0) {
+                    yearList.push(itemYear);
+                }
+            }
+            res.status(statusData.successCode).send([yearList]);
+        });
+    },
+    select_factory_info_for_elec_bill: function(req, res) {
+        /* select specific month
+
+        */
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_factory_info_for_elec_bill"
+        };
+        let sql =   " SELECT "                                                                      +
+                        " machine_info.factory, "                                                   +
+                        " SUM(history_month_info.demand) AS demand, "                               +
+                        " SUM(history_month_info.electricity) AS elec "                             +
+                    " FROM "                                                                        +
+                        " history_month_info "                                                      +
+                    " JOIN "                                                                        +
+                        " equipment_info ON history_month_info.mac = equipment_info.mac "           +
+                    " JOIN "                                                                        +
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "     +
+                    " WHERE "                                                                       +
+                        " `datetime` = ? "                                                          +
+                    " GROUP BY "                                                                    +
+                        "machine_info.factory ";
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.datetime]);
+        console.log(sql);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    select_machine_info_for_elec_bill: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_machine_info_for_elec_bill"
+        };
+        let sql =   " SELECT "                                                                      +
+                        " machine_info.machine_name, "                                              +
+                        " machine_info.factory, "                                                   +
+                        " SUM(history_month_info.demand) AS demand, "                               +
+                        " SUM(history_month_info.electricity) AS elec "                             +
+                    " FROM "                                                                        +
+                        " history_month_info "                                                      +
+                    " JOIN "                                                                        +
+                        " equipment_info ON history_month_info.mac = equipment_info.mac "           +
+                    " JOIN "                                                                        +
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "     +
+                    " WHERE "                                                                       +
+                        " `datetime` = ? "                                                          +
+                    " GROUP BY "                                                                    +
+                        "history_month_info.mac ";
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.datetime]);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    /* End of ElectricBill API */
 
     /* DemandPredict API */
     select_predict_capacity: function(req, res) {

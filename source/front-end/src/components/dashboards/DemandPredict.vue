@@ -174,7 +174,6 @@ export default {
             this.$http
                 .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                 .then((res) => {
-                    console.log(res);
                     this.get_select_options(res.data);
                     this.equipList = res.data;
                     this.show_chart(this.equipList[0]);

@@ -125,7 +125,7 @@ export default {
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            contractCapacity: 500000,
+            contractCapacity: 20000000,
             elecCapacity: [50000, 0, 0],
             getElecConsumData: [],
             getBarData: [],
@@ -219,7 +219,6 @@ export default {
             this.$http
                 .get('api/enms/select_two_years_electricity_consumption')
                 .then(res=> {
-                    console.log(res);
                     let todayDate = new Date();
                     let curMonth = todayDate.getMonth();
                     for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
@@ -238,19 +237,15 @@ export default {
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
-                    console.log('cumulative:', res.data[0]);
-                    let total = 0;
+                    console.log('cumulative:', res);
+                    this.getElecConsumData = [];
+                    this.cEmission = 0;
                     for (let ix = 0; ix < res.data.length; ++ix) {
-                        console.log(res.data[ix].electricity);
-                        total += res.data[ix].electricity;
+                        this.getElecConsumData.push(JSON.parse(res.data[ix]));
+                        this.cEmission += 0.509 * this.getElecConsumData[ix];
                     }
-                    console.log('total:', total);
-                    this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2])];
-                    this.cEmission = (0.509 * (this.getElecConsumData[0]
-                                                + this.getElecConsumData[1]
-                                                + this.getElecConsumData[2])).toFixed(2);
+                    this.cEmission = parseFloat(this.cEmission.toFixed(2));
 
-                    // do not use deep copy
                     this.cEmissionThisYear = Object.assign([], this.cEmissionThisYearBefore);
 
                     this.cEmissionThisYear.push(this.cEmission);
@@ -386,7 +381,6 @@ export default {
                 }
             }
             if (count === this.readyArr.length) this.isReady = true;
-            console.log(count);
         }
 
     }

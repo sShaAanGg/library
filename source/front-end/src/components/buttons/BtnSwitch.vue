@@ -22,12 +22,8 @@ export default {
         }
     },
     mounted() {
-        this.initialize_status();
     },
     methods: {
-        initialize_status() {
-        },
-
         set_switch() {
             if (this.btnCheck == false){
                 console.log('btnCheck false');

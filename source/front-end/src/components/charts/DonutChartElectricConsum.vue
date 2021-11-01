@@ -12,6 +12,7 @@ export default {
     data() {
         return {
             myChart: '',
+            showItems: 2,
             factoryList: ['廠區一', '廠區二', '廠區三'],
             maxElec: 0,
             maxIdx: 0,
