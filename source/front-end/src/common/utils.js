@@ -119,7 +119,7 @@ export function adjustFontSize(res){
 
 }
 
-export var factoryOptions = ["廠區一", "廠區二", "廠區三"];
+export var factoryOptions = ["廠區一", "廠區二"];
 export var machineTypeOptions = ["公共用電節能", "空調節能"];
 
 export function float_computing(num1, num2, points, operations){

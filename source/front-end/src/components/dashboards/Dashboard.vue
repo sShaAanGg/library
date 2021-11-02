@@ -279,7 +279,7 @@ export default {
 
         update_factory_status() {
             let lastLogIndex = this.curLogIndex;
-            (lastLogIndex === 2) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
+            (lastLogIndex === 1) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
         },
 
         get_cur_abnormal_event() {

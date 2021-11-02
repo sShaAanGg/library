@@ -20,7 +20,7 @@ export default {
             'isNormal', 'logIndex', 'abnoramlLog', 'abLogIdx'],
     data() {
         return {
-            normalLog: ['廠區一  無異常', '廠區二  無異常', '廠區三  無異常']
+            normalLog: ['廠區一  無異常', '廠區二  無異常']
         }
     },
 }

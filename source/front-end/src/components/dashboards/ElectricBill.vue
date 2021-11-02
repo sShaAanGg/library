@@ -51,18 +51,6 @@
                             :bordered="true"
                             pagination
                         >
-                            <template #update_chart="{ item }">
-                            <td class="p-2">
-                                <CButton
-                                square
-                                size="sm"
-                                style="color: #98a8a0"
-                                @click="show_chart(item)"
-                                >
-                                <CIcon size="xl" name="cil-chart-line" />
-                                </CButton>
-                            </td>
-                            </template>
                         </CDataTable>
                         <h4 class="mt-4" style="color: #98a8a0">
                             <CIcon name="cil-calculator" size="lg" /> 計價設定- {{period}}
@@ -103,19 +91,6 @@
                             儲存設定
                             </CButton>
                         </CRow>
-
-                        <!-- <h4 class="mt-4" style="color: #98a8a0">
-                            <CIcon name="cil-description" size="lg" /> 機台用電 - {{factory}}
-                        </h4>
-                        <CDataTable
-                            :items="machineList"
-                            :fields="machineFields"
-                            style="textalign: center; font-size: 110%;"
-                            :items-per-page="5"
-                            :bordered="true"
-                            pagination
-                        >
-                        </CDataTable> -->
                     </CCol>
                 </CRow>
             </CCardBody>
@@ -132,8 +107,8 @@ export default {
             demand: 0,
             totalElecConsum: '',
             contractPrice: 177,
-            summerPrice: 1.81,
-            normalPrice: 112,
+            summerPrice: 2.56,
+            normalPrice: 1.81,
             demandCharge: 12310,
             energyCharge: 256321,
             // peakPrice: '',
@@ -210,11 +185,7 @@ export default {
                         labelLine: {
                             show: false
                         },
-                        data: [
-                            {value: 1000, name: '廠區一'},
-                            {value: 1000, name: '廠區二'},
-                            {value: 1000, name: '廠區三'},
-                        ],
+                        data: [],
                         color: [
                             '#175580',
                             '#346780',
@@ -234,10 +205,8 @@ export default {
         this.get_factory_list();
     },
     mounted() {
-
         this.barChart = this.$echarts.init(document.getElementById("barChartDemand"));
         this.barChart.setOption(this.option);
-        // this.initialize_page();
     },
     methods: {
         compute_format_datetime() {
@@ -271,8 +240,6 @@ export default {
             this.$http
                 .post('api/enms/select_factory_info_for_elec_bill', {data:data})
                 .then((res) => {
-                    console.log('result:', res);
-                    // this.factoryList = res.data;
                     this.demand = 0;
                     this.totalElecConsum = 0;
                     this.factoryList = [];
@@ -301,31 +268,9 @@ export default {
                     }
                     this.compute_charge();
                     this.barChart.setOption(this.option);
-
-                    // this.show_chart(this.factoryList[0]);
-                    // this.equipList[0]._classes = '';
                 })
                 .catch((error) => console.log(error));
-        },
-        show_chart(item) {
-            let rowColor = 'table-active';
-            // reset row color
-            let foundIdx = this.equipList.findIndex(x => x._classes === rowColor);
-            if (foundIdx >= 0) {
-                this.equipList[foundIdx]._classes = '';
-            }
-
-            // change row color to show selected
-            // change existed attributes to force rendering
-            //  this.equipList[foundIdx]._classes = '';
-            let tempName = item.machine_name;
-            item.machine_name = '123';
-            item.machine_name = tempName;
-            item._classes = rowColor;
-
-            this.equipName = item.machine_name;
-            this.get_predict_capacity(item.machine_sn);
-        },
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-<template>                
+<template>
     <div>
         <CCard class="card-base">
             <CCardBody>
@@ -25,7 +25,7 @@
                             variant="ghost"
                             class="mr-2 mb-6"
                             style="float: right"
-                            color="dark" 
+                            color="dark"
                             v-bind = "{ shape: 'pill' }"
                             @click="show_modal('')"
                         >
@@ -40,7 +40,7 @@
                             variant="ghost"
                             class="mr-2 mb-6"
                             style="float: right"
-                            color="dark" 
+                            color="dark"
                             v-bind = "{ shape: 'pill' }"
                             @click="show_modal('新增')"
                         >
@@ -111,7 +111,7 @@
                     </CDataTable>
                 </CCol>
             </CRow>
-            
+
             </CCardBody>
 	    </CCard>
 
@@ -163,7 +163,7 @@
                         onkeyup="this.value=this.value.replace(/[, ]/g,'')"
                     />
                 </CCol>
-                
+
                 <CCol lg = "12">
                     <h4 class = "pt-3">新增設備開關:</h4>
                 </CCol>
@@ -274,7 +274,7 @@
                         onkeyup="this.value=this.value.replace(/[, ]/g,'')"
                     />
                 </CCol>
-                
+
                 <CCol lg = "12">
                     <hr class = "mt-0 mb-2" />
                     <h4 class = "pt-3">新增設備開關:</h4>
@@ -338,7 +338,7 @@
             </template>
         </CModal>
     </div>
-   
+
 </template>
 
 <script>
@@ -360,8 +360,8 @@ export default {
 			],
 
             searchFactory:"",
-            factoryOptions: ["廠區一", "廠區二", "廠區三"],
-            
+            factoryOptions: ["廠區一", "廠區二"],
+
             showInsertModal: false,
             showUpdateModal: false,
             factory:"",
@@ -405,7 +405,7 @@ export default {
                              equimentMac:this.equimentMac,
                              buttonArray:this.buttonArray,
                              showButton:false});
-            
+
             this.reset_modal();
             this.showInsertModal = false;
             this.show = true;
@@ -460,9 +460,9 @@ export default {
                 alert("請輸入開關資訊!!!");
                 return;
             }
-            
+
             if (type == "insert"){
-                this.buttonArray.push(buttonContent);   
+                this.buttonArray.push(buttonContent);
             } else if (type == "edit"){
                 this.editbuttonArray.push(buttonContent);
             }
