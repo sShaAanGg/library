@@ -1,10 +1,11 @@
 <template>
     <div class="card-es">
+
         <h4 class="card-font">本月綠能儲電量</h4>
-        
-        <CCardBody class="card-body-es" align='center'> 
-            {{fromDataEs}} KWh 
-        <div style="text-align: right">
+
+        <CCardBody class="card-body-es" align='center'>
+            {{fromDataEs}} KWh
+        <!-- <div style="text-align: right">
             <img
                 class="card-img-es"
                 src="img/dashboard_imgs/elec_store.png"
@@ -12,8 +13,14 @@
                 height="80"
                 display="inline"
             />
-        </div>
-        </CCardBody> 
+        </div> -->
+        </CCardBody>
+
+        <CCardBody>
+            <p style="font-size:12px;" class="p-0 m-0" align='left'>
+                上月儲電量:{{lastMonthFromDataEs}} KWh
+            </p>
+        </CCardBody>
 
     </div>
 </template>
@@ -21,12 +28,12 @@
 <script>
 export default {
     inject: ['reload'],
-    props: ['fromDataEs'],
+    props: ['fromDataEs', 'lastMonthFromDataEs'],
     data() {
         return {
-            screenWidth: Screen.screenWidth,    
+            screenWidth: Screen.screenWidth,
         }
-    },  
+    },
     mounted() {
         const root = document.documentElement;
         root.style.setProperty('--screen-width', '${this.screenWidth}px');

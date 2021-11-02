@@ -6,17 +6,17 @@
                 <CRow>
                     <CCol lg = '12'>
                         <div class="mb-1 mr-1 cardstyle">
-                            <ElecStore :fromDataEs="elecStore"></ElecStore>
+                            <ElecStore :fromDataEs="elecStore" :lastMonthFromDataEs="lastMonthElecStore"></ElecStore>
                         </div>
                     </CCol>
                     <CCol lg = '12'>
                         <div class="mb-1 mr-1 cardstyle">
-                            <CarbonEmission :fromDataCe="cEmission"></CarbonEmission>
+                            <CarbonEmission :fromDataCe="cEmission" :lastMonthFromDataCe="lastMonthcEmission"></CarbonEmission>
                         </div>
                     </CCol>
                     <CCol lg = '12'>
                         <div class="mb-1 mr-1 cardstyle">
-                            <ReduceCarbonEmission :fromDataRce="reducedCEmission"></ReduceCarbonEmission>
+                            <ReduceCarbonEmission :fromDataRce="reducedCEmission" :lastMonthFromDataRce="lastMonthReducedCEmission"></ReduceCarbonEmission>
                         </div>
                     </CCol>
                     <CCol lg = '12'>
@@ -114,8 +114,11 @@ export default {
             isReady: '',
             // data to show on dashboard
             elecStore: 0,
+            lastMonthElecStore:0,
             cEmission: '',
+            lastMonthcEmission: '',
             reducedCEmission: '',
+            lastMonthReducedCEmission: '',
 
             // data to plot graph
             cEmissionAvg: new Array(12),
@@ -230,6 +233,10 @@ export default {
                     this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
                     this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
                     this.readyArr[0] = true;
+
+                    //lastMonthData
+                    this.lastMonthcEmission = res.data[res.data.length -1].carbon_footprint;
+                    this.lastMonthReducedCEmission = res.data[res.data.length -1].carbon_negative;
                 });
         },
 

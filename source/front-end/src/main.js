@@ -36,6 +36,11 @@ import "default-passive-events"
 import * as Utils from '@/common/utils.js';
 Vue.prototype.$utils = Utils;
 
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
+import 'vue2-datepicker/locale/zh-cn';
+Vue.component('DatePicker', DatePicker)
+
 var axiosConfig = {
     headers: {
         "License-Key": '2ebed68cc4c1d3ad38d3ca348b468f93cf3833a1a9cb7d29adb1a277fde79b72'
