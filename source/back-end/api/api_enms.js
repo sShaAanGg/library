@@ -364,18 +364,17 @@ module.exports = {
 
     update_btn_swicth: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
+        console.log('body.data:', req.body.data);
 
         var sql =   " UPDATE "                      +
                         " equipment_controller "    +
                     " SET "                         +
                         " button_status = ? "       +
                     " WHERE mac = ? ";
-        sql = dbFactory.build_mysql_format( sql, [ req.body.data.btnStatus,
-                                            req.body.data.btnMac]);
         let setGpioData = {
             "port":req.body.data.btnPort,
             "pin":parseInt(req.body.data.btnPin),
-            "control":req.body.data.btnStatus,
+            "control":req.body.data.btnCommand,
             "deviceCount":1,
             "devices":[{"mac":req.body.data.btnMac}]
         };
@@ -384,10 +383,11 @@ module.exports = {
         getIpSql = dbFactory.build_mysql_format(getIpSql, [req.body.data.btnMac]);
         dbFactory.action_db_with_cb(getIpSql, statusDataCommon, (result) => {
             let restfulIP = 'http://' + result[0].ip + '/restful.service.cgi?';
-            console.log('restful ip: ', restfulIP);
+            console.log('restful ip: ', restfulIP, setGpioData);
             axios
             .post(restfulIP + 'setgpio', setGpioData, axiosConfig)
             .then( (setgpioRes) => {
+                console.log(setgpioRes);
                 if (setgpioRes.data.comms[0].status == 'OK'){
                     console.log('before read gpio status...');
                     axios
@@ -397,24 +397,23 @@ module.exports = {
                                 res.status(400);
                                 // res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
                             }
-
+                            sql = dbFactory.build_mysql_format(sql,
+                                                                [ req.body.data.btnCommand, req.body.data.btnMac]);
                             dbFactory.action_db(sql, statusDataCommon, res);
-
                         })
                         .catch((error) => console.log(error));
                 } else {
-                    console.log('not ok');
-                    res.json('error')
-                    res.status(401);
-
-                    // res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+                    sql = dbFactory.build_mysql_format(sql, ['2', req.body.data.btnMac]);
+                    dbFactory.asyncQuery(sql);
+                    res.json('KO')
                 }
-                // res.status(400);
             })
-            .catch( (error) => console.log(error));
-            // console.log('end axios');
-            // statusDataCommon['test'] = 400;
-            // res.status(statusDataCommon.test);
+            .catch( (error) => {
+                sql = dbFactory.build_mysql_format(sql, ['2', req.body.data.btnMac]);
+                dbFactory.asyncQuery(sql);
+                // console.log(error)
+                res.json('KO');
+            });
         });
 
         // axios

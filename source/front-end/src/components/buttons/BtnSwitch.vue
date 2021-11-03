@@ -6,7 +6,7 @@
             size='sm'
             @click="set_switch()"
         >
-            {{ btnSwitch.btnText }}
+            {{ btnText }}
         </CButton>
     </h6>
 </template>
@@ -19,9 +19,18 @@ export default {
             mac: this.btnMac,
             isAlive: true,
             btnCheck:true,
+            btnText: '',
         }
     },
+    created() {
+        // TO DO
+        // initialize all status to 'OFF' or 'ON'
+    },
     mounted() {
+        this.btnText = this.btnSwitch.btnText;
+    },
+    beforeUpdate() {
+        this.btnText = this.btnSwitch.btnText;
     },
     methods: {
         set_switch() {
@@ -41,19 +50,20 @@ export default {
                 btnMac:this.btnMac,
                 btnPort:this.btnPort,
                 btnPin:this.btnPin,
-                btnStatus:this.btnSwitch.btnText == 'ON' ? 0 : 1
+                btnCommand:this.btnSwitch.btnText == 'ON' ? 0 : 1
             };
-
+            console.log(data);
             this.$http
                 .post('/api/enms/update_btn_swicth', {data : data})
                 .then((res) => {
                     console.log(res);
-                    if( res.data === 'error') {
+                    if( res.data === 'KO') {
                         alert("開關操作出現問題，請洽管理員!!!");
                     }
+                    this.btnText = res.data;
                     this.btnCheck = true;
                 })
-                .catch((error) => console.log('*****************8', error));
+                .catch((error) => console.log(error));
         },
     },
 
