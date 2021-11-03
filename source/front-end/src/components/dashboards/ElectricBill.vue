@@ -109,8 +109,8 @@ export default {
             contractPrice: 177,
             summerPrice: 2.56,
             normalPrice: 1.81,
-            demandCharge: 12310,
-            energyCharge: 256321,
+            demandCharge: 0,
+            energyCharge: 0,
             // peakPrice: '',
             // shoulderPrice: '',
             // offPeakPrice: '',
@@ -188,7 +188,7 @@ export default {
                         data: [],
                         color: [
                             '#175580',
-                            '#346780',
+                            // '#346780',
                             '#3C968D',
                             // '#388C6C'
                         ]
@@ -240,6 +240,9 @@ export default {
             this.$http
                 .post('api/enms/select_factory_info_for_elec_bill', {data:data})
                 .then((res) => {
+                    if (res.data.length === 0){
+                        alert('該月份無資料可顯示\n請選擇其他月份');
+                    }
                     this.demand = 0;
                     this.totalElecConsum = 0;
                     this.factoryList = [];

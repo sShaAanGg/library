@@ -33,7 +33,7 @@ export default {
             this.mode = 'dark'
           }
         },
-  }
+    }
 }
 </script>
 

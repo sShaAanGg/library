@@ -120,9 +120,9 @@ module.exports = {
                             break;
                         }
                     }
-                    if(factoryEle === 0) {
-                        console.log('No previous daily elec for', Object.keys(groupByFactory)[ix]);
-                    }
+                    // if(factoryEle === 0) {
+                    //     console.log('No previous daily elec for', Object.keys(groupByFactory)[ix]);
+                    // }
                     while(iy < sumArray.length){
                         factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
                         ++ iy;
@@ -379,24 +379,62 @@ module.exports = {
             "deviceCount":1,
             "devices":[{"mac":req.body.data.btnMac}]
         };
-        axios
-            .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
+
+        let getIpSql = " SELECT ip FROM enms.equipment_info WHERE mac = ? ";
+        getIpSql = dbFactory.build_mysql_format(getIpSql, [req.body.data.btnMac]);
+        dbFactory.action_db_with_cb(getIpSql, statusDataCommon, (result) => {
+            let restfulIP = 'http://' + result[0].ip + '/restful.service.cgi?';
+            console.log('restful ip: ', restfulIP);
+            axios
+            .post(restfulIP + 'setgpio', setGpioData, axiosConfig)
             .then( (setgpioRes) => {
-                if (setgpioRes.data.comms[0].status != 'OK')
-                    res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+                if (setgpioRes.data.comms[0].status == 'OK'){
+                    console.log('before read gpio status...');
+                    axios
+                        .post(restfulIP + 'readgpio', setGpioData, axiosConfig)
+                        .then((readgpioRes) => {
+                            if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
+                                res.status(400);
+                                // res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
+                            }
 
-                axios
-                    .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
-                    .then((readgpioRes) => {
-                        if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
-                            res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
-                        }
+                            dbFactory.action_db(sql, statusDataCommon, res);
 
-                        dbFactory.action_db(sql, statusDataCommon, res);
-                    })
-                    .catch((error) => console.log(error));
+                        })
+                        .catch((error) => console.log(error));
+                } else {
+                    console.log('not ok');
+                    res.json('error')
+                    res.status(401);
+
+                    // res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+                }
+                // res.status(400);
             })
             .catch( (error) => console.log(error));
+            // console.log('end axios');
+            // statusDataCommon['test'] = 400;
+            // res.status(statusDataCommon.test);
+        });
+
+        // axios
+        //     .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
+        //     .then( (setgpioRes) => {
+        //         if (setgpioRes.data.comms[0].status != 'OK')
+        //             res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+
+        //         axios
+        //             .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
+        //             .then((readgpioRes) => {
+        //                 if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
+        //                     res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
+        //                 }
+
+        //                 dbFactory.action_db(sql, statusDataCommon, res);
+        //             })
+        //             .catch((error) => console.log(error));
+        //     })
+        //     .catch( (error) => console.log(error));
     },
 
     /* End of Dashboard API */
@@ -570,7 +608,9 @@ module.exports = {
                     " JOIN "                                                                                +
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
-                        " history_month_info.`datetime` = 20210901000000";
+                        " history_month_info.`datetime` = 20210901000000"                                   +
+                    " ORDER BY "                                                                            +
+                        " machine_info.factory";
             let curDate = new Date().getFullYear() + new Date().getMonth() + "01000000";
             // sql = dbFactory.build_mysql_format(sql, curDate);
             sql = dbFactory.build_mysql_format(sql);
@@ -709,9 +749,9 @@ module.exports = {
                     " WHERE "                                                                       +
                         " `datetime` = ? "                                                          +
                     " GROUP BY "                                                                    +
-                        "machine_info.factory ";
+                        "machine_info.factory "                                                     +
+                    " ORDER BY machine_info.factory ";
         sql = dbFactory.build_mysql_format(sql, [req.body.data.datetime]);
-        console.log(sql);
         dbFactory.action_db(sql, statusData, res);
     },
     select_machine_info_for_elec_bill: function(req, res) {
@@ -763,13 +803,13 @@ module.exports = {
                     " WHERE "                                                                       +
                         " machine_info.machine_sn = ? "                                             +
                     " AND "                                                                         +
-                        " `datetime` > ? "                                           +
+                        " `datetime` > ? "                                                          +
                     " AND "                                                                         +
                         " `datetime` < ? ";
         let lastYear = new Date().getFullYear() - 1;
         let curMonth = new Date().getMonth() + 1;
         let next3MonthYear = lastYear;
-        let next3Month = (curMonth + 4) % 12;
+        let next3Month = (curMonth + req.body.data.period) % 12 + 1;
         (Math.floor((curMonth + 3) / 12) >= 1) ? next3MonthYear = lastYear + 1 : next3MonthYear = lastYear;
         (curMonth < 10) ? curMonth = '0' + curMonth.toString() : curMonth = curMonth.toString();
         (next3Month < 10) ? next3Month = '0' + next3Month.toString() : next3Month = next3Month.toString();
@@ -802,12 +842,11 @@ module.exports = {
 
 
         let sql =   " SELECT "                                  +
-                        " machine_info.month_elec AS elec "     +
+                        " machine_info.demand "     +
                     " FROM "                                                                        +
                         " machine_info "                                                       +
                     " WHERE "                                                                       +
                         " machine_info.machine_sn = ? ";
-
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
@@ -849,6 +888,7 @@ module.exports = {
                         " machine_info.factory = ? AND machine_info.type = ?";
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.type]);
         }
+        sql += " ORDER BY machine_info.factory ";
         dbFactory.action_db(sql, statusDataCommon, res);
     },
 

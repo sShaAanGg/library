@@ -147,7 +147,7 @@ export default {
                 '',
                 '廠區一',
                 '廠區二',
-                '廠區三'
+                // '廠區三'
             ],
 
             showDetail:false,

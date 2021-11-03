@@ -178,7 +178,7 @@ export default {
         this.get_demand_response();
         this.update_factory_status();
         this.get_real_time_elec();
-        this.get_sensor_data();
+        // this.get_sensor_data();
         this.check_abnormal_event();
 
         // this.timerLoading = setInterval(() => {
@@ -195,9 +195,9 @@ export default {
             this.update_factory_status();
         }, 2000);
 
-        this.timerenvirnmentalData = setInterval(() => {
-            this.get_sensor_data();
-        }, 1000);
+        // this.timerenvirnmentalData = setInterval(() => {
+        //     this.get_sensor_data();
+        // }, 1000);
 
         this.timerEvent = setInterval(() => {
             this.get_cur_abnormal_event();
@@ -244,7 +244,6 @@ export default {
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
-                    console.log('cumulative:', res);
                     this.getElecConsumData = [];
                     this.cEmission = 0;
                     for (let ix = 0; ix < res.data.length; ++ix) {
@@ -365,7 +364,6 @@ export default {
                 .get('/api/enms/select_real_time_electricity_consumption')
                 .then(res=> {
                     this.realTimeKilowattHourData = parseFloat(res.data).toFixed(2);
-                    console.log('realtime:', res);
                     this.readyArr[4] = true;
                 });
         },

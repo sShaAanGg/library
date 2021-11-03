@@ -47,14 +47,13 @@ export default {
             this.$http
                 .post('/api/enms/update_btn_swicth', {data : data})
                 .then((res) => {
-                    if( res.status !== 200)
+                    console.log(res);
+                    if( res.data === 'error') {
                         alert("開關操作出現問題，請洽管理員!!!");
-
-                    console.log(res.data);
-
+                    }
                     this.btnCheck = true;
                 })
-                .catch((error) => console.log(error));
+                .catch((error) => console.log('*****************8', error));
         },
     },
 

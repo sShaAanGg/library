@@ -55,7 +55,7 @@
                         :items="equipList"
                         :fields="equipFields"
                         style="textalign: center; font-size: 110%; color: #98a8a0"
-                        :items-per-page="5"
+                        :items-per-page="3"
                         :bordered="true"
                         pagination
                     >
@@ -79,7 +79,7 @@
                         :items="equipEventList"
                         :fields="eventFields"
                         style="textalign: center; font-size: 110%;"
-                        :items-per-page="5"
+                        :items-per-page="3"
                         :bordered="true"
                         pagination
                     >

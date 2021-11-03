@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { factoryOptions } from '@/common/utils';
+
 export default {
     inject: ['reload'],
     props: ['elecConsumData'],
@@ -13,7 +15,7 @@ export default {
         return {
             myChart: '',
             showItems: 2,
-            factoryList: ['廠區一', '廠區二', '廠區三'],
+            factoryList: factoryOptions, // ['廠區一', '廠區二', '廠區三'],
             maxElec: 0,
             maxIdx: 0,
             defaultFactory: '', // the maximum elec showing on centre
@@ -62,11 +64,10 @@ export default {
                         data: [
                             {value: 1000, name: '廠區一'},
                             {value: 1000, name: '廠區二'},
-                            {value: 1000, name: '廠區三'},
                         ],
                         color: [
                             '#175580',
-                            '#346780',
+                            // '#346780',
                             '#3C968D',
                             // '#388C6C'
                         ]
