@@ -54,4 +54,22 @@ module.exports = {
             }
         })
     },
+
+    print_log: function (inputLog) {
+        /* print log in console window
+        @purpose
+            Replacing multiple spaces in a string, and print it.
+            If input is not string, print it directly.
+        @argument
+            a variable which you want to print in console window
+        @return
+            none
+        */
+        if (typeof inputLog === 'string'){
+            let formatLog = inputLog.replace(/\s\s+/g, ' ');
+            console.log('[PRINT_LOG]', formatLog);
+        } else{
+            console.log('[PRINT_LOG]', inputLog);
+        }
+    }
 }

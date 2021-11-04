@@ -378,7 +378,7 @@ module.exports = {
             "deviceCount":1,
             "devices":[{"mac":req.body.data.btnMac}]
         };
-
+        console.log(setGpioData);
         let getIpSql = " SELECT ip FROM enms.equipment_info WHERE mac = ? ";
         getIpSql = dbFactory.build_mysql_format(getIpSql, [req.body.data.btnMac]);
         dbFactory.action_db_with_cb(getIpSql, statusDataCommon, (result) => {
@@ -854,40 +854,38 @@ module.exports = {
         statusDataCommon['errorMsg'] = "Some error occurred while select_machine_info_for_demand_predict";
 
         let sql = "";
-        let commonSql = " SELECT DISTINCT "                                                                     +
-                            " machine_info.machine_name, "                                                      +
-                            " machine_info.machine_sn, "                                                        +
-                            " machine_info.factory, "                                                           +
-                            " machine_info.type, "                                                              +
-                            " machine_info.month_elec AS cur_month_elec "                                       +
-                        " FROM "                                                                                +
-                            " equipment_info "                                                                  +
-                        " JOIN "                                                                                +
-                            " machine_info ON equipment_info.machine_sn = machine_info.machine_sn ";
+        let commonSql = `SELECT DISTINCT
+                            machine_info.machine_name,
+                            machine_info.machine_sn,
+                            machine_info.factory,
+                            machine_info.type,
+                            machine_info.demand
+                        FROM
+                            equipment_info
+                        JOIN
+                            machine_info ON equipment_info.machine_sn = machine_info.machine_sn `;
 
         if(req.body.data.factory === '全廠區' && req.body.data.type === '全部項目') {
             sql = dbFactory.build_mysql_format(commonSql);
         }
         else if (req.body.data.factory != '全廠區' && req.body.data.type === '全部項目') {
-            sql =   commonSql                                                               +
-                    " WHERE "                                                               +
-                        " machine_info.factory = ? ";
+            sql =   commonSql
+                    + `WHERE machine_info.factory = ? `;
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory]);
         }
         else if (req.body.data.factory === '全廠區' && req.body.data.type != '全部項目') {
-            sql =   commonSql                                                               +
-                    " WHERE "                                                               +
-                        " machine_info.`type` = ? ";
+            sql =   commonSql
+                    + `WHERE machine_info.\`type\` = ? `;
             sql = dbFactory.build_mysql_format(sql, [req.body.data.type]);
         }
         else {
             // given factory and type
-            sql =   commonSql                                                               +
-                    " WHERE "                                                               +
-                        " machine_info.factory = ? AND machine_info.type = ?";
+            sql =   commonSql
+                    + `WHERE machine_info.factory = ? AND machine_info.\`type \`= ? `;
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.type]);
         }
-        sql += " ORDER BY machine_info.factory ";
+        sql += `ORDER BY machine_info.factory `;
+        // utility.print_log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
 

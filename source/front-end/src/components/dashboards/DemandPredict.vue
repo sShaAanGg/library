@@ -11,25 +11,28 @@
                             <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
                         </h4>
                         <CRow>
-                            <CSelect class="ml-5 select-factory" :options="periodOptions"
-                                :value.sync="period"
-                                @change="get_predict_capacity()" />
+
+                        <CSelect class="ml-5 mt-3 select-factory" :options="periodOptions"
+                            :value.sync="period"
+                            @change="get_predict_capacity()" />
+                        </CRow>
+                        <CRow>
                             <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:60vh"></div>
                         </CRow>
                     </CCol>
                     <CCol lg="6" class="card-base">
                         <CRow lg="8">
-                        <CSelect class="select-factory" label="廠區" :options="factoryOptions"
-                            :value.sync="factory" />
-                        <CSelect class="select-factory" label="分類項目" :options="typeOptions"
-                            :value.sync="machineType" />
-                        <CButton
-                        class="btn-search"
-                        size="lg"
-                        @click="get_equip_list(factory, selectMonth)"
-                        >
-                        搜尋
-                        </CButton>
+                            <CSelect class="select-factory" label="廠區" :options="factoryOptions"
+                                :value.sync="factory" />
+                            <CSelect class="select-factory" label="分類項目" :options="typeOptions"
+                                :value.sync="machineType" />
+                            <CButton
+                            class="btn-search"
+                            size="lg"
+                            @click="get_equip_list(factory, selectMonth)"
+                            >
+                            搜尋
+                            </CButton>
                         </CRow>
                         <h4 class="mt-4" style="color: #98a8a0">
                             <CIcon name="cil-description" size="lg" /> 設備清單
@@ -110,7 +113,7 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: ['未來三個月\n契約容量', '未來三個月\n預測需量', '當前月\n需量'],
+                    data: ['契約容量', '預測需量', '當前月\n需量'],
                     inverse: true,
                     animationDuration: 300,
                     animationDurationUpdate: 300,

@@ -229,8 +229,8 @@ export default {
             })
         },
         compute_charge() {
-            this.demandCharge = this.demand * this.contractPrice;
-            this.energyCharge = (this.totalElecConsum * this.summerPrice).toFixed(2);
+            this.demandCharge = parseFloat((this.demand * this.contractPrice).toFixed(2));
+            this.energyCharge = parseFloat((this.totalElecConsum * this.summerPrice).toFixed(2));
             this.totalElecConsum = parseFloat(this.totalElecConsum.toFixed(2));
         },
         get_factory_list() {
