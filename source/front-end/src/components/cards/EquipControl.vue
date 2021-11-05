@@ -5,7 +5,6 @@
         <tabs :mode="mode">
             <tab title="廠區一"></tab>
             <tab title="廠區二"></tab>
-            <tab title="廠區三"></tab>
         </tabs>
     </div>
 </template>
@@ -34,7 +33,7 @@ export default {
             this.mode = 'dark'
           }
         },
-  }
+    }
 }
 </script>
 

@@ -11,22 +11,28 @@
                             <CIcon name="cil-chart-line" size="lg" /> 圖表數據 - {{ equipName }}
                         </h4>
                         <CRow>
+
+                        <CSelect class="ml-5 mt-3 select-factory" :options="periodOptions"
+                            :value.sync="period"
+                            @change="get_predict_capacity()" />
+                        </CRow>
+                        <CRow>
                             <div class="ml-3 mt-5" id="barChartDemand" style="width:40vw;height:60vh"></div>
                         </CRow>
                     </CCol>
                     <CCol lg="6" class="card-base">
                         <CRow lg="8">
-                        <CSelect class="select-factory" label="廠區" :options="factoryOptions"
-                            :value.sync="factory" />
-                        <CSelect class="select-factory" label="分類項目" :options="typeOptions"
-                            :value.sync="machineType" />
-                        <CButton
-                        class="btn-search"
-                        size="lg"
-                        @click="get_equip_list(factory, selectMonth)"
-                        >
-                        搜尋
-                        </CButton>
+                            <CSelect class="select-factory" label="廠區" :options="factoryOptions"
+                                :value.sync="factory" />
+                            <CSelect class="select-factory" label="分類項目" :options="typeOptions"
+                                :value.sync="machineType" />
+                            <CButton
+                            class="btn-search"
+                            size="lg"
+                            @click="get_equip_list(factory, selectMonth)"
+                            >
+                            搜尋
+                            </CButton>
                         </CRow>
                         <h4 class="mt-4" style="color: #98a8a0">
                             <CIcon name="cil-description" size="lg" /> 設備清單
@@ -63,11 +69,15 @@
 export default {
     data() {
         return {
-            maxContract: 1800000,
+            maxContract: 600000,
+            periodOptions: ['未來一個月', '未來二個月', '未來三個月', '未來四個月', '未來五個月',
+                            '未來六個月', '未來七個月', '未來八個月', '未來九個月'],
+            period: '未來一個月',
             factoryOptions: ['全廠區'],
             typeOptions: ['全部項目'],
             factory: '全廠區',
             machineType: '全部項目',
+            machineSN: '',
 
             equipName: '',
             equipList: [],
@@ -76,7 +86,7 @@ export default {
                 {key: 'machine_sn', label: 'S/N', _style: "color: #4C756A"},
                 {key: 'factory', label: '廠區', _style: "color: #4C756A"},
                 {key: 'type', label: '分類項目', _style: "color: #4C756A"},
-                {key: 'cur_month_elec', label: '需量(KW)', _style: "color: #4C756A"},
+                {key: 'demand', label: '需量(KW)', _style: "color: #4C756A"},
                 {key: 'update_chart', label: ''}
             ],
 
@@ -103,7 +113,7 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: ['未來三個月\n契約容量', '未來三個月\n預測需量', '當前月\n需量'],
+                    data: ['契約容量', '預測需量', '當前月\n需量'],
                     inverse: true,
                     animationDuration: 300,
                     animationDurationUpdate: 300,
@@ -174,7 +184,6 @@ export default {
             this.$http
                 .post('api/enms/select_machine_info_for_demand_predict', {data:data})
                 .then((res) => {
-                    console.log(res);
                     this.get_select_options(res.data);
                     this.equipList = res.data;
                     this.show_chart(this.equipList[0]);
@@ -194,8 +203,10 @@ export default {
                 })
                 .catch((error) => console.log(error));
         },
-        get_predict_capacity(machine_sn){
-            let data = {machine_sn: machine_sn}
+        get_predict_capacity(){
+            let selectPeriod = this.periodOptions.findIndex(x => x === this.period) + 1;
+            this.option.series[0].data[0] = selectPeriod * this.maxContract;
+            let data = {machine_sn: this.machineSN, period: selectPeriod};
             this.$http
                 .post('api/enms/select_predict_capacity', {data:data})
                 .then(res=>{
@@ -203,7 +214,7 @@ export default {
                     this.$http
                         .post('api/enms/select_current_capacity', {data:data})
                         .then(res=>{
-                            this.option.series[0].data[2] = res.data[0].elec;
+                            this.option.series[0].data[2] = res.data[0].demand;
                             this.barChart.setOption(this.option);
 
                         });
@@ -226,7 +237,8 @@ export default {
             item._classes = rowColor;
 
             this.equipName = item.machine_name;
-            this.get_predict_capacity(item.machine_sn);
+            this.machineSN = item.machine_sn;
+            this.get_predict_capacity();
         },
     }
 }

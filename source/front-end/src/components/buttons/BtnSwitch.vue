@@ -6,7 +6,7 @@
             size='sm'
             @click="set_switch()"
         >
-            {{ btnSwitch.btnText }}
+            {{ btnText }}
         </CButton>
     </h6>
 </template>
@@ -19,15 +19,31 @@ export default {
             mac: this.btnMac,
             isAlive: true,
             btnCheck:true,
+            btnText: '',
+            data: {
+                btnMac:this.btnMac,
+                btnPort:this.btnPort,
+                btnPin:this.btnPin,
+                btnCommand:''
+            },
         }
     },
+    created() {
+        // turn on ths switch at initial state
+        this.btnText = 'OFF';   // then command will be set to 1
+        this.set_switch();
+    },
     mounted() {
-        this.initialize_status();
+    },
+    beforeUpdate() {
+        this.btnText = this.btnSwitch.btnText;
+        if (this.btnStatus == 2){
+            this.btnText = 'KO';
+            // alert("控制開關出現問題，請洽管理員!!!");
+            return;
+        }
     },
     methods: {
-        initialize_status() {
-        },
-
         set_switch() {
             if (this.btnCheck == false){
                 console.log('btnCheck false');
@@ -35,27 +51,15 @@ export default {
             }
 
             this.btnCheck = false;
-
-            if (this.btnStatus == 2){
-                alert("控制開關出現問題，請洽管理員!!!");
-                return;
-            }
-
-            let data =  {
-                btnMac:this.btnMac,
-                btnPort:this.btnPort,
-                btnPin:this.btnPin,
-                btnStatus:this.btnSwitch.btnText == 'ON' ? 0 : 1
-            };
-
+            this.data.btnCommand = (this.btnText === 'ON') ? 0 : 1;
             this.$http
-                .post('/api/enms/update_btn_swicth', {data : data})
+                .post('/api/enms/update_btn_swicth', {data : this.data})
                 .then((res) => {
-                    if( res.status !== 200)
-                        alert("開關操作出現問題，請洽管理員!!!");
-
-                    console.log(res.data);
-
+                    // console.log(res);
+                    if( res.data === 'KO') {
+                        // alert("開關操作出現問題，請洽管理員!!!");
+                    }
+                    this.btnText = res.data;
                     this.btnCheck = true;
                 })
                 .catch((error) => console.log(error));

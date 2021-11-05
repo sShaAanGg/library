@@ -55,7 +55,7 @@
                         :items="equipList"
                         :fields="equipFields"
                         style="textalign: center; font-size: 110%; color: #98a8a0"
-                        :items-per-page="5"
+                        :items-per-page="3"
                         :bordered="true"
                         pagination
                     >
@@ -79,7 +79,7 @@
                         :items="equipEventList"
                         :fields="eventFields"
                         style="textalign: center; font-size: 110%;"
-                        :items-per-page="5"
+                        :items-per-page="3"
                         :bordered="true"
                         pagination
                     >
@@ -110,7 +110,7 @@ export default {
     data() {
         return {
             showSearchHint: false,
-            factoryOptions: ['全廠區', '廠區一', '廠區二', '廠區三'],
+            factoryOptions: ['全廠區'],
             yearOptions: [2021],
             yearMonth: '-',
             selectYear: 2021,
@@ -210,7 +210,13 @@ export default {
                     this.equipList = res.data;
                     this.show_chart(this.equipList[0]);
                     // this.equipList[0]._classes = '';
-
+                    this.factoryOptions = ['全廠區'];
+                    for (let ix = 0; ix < res.data.length; ++ix) {
+                        let foundIdx = this.factoryOptions.findIndex(x => x === res.data[ix].factory);
+                        if (foundIdx < 0) {
+                            this.factoryOptions.push(res.data[ix].factory);
+                        }
+                    }
                 })
                 .catch((error) => console.log(error));
         },

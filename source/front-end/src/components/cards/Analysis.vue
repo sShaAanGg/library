@@ -94,10 +94,10 @@
                     >
                             <template #show_details="{item}">
                                 <td class="p-2">
-                                    <CButton  @click="show_chart(item)">
+                                    <CButton style="color: #98a8a0" @click="show_chart(item)">
                                         <CIcon size="xl" name="cil-chart-pie"/>
                                     </CButton>
-                                    <CButton  @click="show_data_details(item)">
+                                    <CButton style="color: #98a8a0" @click="show_data_details(item)">
                                         <CIcon size="xl" name="cilZoom"/>
                                     </CButton>
                                 </td>
@@ -147,7 +147,7 @@ export default {
                 '',
                 '廠區一',
                 '廠區二',
-                '廠區三'
+                // '廠區三'
             ],
 
             showDetail:false,
@@ -190,6 +190,37 @@ export default {
                 detailItemsTemp:[],
                 detailItemsTempCompare:[],
                 detailFields:[]
+            },
+            option: {
+                tooltip: {
+                    trigger: 'axis',
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: '',
+                },
+                yAxis: {
+                    type: 'value',
+                    min: '',
+                    max: '',
+                },
+                series: [
+                    {
+                        name: '',
+                        type: 'line',
+                        // smooth: true,
+                        // prettier-ignore
+                        data: [],
+                    },
+                    {
+                        name: '',
+                        type: 'line',
+                        // mooth: true,
+                        // prettier-ignore
+                        data: [],
+                    },
+                ]
             }
         }
     },
@@ -316,8 +347,6 @@ export default {
                 date:this.AnalysisData.date,
                 analysisMode:this.AnalysisData.analysisMode
             }
-            console.log(data);
-            // if (data['factory'] === '全廠區') data['factory'] = '';
             this.$http
                 .post('api/enms/select_two_years_electricity_consumption_for_anslysis',{ data:data })
                 .then(async res => {
@@ -328,8 +357,8 @@ export default {
                         this.AnalysisData.max = 0;
                         this.AnalysisData.value = 0;
                         this.AnalysisData.data = [];
-                        this.AnalysisData.compareData = [];
                         this.AnalysisData.items = [];
+                        this.AnalysisData.compareData = [];
                         this.AnalysisData.detailItemsTemp = [];
                         var dateTotal = [];
                         var index;
@@ -479,7 +508,6 @@ export default {
                             }
 
                         }
-                        console.log(dateTotal)
                         this.AnalysisData.compareData = [];
                         this.AnalysisData.data = [];
 
@@ -488,12 +516,10 @@ export default {
                                 var year = new Date(dateTotal[i].datetime).getFullYear();
                                 if (year == newDate.getFullYear()){
                                     this.AnalysisData.data.push(dateTotal[i].data.toFixed(2));
-                                    console.log("This is data::" + dateTotal[i].data.toFixed(2))
                                 }
 
                                 if (year == newDate.getFullYear()-1){
                                     this.AnalysisData.compareData.push(dateTotal[i].data.toFixed(2));
-                                    console.log("This is compare::" + dateTotal[i].data.toFixed(2))
                                 }
                             }
 
@@ -512,9 +538,6 @@ export default {
                             }
                         }
 
-                        console.log(this.AnalysisData.compareData)
-                        console.log(this.AnalysisData.data)
-
                         if (this.AnalysisData.compareData.length === 0 && this.xAxis.length === 0){
                             for (let i = 0 ; i < this.AnalysisData.data.length; ++i){
                                 this.xAxis.push(i+1);
@@ -524,7 +547,6 @@ export default {
                         if (this.AnalysisData.mode === 'powerConsumption'){
                             for (let i = 0; i < this.AnalysisData.items.length; ++i){
                                 this.AnalysisData.items[i].analysis = ((this.AnalysisData.items[i].analysis/509) * 1000).toFixed(2);
-                                console.log('analysis:', this.AnalysisData.items[i].analysis);
                             }
                         }
                         this.AnalysisData.sort = '全部';
@@ -536,82 +558,39 @@ export default {
         },
 
         rendering_chart() {
-            this.option = {};
-            this.compute_min_max_for_chart_data(this.AnalysisData.data);
-            console.log(typeof this.AnalysisData.compareData.length)
-            if (this.AnalysisData.compareData.length == 0){
-                this.option = {
-                    tooltip: {
-                        trigger: 'axis',
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: this.xAxis,
-                    },
-                    yAxis: {
-                        type: 'value',
-                        min: this.AnalysisData.min,
-                        max: this.AnalysisData.max,
-                    },
-                    series: [
-                        {
-                            name: '今年度' + this.AnalysisData.analysisSort,
-                            type: 'line',
-                            // smooth: true,
-                            // prettier-ignore
-                            data: this.AnalysisData.data,
-                        },
-                        {
-                            name: '去年度' + this.AnalysisData.analysisSort,
-                            type: 'line',
-                            toolbox: {
-                            show: false
-                            },
-                            // mooth: true,
-                            // prettier-ignore
-                            data: this.AnalysisData.compareData,
-                        },
-                    ]
-                };
-                this.myChart.setOption(this.option);
-            } else {
-                this.option = {
-                    tooltip: {
-                        trigger: 'axis',
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: this.xAxis,
-                    },
-                    yAxis: {
-                        type: 'value',
-                        min: this.AnalysisData.min,
-                        max: this.AnalysisData.max,
-                    },
-                    series: [
-                        {
-                            name: '今年度' + this.AnalysisData.analysisSort,
-                            type: 'line',
-                            // smooth: true,
-                            // prettier-ignore
-                            data: this.AnalysisData.data,
-                        },
-                        {
-                            name: '去年度' + this.AnalysisData.analysisSort,
-                            type: 'line',
-                            // mooth: true,
-                            // prettier-ignore
-                            data: this.AnalysisData.compareData,
-                        },
-                    ]
-                };
-                this.myChart.setOption(this.option);
+            this.compute_min_max_for_chart_data(this.AnalysisData.data, this.AnalysisData.compareData);
+            this.option.xAxis.data = this.xAxis;
+            this.option.yAxis.min = this.AnalysisData.min;
+            this.option.yAxis.max = this.AnalysisData.max;
+            this.option.series[0].name = '今年度' + this.AnalysisData.analysisSort;
+            this.option.series[0].data = this.AnalysisData.data;
+            this.option.series[1].name = '去年度' + this.AnalysisData.analysisSort;
+            this.option.series[1].data = this.AnalysisData.compareData;
+            if (this.AnalysisData.compareData.length === 0){
+                this.option.series[1].show = false;
             }
+            this.myChart.setOption(this.option);
+
+        },
+
+        highlight_item(item) {
+            let rowColor = 'table-active';
+            // reset row color
+            let foundIdx = this.AnalysisData.items.findIndex(x => x._classes === rowColor);
+            if (foundIdx >= 0) {
+                this.AnalysisData.items[foundIdx]._classes = '';
+            }
+
+            // change row color to show selected
+            // change existed attributes to force rendering
+            let tempName = item.sort;
+            item.sort = '123';
+            item.sort = tempName;
+            item._classes = rowColor;
         },
 
         show_chart(item) {
+            this.highlight_item(item);
             var newDate = new Date(this.AnalysisData.date);
 
             var key = item.sort;
@@ -627,7 +606,6 @@ export default {
 
             var dateTotal = [];
             var index;
-            console.log(this.AnalysisData.detailItemsTemp);
             for (let i = 0; i < this.AnalysisData.detailItemsTemp.length; ++i){
                 if (this.AnalysisData.detailItemsTemp[i].sort !== key)
                     continue;
@@ -650,7 +628,6 @@ export default {
                     this.xAxis = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
             }
-            console.log(dateTotal);
 
             for (let i = 0; i < dateTotal.length; ++i){
                 if (this.AnalysisData.analysisMode === 'year'){
@@ -697,44 +674,25 @@ export default {
             this.showDetail = true;
         },
 
-        compute_min_max_for_chart_data(chartData) {
-            let total = 0;
+        compute_min_max_for_chart_data(chartDataCur, chartDataCom) {
             let maxElement = 0;
             let minElement = Number.MAX_VALUE;
 
-            for (let ix = 0; ix < chartData.length; ++ix){
-                let floatData = parseFloat(chartData[ix]);
+            for (let ix = 0; ix < chartDataCur.length; ++ix){
+                let floatData = parseFloat(chartDataCur[ix]);
                 if (floatData > maxElement) maxElement = floatData;
                 if (floatData < minElement) minElement = floatData;
-
-                total += floatData;
             }
-            let avg = total / chartData.length;
 
-            let maxScale = (avg + Math.abs(maxElement - avg) * 0.5) / avg;
-            let minScale = (avg - Math.abs(minElement - avg) * 0.5) / avg;
-            this.AnalysisData.max = (Math.round((maxElement + Math.abs(maxElement - avg) * 0.5) / 0.01) * 0.01).toFixed(2);
-            this.AnalysisData.min = (Math.round((minElement - Math.abs(minElement - avg) * 0.5) / 0.01) * 0.01).toFixed(2);
-            console.log('avg:', avg, maxElement, minElement);
-            // diff percentage
-            // let maxDiff = 0;
-            // let minDiff = 1;
-            // for (let iy = 0; iy < chartData.length; ++iy) {
-            //     let floatData = parseFloat(chartData[iy]);
-            //     let diff = Math.abs(floatData - avg) / avg;
-            //     if (diff > maxDiff) maxDiff = diff;
-            //     if (diff < minDiff) minDiff = diff;
+            for(let iy = 0; iy < chartDataCom.length; ++iy){
+                let floatData = parseFloat(chartDataCom[iy]);
+                if (floatData > maxElement) maxElement = floatData;
+                if (floatData < minElement) minElement = floatData;
+            }
 
-            // }
-            // let maxScale = 1 + maxDiff * 1.5;
-            // let minScale = 1 + minDiff * 1.5;
-            // this.AnalysisData.max = parseFloat((maxElement * maxScale).toFixed(2));
-            // this.AnalysisData.min = parseFloat((minElement * minScale).toFixed(2));
-            console.log(avg, minScale, maxScale);
-
-            // this.AnalysisData.min = parseFloat((minElement*0.98).toFixed(2));
-            // this.AnalysisData.max = parseFloat((maxElement*1.02).toFixed(2));
-            console.log('(min, max)=', this.AnalysisData.min, this.AnalysisData.max);
+            let addMargin = (maxElement - minElement) * 0.1;
+            this.AnalysisData.max = parseFloat((maxElement + addMargin).toFixed(2));
+            this.AnalysisData.min = parseFloat((minElement - addMargin).toFixed(2));
         }
     }
 }

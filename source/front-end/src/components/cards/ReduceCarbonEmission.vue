@@ -1,17 +1,23 @@
 <template>
     <div class="card-h">
         <h2 class="card-title-rce">本月減碳排放量</h2>
-        <CCardBody class='card-body-rce' align='center' @click="$router.push('/analysis/carbonNegative/all')">
+        <CCardBody :style="{'color':fromDataRce > lastMonthFromDataRce ? 'green':'red'}" class='card-body-rce' align='center' @click="$router.push('/analysis/carbonNegative/all')">
             {{fromDataRce}} kgCO<sub>2</sub>e
-        <div style="text-align: right">
-            <img
-                class="card-img-es"
-                src="img/dashboard_imgs/co2_reduce.png"
-                width="110"
-                height="75"
-                display="inline"
-            />
-        </div>        
+            <!-- <div style="text-align: right">
+                <img
+                    class="card-img-es"
+                    src="img/dashboard_imgs/co2_reduce.png"
+                    width="110"
+                    height="75"
+                    display="inline"
+                />
+            </div> -->
+        </CCardBody>
+
+        <CCardBody>
+            <p style="font-size:12px;" class="p-0 m-0" align='left'>
+                上月減碳排量:{{lastMonthFromDataRce}} kgCO<sub>2</sub>e
+            </p>
         </CCardBody>
     </div>
 </template>
@@ -19,7 +25,7 @@
 <script>
 export default {
     inject: ['reload'],
-    props: ['fromDataRce'],
+    props: ['fromDataRce', 'lastMonthFromDataRce'],
     name: "HistoryAnalysis",
 
 }

@@ -16,6 +16,7 @@ router.post('/send_switch_socket', function (req, res) {
 //      Dashboard
 //      Analysis
 //      ProductionLineAnalysis
+//      ElectricBill
 //      DemandPredict
 //      MachineManage
 //      AbnormalAlert
@@ -72,7 +73,7 @@ router.post('/select_two_years_electricity_consumption_for_anslysis', function (
 
 /* End of Analysis API */
 
-/* ProductionLineStatusAnalysis */
+/* ProductionLineStatusAnalysis API */
 router.post('/select_factory_machine_monthly_info', function (req, res) {
     api.select_factory_machine_monthly_info(req, res);
 });
@@ -89,7 +90,21 @@ router.post('/select_equip_daily_elec_this_month', function (req, res) {
     api.select_equip_daily_elec_this_month(req, res);
 });
 
-/* End of ProductionLineStatusAnalysis */
+/* End of ProductionLineStatusAnalysis API */
+
+/* ElectricBill API */
+router.post('/select_factory_info_for_elec_bill', function (req, res) {
+    api.select_factory_info_for_elec_bill(req, res);
+});
+
+router.post('/select_options', function (req, res) {
+    api.select_options(req, res);
+});
+
+router.post('/select_machine_info_for_elec_bill', function (req, res) {
+    api.select_machine_info_for_elec_bill(req, res);
+});
+/* End of ElectricBill API */
 
 /* DemandPredict API */
 router.post('/select_predict_capacity', function (req, res) {

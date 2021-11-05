@@ -53,6 +53,7 @@ module.exports = {
     //      Dashboard
     //      Analysis
     //      ProductionLineAnalysis
+    //      ElectricBill
     //      DemandPredict
     //      MachineManage
     //      AbnormalAlert
@@ -66,60 +67,73 @@ module.exports = {
             errorCode: 500,
             errorMsg: "Some error occurred while select_current_cumulative_electricity_consumption"
         };
-        let sql =   " SELECT "+
-                        " SUM(electricity) AS elec "+
-                    " FROM "+
-                        " ((history_day_info "+
+        let sql =   " SELECT "                                                                              +
+                        " machine_info.factory, "                                                           +
+                        " SUM(electricity) AS elec "                                                        +
+                    " FROM "                                                                                +
+                        " ((history_day_info "                                                              +
                             " INNER JOIN "                                                                  +
                                 " equipment_info ON history_day_info.mac = equipment_info.mac) "            +
                             " INNER JOIN "                                                                  +
                                 " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
                     " WHERE "                                                                               +
-                        " history_day_info.`datetime` < '20211027101509' "+
-                    " AND "+
-                        " history_day_info.`datetime` > '20211000000000' ";
-        console.log(sql);
+                        " history_day_info.`datetime` < ? "                                  +
+                    " AND "                                                                                 +
+                        " history_day_info.`datetime` > ? "                                  +
+                    " GROUP BY "                                                                            +
+                        " machine_info.factory";
+        sql = dbFactory.build_mysql_format(sql, [utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
+                        utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMdd000000')]);
+        dbFactory.action_db_with_cb(sql, statusData, (resPreDays) => {
+            let secondSql =     " SELECT "                                                                      +
+                                    " machine_info.factory, "                                                   +
+                                    " equipment_info.machine_sn, "                                              +
+                                    " machine_info.voltage, "                                                   +
+                                    " SUM(ampere) AS 'sum_ampere' "                                             +
+                                " FROM "                                                                        +
+                                    " ((enms_info "                                                             +
+                                " INNER JOIN "                                                                  +
+                                    " equipment_info on enms_info.mac = equipment_info.mac) "                   +
+                                " INNER JOIN "                                                                  +
+                                    " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
+                                " WHERE "                                                                       +
+                                    " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
+                                " GROUP BY "                                                                    +
+                                    " machine_info.machine_sn ";
+            secondSql = dbFactory.build_mysql_format(secondSql, [utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
+                                                                utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMdd000000')]);
+            dbFactory.action_db_with_cb(secondSql, statusData, (resToday) => {
+                let cumulativeElectricityConsumption = [];
+                let sumArray = [];
+                let factoryEle = 0;
+                let ix = 0, iy = 0;
+                let groupByFactory = resToday.groupBy('factory');
 
-        dbFactory.action_db(sql, statusData, res);
-        // let sql =   " SELECT "                                                                      +
-        //                 " machine_info.factory, "                                                   +
-        //                 " equipment_info.machine_sn, "                                              +
-        //                 " machine_info.voltage, "                                                   +
-        //                 " SUM(ampere) AS 'sum_ampere' "                                             +
-        //             " FROM "                                                                        +
-        //                 " ((enms_info "                                                             +
-        //             " INNER JOIN "                                                                  +
-        //                 " equipment_info on enms_info.mac = equipment_info.mac) "                   +
-        //             " INNER JOIN "                                                                  +
-        //                 " machine_info on equipment_info.machine_sn = machine_info.machine_sn) "    +
-        //             " WHERE "                                                                       +
-        //                 " enms_info.`datetime` < ? AND enms_info.`datetime` > ? "                   +
-        //             " GROUP BY "                                                                    +
-        //                 " machine_info.machine_sn ";
-        // sql = dbFactory.build_mysql_format(sql, [   utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMMddHHmmss'),
-        //                                             utility.formattime(new Date().setMonth(new Date().getMonth()), 'yyyyMM01000000')]);
-        // dbFactory.action_db_with_cb(sql, statusData, (result) => {
-        //     let cumulativeElectricityConsumption = [];
-        //     let sumArray = [];
-        //     let factoryEle = 0;
-        //     let ix = 0, iy = 0;
-        //     let groupByFactory = result.groupBy('factory');
+                while(ix < Object.keys(groupByFactory).length){
+                    sumArray = [];
+                    sumArray = groupByFactory[Object.keys(groupByFactory)[ix]];
+                    iy = 0;
 
-        //     while(ix < Object.keys(groupByFactory).length){
-        //         sumArray = [];
-        //         sumArray = groupByFactory[Object.keys(groupByFactory)[ix]];
-        //         iy = 0;
-        //         factoryEle = 0;
-        //         while(iy < sumArray.length){
-        //             factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
-        //             ++ iy;
-        //         }
-        //         cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
-        //         ++ ix;
-        //     }
-        //     console.log(cumulativeElectricityConsumption)
-        //     res.status(statusData.successCode).send(cumulativeElectricityConsumption);
-        // });
+                    for (let iy = 0; iy < resPreDays.length; ++iy) {
+                        if(resPreDays[iy]['factory'] === Object.keys(groupByFactory)[ix]) {
+                            factoryEle = resPreDays[iy]['elec'];
+                            break;
+                        }
+                    }
+                    // if(factoryEle === 0) {
+                    //     console.log('No previous daily elec for', Object.keys(groupByFactory)[ix]);
+                    // }
+                    while(iy < sumArray.length){
+                        factoryEle += (sumArray[iy].voltage * sumArray[iy].sum_ampere)/360000;
+                        ++ iy;
+                    }
+                    cumulativeElectricityConsumption.push(factoryEle.toFixed(2));
+                    ++ ix;
+                }
+                res.status(statusData.successCode).send(cumulativeElectricityConsumption);
+            });
+
+        });
     },
 
     select_two_years_electricity_consumption: function(req, res) {
@@ -191,7 +205,6 @@ module.exports = {
                         " `datetime` ";
         sql = dbFactory.build_mysql_format(sql, [   new Date().getFullYear()-1 + '01000000',
                                                     utility.formattime(new Date(), 'yyyy1200000000')]);
-        console.log(sql);
         dbFactory.action_db(sql, statusData, res);
     },
 
@@ -351,47 +364,82 @@ module.exports = {
 
     update_btn_swicth: function(req, res) {
         statusDataCommon['errorMsg'] = "Some error occurred while update_btn_seicth";
+        console.log('body.data:', req.body.data);
 
         var sql =   " UPDATE "                      +
                         " equipment_controller "    +
                     " SET "                         +
                         " button_status = ? "       +
                     " WHERE mac = ? ";
-        sql = dbFactory.build_mysql_format( sql, [ req.body.data.btnStatus,
-                                            req.body.data.btnMac]);
         let setGpioData = {
             "port":req.body.data.btnPort,
             "pin":parseInt(req.body.data.btnPin),
-            "control":req.body.data.btnStatus,
+            "control":req.body.data.btnCommand,
             "deviceCount":1,
             "devices":[{"mac":req.body.data.btnMac}]
         };
         console.log(setGpioData);
-        axios
-            .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
+        let getIpSql = " SELECT ip FROM enms.equipment_info WHERE mac = ? ";
+        getIpSql = dbFactory.build_mysql_format(getIpSql, [req.body.data.btnMac]);
+        dbFactory.action_db_with_cb(getIpSql, statusDataCommon, (result) => {
+            let restfulIP = 'http://' + result[0].ip + '/restful.service.cgi?';
+            console.log('restful ip: ', restfulIP, setGpioData);
+            axios
+            .post(restfulIP + 'setgpio', setGpioData, axiosConfig)
             .then( (setgpioRes) => {
-                if (setgpioRes.data.comms[0].status != 'OK')
-                    res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
-
-                axios
-                    .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
-                    .then((readgpioRes) => {
-                        if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
-                            res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
-                        }
-
-                        dbFactory.action_db(sql, statusDataCommon, res);
-                    })
-                    .catch((error) => console.log(error));
+                console.log(setgpioRes);
+                if (setgpioRes.data.comms[0].status == 'OK'){
+                    console.log('before read gpio status...');
+                    axios
+                        .post(restfulIP + 'readgpio', setGpioData, axiosConfig)
+                        .then((readgpioRes) => {
+                            if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
+                                res.status(400);
+                                // res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
+                            }
+                            sql = dbFactory.build_mysql_format(sql,
+                                                                [ req.body.data.btnCommand, req.body.data.btnMac]);
+                            dbFactory.action_db(sql, statusDataCommon, res);
+                        })
+                        .catch((error) => console.log(error));
+                } else {
+                    sql = dbFactory.build_mysql_format(sql, ['2', req.body.data.btnMac]);
+                    dbFactory.asyncQuery(sql);
+                    res.json('KO')
+                }
             })
-            .catch( (error) => console.log(error));
+            .catch( (error) => {
+                sql = dbFactory.build_mysql_format(sql, ['2', req.body.data.btnMac]);
+                dbFactory.asyncQuery(sql);
+                // console.log(error)
+                res.json('KO');
+            });
+        });
+
+        // axios
+        //     .post(process.env.RESTFUL_IP + 'setgpio', setGpioData, axiosConfig)
+        //     .then( (setgpioRes) => {
+        //         if (setgpioRes.data.comms[0].status != 'OK')
+        //             res.status(statusDataCommon.errorCode).send("setGpioStatus failed!");
+
+        //         axios
+        //             .post(process.env.RESTFUL_IP + 'readgpio', setGpioData, axiosConfig)
+        //             .then((readgpioRes) => {
+        //                 if ((setGpioData.control == 1 ? 'ON' : 'OFF') != readgpioRes.data.comms[0].gpioStatus){
+        //                     res.status(statusDataCommon.errorCode).send("gpioStatus is not true!");
+        //                 }
+
+        //                 dbFactory.action_db(sql, statusDataCommon, res);
+        //             })
+        //             .catch((error) => console.log(error));
+        //     })
+        //     .catch( (error) => console.log(error));
     },
 
     /* End of Dashboard API */
 
     /* Analysis API */
     select_data_year: function(req, res){
-        console.log('in select_data_year...')
         let statusData = {
             successCode: 200,
             errorCode: 500,
@@ -546,6 +594,7 @@ module.exports = {
         var sql = '';
         if(req.body.data.factory.length == 0 || req.body.data.datetime.length == 0) {
             sql =   " SELECT DISTINCT "                                                                     +
+                        " machine_info.factory, "                                                           +
                         " machine_info.machine_name, "                                                      +
                         " machine_info.machine_sn, "                                                        +
                         " machine_info.month_elec AS cur_month_elec, "                                      +
@@ -558,11 +607,16 @@ module.exports = {
                     " JOIN "                                                                                +
                         " history_month_info ON equipment_info.mac = history_month_info.mac "               +
                     " WHERE "                                                                               +
-                        " history_month_info.`datetime` = 20210901000000";
+                        " history_month_info.`datetime` = 20210901000000"                                   +
+                    " ORDER BY "                                                                            +
+                        " machine_info.factory";
+            let curDate = new Date().getFullYear() + new Date().getMonth() + "01000000";
+            // sql = dbFactory.build_mysql_format(sql, curDate);
             sql = dbFactory.build_mysql_format(sql);
         }
         else {
             sql =   " SELECT DISTINCT "                                                                     +
+                        " machine_info.factory, "                                                           +
                         " machine_info.machine_name, "                                                      +
                         " machine_info.machine_sn, "                                                        +
                         " machine_info.month_elec AS cur_month_elec, "                                      +
@@ -578,7 +632,6 @@ module.exports = {
                         " machine_info.factory = ? AND history_month_info.`datetime` = ?";
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.datetime]);
         }
-        console.log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
 
     },
@@ -653,6 +706,79 @@ module.exports = {
 
     /* End of ProductionLineAnalysis API */
 
+    /* ElectricBill API */
+    select_options: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_options"
+        };
+        let sql = " SELECT `datetime` from history_month_info GROUP BY `datetime` ";
+        dbFactory.action_db_with_cb(sql, statusData, (result) => {
+            let yearList = [];
+            for(let ix = 0; ix < result.length; ++ix) {
+                let itemYear = result[ix].datetime.toString().substring(0, 4);
+                let foundIdx = yearList.findIndex(x => x === itemYear);
+                if (foundIdx < 0) {
+                    yearList.push(itemYear);
+                }
+            }
+            res.status(statusData.successCode).send([yearList]);
+        });
+    },
+    select_factory_info_for_elec_bill: function(req, res) {
+        /* select specific month
+
+        */
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_factory_info_for_elec_bill"
+        };
+        let sql =   " SELECT "                                                                      +
+                        " machine_info.factory, "                                                   +
+                        " SUM(history_month_info.demand) AS demand, "                               +
+                        " SUM(history_month_info.electricity) AS elec "                             +
+                    " FROM "                                                                        +
+                        " history_month_info "                                                      +
+                    " JOIN "                                                                        +
+                        " equipment_info ON history_month_info.mac = equipment_info.mac "           +
+                    " JOIN "                                                                        +
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "     +
+                    " WHERE "                                                                       +
+                        " `datetime` = ? "                                                          +
+                    " GROUP BY "                                                                    +
+                        "machine_info.factory "                                                     +
+                    " ORDER BY machine_info.factory ";
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.datetime]);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    select_machine_info_for_elec_bill: function(req, res) {
+        let statusData = {
+            successCode: 200,
+            errorCode: 500,
+            errorMsg: " Some error occurred while select_machine_info_for_elec_bill"
+        };
+        let sql =   " SELECT "                                                                      +
+                        " machine_info.machine_name, "                                              +
+                        " machine_info.factory, "                                                   +
+                        " SUM(history_month_info.demand) AS demand, "                               +
+                        " SUM(history_month_info.electricity) AS elec "                             +
+                    " FROM "                                                                        +
+                        " history_month_info "                                                      +
+                    " JOIN "                                                                        +
+                        " equipment_info ON history_month_info.mac = equipment_info.mac "           +
+                    " JOIN "                                                                        +
+                        " machine_info ON equipment_info.machine_sn = machine_info.machine_sn "     +
+                    " WHERE "                                                                       +
+                        " `datetime` = ? "                                                          +
+                    " GROUP BY "                                                                    +
+                        "history_month_info.mac ";
+        sql = dbFactory.build_mysql_format(sql, [req.body.data.datetime]);
+        dbFactory.action_db(sql, statusData, res);
+    },
+    /* End of ElectricBill API */
+
     /* DemandPredict API */
     select_predict_capacity: function(req, res) {
         /* select passed two years electricity consumption
@@ -676,13 +802,13 @@ module.exports = {
                     " WHERE "                                                                       +
                         " machine_info.machine_sn = ? "                                             +
                     " AND "                                                                         +
-                        " `datetime` > ? "                                           +
+                        " `datetime` > ? "                                                          +
                     " AND "                                                                         +
                         " `datetime` < ? ";
         let lastYear = new Date().getFullYear() - 1;
         let curMonth = new Date().getMonth() + 1;
         let next3MonthYear = lastYear;
-        let next3Month = (curMonth + 4) % 12;
+        let next3Month = (curMonth + req.body.data.period) % 12 + 1;
         (Math.floor((curMonth + 3) / 12) >= 1) ? next3MonthYear = lastYear + 1 : next3MonthYear = lastYear;
         (curMonth < 10) ? curMonth = '0' + curMonth.toString() : curMonth = curMonth.toString();
         (next3Month < 10) ? next3Month = '0' + next3Month.toString() : next3Month = next3Month.toString();
@@ -715,12 +841,11 @@ module.exports = {
 
 
         let sql =   " SELECT "                                  +
-                        " machine_info.month_elec AS elec "     +
+                        " machine_info.demand "     +
                     " FROM "                                                                        +
                         " machine_info "                                                       +
                     " WHERE "                                                                       +
                         " machine_info.machine_sn = ? ";
-
         sql = dbFactory.build_mysql_format(sql, [req.body.data.machine_sn]);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
@@ -729,39 +854,38 @@ module.exports = {
         statusDataCommon['errorMsg'] = "Some error occurred while select_machine_info_for_demand_predict";
 
         let sql = "";
-        let commonSql = " SELECT DISTINCT "                                                                     +
-                            " machine_info.machine_name, "                                                      +
-                            " machine_info.machine_sn, "                                                        +
-                            " machine_info.factory, "                                                           +
-                            " machine_info.type, "                                                              +
-                            " machine_info.month_elec AS cur_month_elec "                                       +
-                        " FROM "                                                                                +
-                            " equipment_info "                                                                  +
-                        " JOIN "                                                                                +
-                            " machine_info ON equipment_info.machine_sn = machine_info.machine_sn ";
+        let commonSql = `SELECT DISTINCT
+                            machine_info.machine_name,
+                            machine_info.machine_sn,
+                            machine_info.factory,
+                            machine_info.type,
+                            machine_info.demand
+                        FROM
+                            equipment_info
+                        JOIN
+                            machine_info ON equipment_info.machine_sn = machine_info.machine_sn `;
 
         if(req.body.data.factory === '全廠區' && req.body.data.type === '全部項目') {
             sql = dbFactory.build_mysql_format(commonSql);
         }
         else if (req.body.data.factory != '全廠區' && req.body.data.type === '全部項目') {
-            sql =   commonSql                                                               +
-                    " WHERE "                                                               +
-                        " machine_info.factory = ? ";
+            sql =   commonSql
+                    + `WHERE machine_info.factory = ? `;
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory]);
         }
         else if (req.body.data.factory === '全廠區' && req.body.data.type != '全部項目') {
-            sql =   commonSql                                                               +
-                    " WHERE "                                                               +
-                        " machine_info.`type` = ? ";
+            sql =   commonSql
+                    + `WHERE machine_info.\`type\` = ? `;
             sql = dbFactory.build_mysql_format(sql, [req.body.data.type]);
         }
         else {
             // given factory and type
-            sql =   commonSql                                                               +
-                    " WHERE "                                                               +
-                        " machine_info.factory = ? AND machine_info.type = ?";
+            sql =   commonSql
+                    + `WHERE machine_info.factory = ? AND machine_info.\`type \`= ? `;
             sql = dbFactory.build_mysql_format(sql, [req.body.data.factory, req.body.data.type]);
         }
+        sql += `ORDER BY machine_info.factory `;
+        // utility.print_log(sql);
         dbFactory.action_db(sql, statusDataCommon, res);
     },
 

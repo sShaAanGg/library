@@ -6,17 +6,17 @@
                 <CRow>
                     <CCol lg = '12'>
                         <div class="mb-1 mr-1 cardstyle">
-                            <ElecStore :fromDataEs="elecStore"></ElecStore>
+                            <ElecStore :fromDataEs="elecStore" :lastMonthFromDataEs="lastMonthElecStore"></ElecStore>
                         </div>
                     </CCol>
                     <CCol lg = '12'>
                         <div class="mb-1 mr-1 cardstyle">
-                            <CarbonEmission :fromDataCe="cEmission"></CarbonEmission>
+                            <CarbonEmission :fromDataCe="cEmission" :lastMonthFromDataCe="lastMonthcEmission"></CarbonEmission>
                         </div>
                     </CCol>
                     <CCol lg = '12'>
                         <div class="mb-1 mr-1 cardstyle">
-                            <ReduceCarbonEmission :fromDataRce="reducedCEmission"></ReduceCarbonEmission>
+                            <ReduceCarbonEmission :fromDataRce="reducedCEmission" :lastMonthFromDataRce="lastMonthReducedCEmission"></ReduceCarbonEmission>
                         </div>
                     </CCol>
                     <CCol lg = '12'>
@@ -114,8 +114,11 @@ export default {
             isReady: '',
             // data to show on dashboard
             elecStore: 0,
+            lastMonthElecStore:0,
             cEmission: '',
+            lastMonthcEmission: '',
             reducedCEmission: '',
+            lastMonthReducedCEmission: '',
 
             // data to plot graph
             cEmissionAvg: new Array(12),
@@ -125,7 +128,7 @@ export default {
             cEmissionLastTime: '',
             realTimeKilowattHourData: 0,
             // elecCapacity:[22000,Math.round(Math.random() * 22000),Math.round(Math.random() * 22000)],
-            contractCapacity: 500000,
+            contractCapacity: 20000000,
             elecCapacity: [50000, 0, 0],
             getElecConsumData: [],
             getBarData: [],
@@ -175,7 +178,7 @@ export default {
         this.get_demand_response();
         this.update_factory_status();
         this.get_real_time_elec();
-        this.get_sensor_data();
+        // this.get_sensor_data();
         this.check_abnormal_event();
 
         // this.timerLoading = setInterval(() => {
@@ -192,9 +195,9 @@ export default {
             this.update_factory_status();
         }, 2000);
 
-        this.timerenvirnmentalData = setInterval(() => {
-            this.get_sensor_data();
-        }, 1000);
+        // this.timerenvirnmentalData = setInterval(() => {
+        //     this.get_sensor_data();
+        // }, 1000);
 
         this.timerEvent = setInterval(() => {
             this.get_cur_abnormal_event();
@@ -219,7 +222,6 @@ export default {
             this.$http
                 .get('api/enms/select_two_years_electricity_consumption')
                 .then(res=> {
-                    console.log(res);
                     let todayDate = new Date();
                     let curMonth = todayDate.getMonth();
                     for (let ix = 0; ix < Object.keys(res.data).length; ix++) {
@@ -231,6 +233,10 @@ export default {
                     this.cEmissionLastYear = this.cEmissionLastYear.map(Number);
                     this.cEmissionThisYearBefore = this.cEmissionThisYearBefore.map(Number);
                     this.readyArr[0] = true;
+
+                    //lastMonthData
+                    this.lastMonthcEmission = res.data[res.data.length -1].carbon_footprint;
+                    this.lastMonthReducedCEmission = res.data[res.data.length -1].carbon_negative;
                 });
         },
 
@@ -238,19 +244,14 @@ export default {
             this.$http
                 .get('api/enms/select_current_month_cumulative_electricity_consumption')
                 .then(res=>{
-                    console.log('cumulative:', res.data[0]);
-                    let total = 0;
+                    this.getElecConsumData = [];
+                    this.cEmission = 0;
                     for (let ix = 0; ix < res.data.length; ++ix) {
-                        console.log(res.data[ix].electricity);
-                        total += res.data[ix].electricity;
+                        this.getElecConsumData.push(JSON.parse(res.data[ix]));
+                        this.cEmission += 0.509 * this.getElecConsumData[ix];
                     }
-                    console.log('total:', total);
-                    this.getElecConsumData = [JSON.parse(res.data[0]), JSON.parse(res.data[1]), JSON.parse(res.data[2])];
-                    this.cEmission = (0.509 * (this.getElecConsumData[0]
-                                                + this.getElecConsumData[1]
-                                                + this.getElecConsumData[2])).toFixed(2);
+                    this.cEmission = parseFloat(this.cEmission.toFixed(2));
 
-                    // do not use deep copy
                     this.cEmissionThisYear = Object.assign([], this.cEmissionThisYearBefore);
 
                     this.cEmissionThisYear.push(this.cEmission);
@@ -284,7 +285,7 @@ export default {
 
         update_factory_status() {
             let lastLogIndex = this.curLogIndex;
-            (lastLogIndex === 2) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
+            (lastLogIndex === 1) ? this.curLogIndex = 0 : this.curLogIndex = lastLogIndex + 1;
         },
 
         get_cur_abnormal_event() {
@@ -363,7 +364,6 @@ export default {
                 .get('/api/enms/select_real_time_electricity_consumption')
                 .then(res=> {
                     this.realTimeKilowattHourData = parseFloat(res.data).toFixed(2);
-                    console.log('realtime:', res);
                     this.readyArr[4] = true;
                 });
         },
@@ -386,7 +386,6 @@ export default {
                 }
             }
             if (count === this.readyArr.length) this.isReady = true;
-            console.log(count);
         }
 
     }
