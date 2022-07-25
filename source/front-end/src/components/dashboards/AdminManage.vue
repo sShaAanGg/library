@@ -237,7 +237,7 @@
                     required
                     ></b-form-input>
                 </b-form-group>
-                <b-button @clicl.prevent="insert_admin" variant="primary">確認新增管理員</b-button>
+                <b-button @clicl.prevent="insert_admin" variant="primary">新增管理員</b-button>
             </b-form>
         </b-modal>
 
