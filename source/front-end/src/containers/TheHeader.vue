@@ -5,28 +5,12 @@
     <!-- <CHeaderBrand class="mx-auto d-lg-none" src="img/brand/silensys-logo.png" width="200" height="38" alt="CoreUI Logo" /> -->
     <CHeaderNav class="d-md-down-none mr-auto ">
     </CHeaderNav>
-    <CHeaderNav class="mr-1">
-      <!-- <CHeaderNavItem class="d-md-down-none mx-2">
-        <CHeaderNavLink>
-          <CIcon name="cil-bell"/>
-        </CHeaderNavLink>
-      </CHeaderNavItem>
-      <CHeaderNavItem class="d-md-down-none mx-2">
-        <CHeaderNavLink>
-          <CIcon name="cil-list"/>
-        </CHeaderNavLink>
-      </CHeaderNavItem>
-      <CHeaderNavItem class="d-md-down-none mx-2">
-        <CHeaderNavLink>
-          <CIcon name="cil-envelope-open"/>
-        </CHeaderNavLink>
-      </CHeaderNavItem> -->
 
-      <TheHeaderDropdownAccnt />
+    <CHeaderNav class="mr-1">
+        <TheHeaderDropdownAccnt />
     </CHeaderNav>
-    <CSubheader class="px-0 border-0">
-      <CBreadcrumbRouter class="border-0 mb-0"/>
-    </CSubheader>
+
+
   </CHeader>
 </template>
 
@@ -34,18 +18,18 @@
 import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt'
 
 export default {
-  name: 'TheHeader',
-  components: {
-    TheHeaderDropdownAccnt
-  },
-  data() {
-    return {
+    name: 'TheHeader',
+    components: {
+        TheHeaderDropdownAccnt
+    },
+    data() {
+        return {
+        }
+    },
+    mounted() {
+    },
+    methods: {
     }
-  },
-  mounted() {
-  },
-  methods: {
-  }
 }
 </script>
 
@@ -60,10 +44,10 @@ export default {
   }
 }
 .px-0 {
-  background-color: #000000;
+  background-color: #3F7CAC;
 }
 .header {
-  background-color: #000000;
+  background-color: #3F7CAC;
 }
 .bread_crumb {
   background-color: #c2a0a0;

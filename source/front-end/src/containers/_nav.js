@@ -4,55 +4,73 @@ export const admin = [
         _children: [
             {
                 _name: 'CSidebarNavItem',
-                name: '儀表板',
+                name: '首頁',
                 to: '/dashboard',
                 icon: 'cilFactory',
             },
             {
                 _name: 'CSidebarNavItem',
-                name: '產線年度歷史分析',
-                to: '/product-line-status-analysis',
+                name: '公告設定',
+                to: '/post_manage',
                 icon: 'cil-chart-line',
             },
             {
                 _name: 'CSidebarNavItem',
-                name: '電費計算',
-                to: '/electric-bill',
+                name: '藏書設定',
+                to: '/book_manage',
                 icon: 'cil-lightbulb',
             },
             {
                 _name: 'CSidebarNavItem',
-                name: '需量預測',
-                to: '/demand-predict',
-                icon: 'cil-bar-chart',
+                name: '管理員管理',
+                to: '/admin_manage',
+                icon: 'cil-people'
+            },
+        ]
+    }
+]
+
+export const guest = [
+    {
+        _name: 'CSidebarNav',
+        _children: [
+            {
+                _name: 'CSidebarNavItem',
+                name: '首頁',
+                to: '/dashboard',
+                icon: 'cilFactory',
             },
             {
                 _name: 'CSidebarNavItem',
-                name: '設備管理',
-                to: '/machine-manage',
-                icon: 'cil-cog',
-                // items: [
-                //     {
-                //         name: '機台設備',
-                //         to: '/machine-manage',
-                //     },
-                //     {
-                //         name: '網路設備',
-                //         to: '/equipment-manage',
-                //     }
-                // ]
-            },
-            // {
-            //     _name: 'CSidebarNavItem',
-            //     name: 'AI分析',
-            //     to: '/ai-analysis',
-            //     icon: 'cil-chart-pie'
-            // },
+                name: '館藏查詢',
+                to: '/search-books',
+                icon: 'cil-chart-line',
+            }
+        ]
+    }
+]
+
+export const user = [
+    {
+        _name: 'CSidebarNav',
+        _children: [
             {
                 _name: 'CSidebarNavItem',
-                name: '異常告警',
-                to: '/abnormal-alert',
-                icon: 'cil-warning',
+                name: '首頁',
+                to: '/dashboard',
+                icon: 'cilFactory',
+            },
+            {
+                _name: 'CSidebarNavItem',
+                name: '館藏查詢',
+                to: '/search-books',
+                icon: 'cil-chart-line',
+            },
+            {
+                _name: 'CSidebarNavItem',
+                name: '我的書櫃',
+                to: '/my-books',
+                icon: 'cil-lightbulb',
             },
             {
                 _name: 'CSidebarNavItem',
@@ -60,13 +78,6 @@ export const admin = [
                 to: '/account-manage',
                 icon: 'cil-people'
             },
-            // {
-            //     _name: 'CSidebarNavItem',
-            //     name: '登出',
-            //     to: '/pages/login',
-            //     icon: 'cil-account-logout'
-            //     // icon: { name: 'cil-home', class: 'text-info' },
-            // },
         ]
     }
 ]

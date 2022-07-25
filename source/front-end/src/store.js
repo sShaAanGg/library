@@ -17,7 +17,11 @@ const store = new Vuex.Store({
     equip_name: '',
     equip_ip: '',
     spec: '',
-    lotNo: ''
+    lotNo: '',
+    title: '',
+    content: '',
+    time: '',
+    auth: false,
   },
   getters: {
     line_id(state) {
@@ -40,6 +44,18 @@ const store = new Vuex.Store({
     },
     lotNo(state) {
       return state.lotNo
+    },
+    title(state) {
+      return state.title
+    },
+    content(state) {
+      return state.content
+    },
+    time(state) {
+      return state.time
+    },
+    auth(state) {
+        return state.auth
     }
   },
   mutations: {

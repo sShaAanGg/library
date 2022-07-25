@@ -77,7 +77,7 @@ export default {
                     password:this.password
                 }
                 this.$http
-                    .post('/api/accounts/login',{data:data})
+                    .post('/api/login/login',{data:data})
                     .then(res => {
                         if (res.status !== 200){
                             alert("回傳值出現非預期狀況，請確認後再進行操作!");

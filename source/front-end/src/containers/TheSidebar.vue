@@ -38,24 +38,25 @@ export default {
     }
   },
   created () {
-    // switch (sessionStorage.getItem('ROLE')) {
+    switch (sessionStorage.getItem('ROLE')) {
 
-    //   case 'admin':
-    //     this.nav = admin
-    //     break
+        case 'admin':
+            this.nav = admin;
+            break;
 
-    //   case 'user':
-    //     this.nav = user
-    //     break
+        case 'user':
+            this.nav = user;
+            break;
 
-    //   case 'guest':
-    //     this.nav = guest
-    //     break
+        case 'guest':
+            this.nav = guest;
+            break;
 
-    //   default:
-    //     break
-    // }
-    this.nav = admin
+        default:
+            this.nav = guest;
+            break;
+    }
+    // this.nav = admin
   },
   mounted () {
     this.$root.$on('toggle-sidebar', () => {

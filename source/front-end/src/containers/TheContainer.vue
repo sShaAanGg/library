@@ -2,7 +2,7 @@
   <div class="c-app">
     <TheSidebar/>
     <div class="c-wrapper">
-      <!-- <TheHeader/> -->
+      <TheHeader/>
       <div class="c-body">
         <main class="c-main">
           <CContainer fluid>
@@ -11,7 +11,7 @@
             <!-- </transition> -->
           </CContainer>
         </main>
-        
+
       </div>
       <!-- <TheFooter/> -->
     </div>
@@ -44,7 +44,7 @@ export default {
   opacity: 0;
 }
 .c-main {
-  background-color: #272727;
+  background-color: #b5d7ef;
 
 }
 

@@ -5,6 +5,10 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import store from './store'
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 import CoreuiVue from '@coreui/vue'
 import Multiselect from 'vue-multiselect'
 import VueUploadComponent from 'vue-upload-component'
@@ -39,7 +43,15 @@ Vue.prototype.$utils = Utils;
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/zh-cn';
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
 Vue.component('DatePicker', DatePicker)
+// Make BootstrapVue available throughout your project
+Vue.use(BootstrapVue)
+// Optionally install the BootstrapVue icon components plugin
+Vue.use(IconsPlugin)
+
 
 var axiosConfig = {
     headers: {
@@ -90,6 +102,7 @@ new Vue({
     router,
     icons,
     store,
+    // announce,
     template: '<App/>',
     components: {
         App

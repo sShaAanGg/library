@@ -10,15 +10,15 @@ $sidebar-dark-nav-link-active-icon-color:#081d1b !default;
 
 // $sidebar-dark-nav-link-hover-bg:           #7074af !default;
 // $sidebar-dark-nav-link-active-bg:          #6054ec !default;
-$sidebar-dark-nav-link-active-color: #98a8a0 !default;
-$sidebar-dark-nav-link-active-bg: rgb(71, 100, 93) !default;
+$sidebar-dark-nav-link-active-color: #000 !default;
+$sidebar-dark-nav-link-active-bg: #fff !default;
 // $sidebar-dark-nav-link-active-bg:          #01814A !default;
-$sidebar-dark-nav-link-hover-bg:          rgb(75, 110, 75) !default;
+$sidebar-dark-nav-link-hover-bg:         #435767 !default;
 
 // $sidebar-dark-bg:#121716 !default;    // $sidebar-dark-bg: $gray-base !default;
-$sidebar-dark-bg:#081d1b !default;
-$sidebar-dark-nav-link-color: #98a8a0;;
-$sidebar-dark-nav-link-icon-color: #98a8a0;
+$sidebar-dark-bg:#3F7CAC !default;
+$sidebar-dark-nav-link-color: #fff;;
+$sidebar-dark-nav-link-icon-color: #000;
 
 
 // @import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
@@ -29,6 +29,7 @@ $cmodal-info-brand-bg:              #a3a9af !default;
 $cbutton-info-brand-bg:             #1a4166 !default;
 $ccardheader-info-connected-bg: 	#6cee5b !default;
 $ccardheader-info-not-connected-bg: #c0c9cf !default;
+
 
 $theme-colors: (
 	"cmodal-info":	$cmodal-info-brand-bg,
@@ -50,9 +51,9 @@ $pagination-disabled-bg: #4C756A;
 $pagination-disabled-border-color: #4C756A;
 
 // $modal-backdrop-bg: #0b2e24;
-$modal-content-bg: #1e2d35;
-$modal-content-border-color: #1e2d35;
-$modal-header-border-color: #1e2d35;
+$modal-content-bg: #435767;
+$modal-content-border-color: #CADFF0;
+$modal-header-border-color: #CADFF0;
 
 $success: #1d7948;
 

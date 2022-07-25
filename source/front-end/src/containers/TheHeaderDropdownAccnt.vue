@@ -16,53 +16,21 @@
         <font-awesome-icon icon="user"/>
       </CHeaderNavLink>
     </template>
-    <CDropdownHeader tag="div" class="text-center" color="light">
-      <strong>Account</strong>
-    </CDropdownHeader>
-    <!-- <CDropdownItem>
-      <CIcon name="cil-bell"/> Updates
-      <CBadge color="info" class="ml-auto">{{ itemsCount }}</CBadge>
+    <CDropdownItem v-if="auth === 'true'">
+        <strong>Hi! {{account}}</strong>
+        <!-- <CBadge color="warning" class="ml-auto">{{ itemsCount }}</CBadge> -->
     </CDropdownItem>
-    <CDropdownItem>
-      <CIcon name="cil-envelope-open" /> Messages
-      <CBadge color="success" class="ml-auto">{{ itemsCount }}</CBadge>
-    </CDropdownItem>
-    <CDropdownItem>
-      <CIcon name="cil-task" /> Tasks
-      <CBadge color="danger" class="ml-auto">{{ itemsCount }}</CBadge>
-    </CDropdownItem>
-    <CDropdownItem>
-      <CIcon name="cil-comment-square" /> Comments
-      <CBadge color="warning" class="ml-auto">{{ itemsCount }}</CBadge>
-    </CDropdownItem> -->
-    <CDropdownItem>
-      <CIcon name="cil-comment-square" /> Hi! {{account}}
-      <!-- <CBadge color="warning" class="ml-auto">{{ itemsCount }}</CBadge> -->
-    </CDropdownItem>
-    <!-- <CDropdownHeader
-      tag="div"
-      class="text-center"
-      color="light"
-    >
-      <strong>Settings</strong>
-    </CDropdownHeader>
-    <CDropdownItem>
-      <CIcon name="cil-user" /> Profile
-    </CDropdownItem>
-    <CDropdownItem>
-      <CIcon name="cil-settings" /> Settings
-    </CDropdownItem>
-    <CDropdownItem>
-      <CIcon name="cil-dollar" /> Payments
-      <CBadge color="secondary" class="ml-auto">{{ itemsCount }}</CBadge>
-    </CDropdownItem>
-    <CDropdownItem>
-      <CIcon name="cil-file" /> Projects
-      <CBadge color="primary" class="ml-auto">{{ itemsCount }}</CBadge>
-    </CDropdownItem> -->
     <CDropdownDivider/>
-    <CDropdownItem @click="logout">
+    <CDropdownItem v-if="auth === 'true'" @click="logout()">
       <CIcon name="cil-lock-locked" /> 登出
+    </CDropdownItem>
+
+    <CDropdownHeader v-if="auth != 'true'" tag="div" class="text-center" color="light">
+      <strong>尚未登入</strong>
+    </CDropdownHeader>
+    <CDropdownDivider/>
+    <CDropdownItem v-if="auth != 'true'" @click="login()">
+      <CIcon name="cil-lock-locked" /> 登入
     </CDropdownItem>
   </CDropdown>
 </template>
@@ -71,19 +39,26 @@
 export default {
   name: 'TheHeaderDropdownAccnt',
   data () {
-    return { 
+    return {
       itemsCount: 42,
-      account: ''
+      account: '',
+      auth: ''
     }
   },
   mounted() {
-    this.account = sessionStorage.getItem('ACCOUNT')
+    this.account = sessionStorage.getItem('USER_NAME');
+    this.auth = sessionStorage.getItem('AUTH');
   },
   methods: {
     logout() {
-      sessionStorage.setItem('ACCOUNT', ''); 
-      sessionStorage.setItem('ROLE', '')
-      this.$router.push('/pages/login')
+        sessionStorage.setItem('ACCOUNT', '');
+        sessionStorage.setItem('USER_NAME', '');
+        sessionStorage.setItem('AUTH', false);
+        sessionStorage.setItem('ROLE', 'guest');
+        location.replace('/');
+    },
+    login() {
+        this.$router.push('/dashboard');
     }
   }
 }

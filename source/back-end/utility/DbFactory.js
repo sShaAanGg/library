@@ -36,6 +36,7 @@ class DbFactory {
 
                 if (err) {
                     res.status(statusData.errorCode).send({ message: statusData.errorMsg })
+                    console.log(err);
                 } else {
                     res.status(statusData.successCode).json(result)
                 }

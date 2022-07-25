@@ -18,7 +18,7 @@
 					><CIcon name="cil-user-plus" /> 新增</CButton
 				>
 				</CCol>
-		
+
 
 			<CDataTable
 				:items="items"
@@ -229,6 +229,8 @@
 </template>
 
 <script>
+import { registerUpdateLifecycle } from 'echarts';
+
 export default {
 	data: () => {
 		return {

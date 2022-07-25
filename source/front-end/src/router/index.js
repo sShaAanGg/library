@@ -1,23 +1,24 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Vuex from 'vuex'
+
 
 // Containers
 const TheContainer = () => import('@/containers/TheContainer')
 
 // Views
-const Main = () => import('@/views/Main')
-const AccountManage = () => import('@/views/AccountManage')
+// const Main = () => import('@/views/Main')
+// const EnmsAccountManage = () => import('@/views/ENMS_AccountManage')
 
 // Dashboard
 const Dashboard = () => import('@/components/dashboards/Dashboard.vue')
-const ProductLineStatusAnaylysis = () => import('@/components/dashboards/ProductLineStatusAnalysis.vue')
-const ElectricBill = () => import ('@/components/dashboards/ElectricBill.vue')
-const DemandPredict = () => import ('@/components/dashboards/DemandPredict.vue')
-const EquipmentManage = () => import('@/components/dashboards/EquipmentManage.vue')
-const MachineManage = () => import('@/components/dashboards/MachineManage.vue')
-const AIAnalysis = () => import('@/components/dashboards/AIAnalysis.vue')
-const AbnormalAlert = () => import('@/components/dashboards/AbnormalAlert.vue')
 
+const SearchBooks = () => import('@/components/dashboards/SearchBooks.vue')
+const MyBooks = () => import('@/components/dashboards/MyBooks.vue')
+const AccountManage = () => import('@/components/dashboards/AccountManage.vue')
+const BooksManage = () => import('@/components/dashboards/BooksManage.vue')
+const PostManage = () => import('@/components/dashboards/PostManage.vue')
+const AdminManage = () => import('@/components/dashboards/AdminManage.vue')
 
 //Cards
 const Analysis = () => import('@/components/cards/Analysis')
@@ -42,17 +43,23 @@ const router = new Router({
 //     if (to.matched.some(record => record.meta.requiresAuth)) {
 //         // this route requires auth, check if logged in
 //         // if not, redirect to login page.
-//         let account = sessionStorage.getItem('ACCOUNT')
-//         let role = sessionStorage.getItem('ROLE')
-//         //console.log(`account=${account}, role=${role}`)
-
-//         if ((to.path === '/account-manage') && role !== 'admin') {
-//             next({ path: '/401' })
-//         } else if (!account || !role) {
-//             next({ path: '/pages/login' })
-//         } else {
-//             next()
+//         // console.log('au   '+ to.query.roles);
+//         // let account = sessionStorage.getItem('ACCOUNT')
+//         // let role = sessionStorage.getItem('ROLE')
+//         let auth = sessionStorage.getItem('AUTH')
+//         // console.log(`account=${account}, role=${role}`)  to.matched.some(record => record.meta.roles).includes(sessionStorage.getItem('ROLE'))
+//         // if(to.roles.includes(role)){
+//         //     console.log('333');
+//         // }
+//         if(auth === 'true'){
+//             next();
 //         }
+//         else{
+//             // console.log(sessionStorage.getItem('AUTH'));
+//             next({path: '/dashboard'});
+//             alert('請先登入!');
+//         }
+
 //     } else {
 //         next() // 確保一定要調用 next()
 //     }
@@ -67,66 +74,47 @@ function configRoutes() {
             component: TheContainer,
             children: [
                 {
-                    path: 'dashboard',
+                    path: '/dashboard',
                     name: '儀表板',
                     component: Dashboard,
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: '/product-line-status-analysis',
-                    name: '產線狀態分析',
-                    component: ProductLineStatusAnaylysis,
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: 'electric-bill',
-                    name: '電費計算',
-                    component: ElectricBill,
-                    meta: { requireAuth: true}
-                },
-                {
-                    path: 'demand-predict',
-                    name: '需量預測',
-                    component: DemandPredict,
-                    meta: { requireAuth: true}
-                },
-                {
-                    path: '/equipment-manage',
-                    name: '網路設備',
-                    component: EquipmentManage,
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: '/machine-manage',
-                    name: '設備管理',   // 機台設備
-                    component: MachineManage,
-                    meta: { requiresAuth: true }
-                },
-                {
-                    path: '/ai-analysis',
-                    name: 'AI分析',
-                    component: AIAnalysis,
-                    meta: {requiresAuth: true}
-                },
-                {
-                    path: '/abnormal-alert',
-                    name: '異常告警',
-                    component: AbnormalAlert,
-                    meta: {requiresAuth: true}
-                },
-                {
-                    path: '/analysis/:mode/:factory',
-                    name: 'Analysis',
-                    component: Analysis,
-                    meta:{
-                        requiresAuth: true
-                    }
+                    props: true,
+                    // meta: { requiresAuth: false}
                 },
                 {
                     path: '/account-manage',
                     name: '帳號管理',
                     component: AccountManage,
-                    meta: { requiresAuth: true }
+                    // meta: { requiresAuth: true},
+                },
+                {
+                    path: '/search-books',
+                    name: 'findbooks',
+                    component: SearchBooks,
+                    // meta: { requiresAuth: false }
+                },
+                {
+                    path: '/my-books',
+                    name: '我的書櫃',
+                    component: MyBooks,
+                    // meta: { requiresAuth: true }
+                },
+                {
+                    path: '/book_manage',
+                    name: '藏書設定',
+                    component: BooksManage,
+                    // meta: { requiresAuth: true }
+                },
+                {
+                    path: '/post_manage',
+                    name: '公告設定',
+                    component: PostManage,
+                    // meta: { requiresAuth: true }
+                },
+                {
+                    path: '/admin_manage',
+                    name: '管理員管理',
+                    component: AdminManage,
+                    // meta: { requiresAuth: true }
                 },
             ]
         },

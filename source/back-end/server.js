@@ -5,6 +5,10 @@ const bodyParser    = require('body-parser');
 const account      = require('./routers/accounts');
 const enms          = require('./routers/enms');
 const cron          = require('./routers/cron');
+const login         = require('./routers/login');
+const books         = require('./routers/books');
+const post          = require('./routers/posts');
+
 // const morgan      = require('morgan');
 
 const app = express()
@@ -17,6 +21,9 @@ app.use(cors());
 app.use('/api/accounts',  account);
 app.use('/api/enms', enms);
 app.use('/api/cron', cron);
+app.use('/api/login', login);
+app.use('/api/books', books);
+app.use('/api/posts', post);
 
 
 var httpServer = http.createServer(app);
