@@ -2,13 +2,13 @@
     <CSidebar class="sidebar" fixed :minimize="minimize" :show.sync="show">
 <!--         <h5 class="systemName">EnMS</h5> -->
         <CSidebarBrand to="/">
-            <img
-                src="img/brand/logo-black.png"
+            <!-- <img
+                src="img/books/ato.jpg"
                 alt="Logo"
                 width="170"
                 height="46"
                 class="c-sidebar-brand-full"
-            />
+            /> -->
             <img
                 src="img/brand/favicon.png"
                 alt="Logo"
