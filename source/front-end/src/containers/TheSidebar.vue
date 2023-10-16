@@ -9,7 +9,17 @@
                 height="46"
                 class="c-sidebar-brand-full"
             /> -->
+<<<<<<< HEAD
 
+=======
+            <img
+                src="img/brand/favicon.png"
+                alt="Logo"
+                width="46"
+                height="46"
+                class="c-sidebar-brand-minimized"
+            />
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
         </CSidebarBrand>
         <CRenderFunction class="navFuction" flat :content-to-render="nav" />
         <CSidebarMinimizer

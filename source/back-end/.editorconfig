@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 root = true
 
 [*]
@@ -21,3 +22,28 @@ indent_style = tab
 [{package.json,.travis.yml}]
 tab_width = 2
 indent_size = 2
+=======
+root = true
+
+[*]
+indent_style = space
+tab_width = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{c, h}]
+indent_style = tab
+tab_width = 4
+
+[*.md]
+trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab
+
+[{package.json,.travis.yml}]
+tab_width = 2
+indent_size = 2
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946

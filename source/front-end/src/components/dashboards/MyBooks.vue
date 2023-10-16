@@ -234,11 +234,16 @@
                 .post('/api/books/show_collect_books', {data:data})
                 .then(res => {
 
+<<<<<<< HEAD
                     if(res.data.length === 0){
+=======
+                    if(res.data.length !== 0){
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                         return;
                     }
 
                     this.collectArray = res.data[0].collect_books.split(",");
+<<<<<<< HEAD
                     for(let i = 0; i < this.collectArray.length; i++){
                         this.allBooks.find(item => {
                                 if(item.id.toString() === this.collectArray[i]){
@@ -246,6 +251,16 @@
                                 }
                         });
                     }
+=======
+                    console.log(this.collectArray);
+                    // console.log (array);
+                    for(let i = 0; i < this.collectArray.length; i++){
+                    this.allBooks.find(item => {
+                            if(item.id.toString() === this.collectArray[i]){
+                                this.collectBooks.push(item);
+                            }
+                    });}
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 })
                 .catch(err => {
                     alert('發生錯誤');

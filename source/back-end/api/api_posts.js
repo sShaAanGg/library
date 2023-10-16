@@ -27,7 +27,11 @@ module.exports = {
 
         let statusData = {
             successCode: 200,
+<<<<<<< HEAD
             errorCode: 500, 
+=======
+            errorCode: 500,
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
             errorMsg: "Some error occurred while select_current_cumulative_electricity_consumption"
         };
 
@@ -36,9 +40,17 @@ module.exports = {
                     " FROM "        +
                         " post ";
 
+<<<<<<< HEAD
         // sql = dbFactory.build_mysql_format(sql,[req.body.data.account,sha256(req.body.data.password)]); 
         dbFactory.action_db(sql, statusData, res);
     }, 
+=======
+
+        // sql = dbFactory.build_mysql_format(sql,[req.body.data.account,sha256(req.body.data.password)]);
+
+        dbFactory.action_db(sql, statusData, res);
+    },
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
     show_search: function(req, res){
         let example = ['search'];
 
@@ -56,7 +68,11 @@ module.exports = {
                         " * "               +
                     " FROM "                +
                         " post "            +
+<<<<<<< HEAD
                     " WHERE "               + 
+=======
+                    " WHERE "               +
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                         " (title like ? "   +
                         " OR "              +
                         " content like ? ) ";

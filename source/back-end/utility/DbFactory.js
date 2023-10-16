@@ -28,8 +28,12 @@ class DbFactory {
         this.mysqlPool.getConnection(function (err, connection) {
             if (err) {
                 // not connected!
+<<<<<<< HEAD
                 res.status(500).send({ message: err });
                 return
+=======
+                res.status(500).send({ message: err })
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
             }
             connection.query(sql, function (err, result) {
                 // release the connection
@@ -38,8 +42,11 @@ class DbFactory {
                 if (err) {
                     res.status(statusData.errorCode).send({ message: statusData.errorMsg })
                     console.log(err);
+<<<<<<< HEAD
                     
                     
+=======
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 } else {
                     res.status(statusData.successCode).json(result)
                 }

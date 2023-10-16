@@ -36,7 +36,11 @@ module.exports = {
 
     login: function(req, res){
         let example = ['account', 'password'];
+<<<<<<< HEAD
         console.log(req.body);
+=======
+
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
         if (false === utility.data_check(req.body.data, example)) {
             res.status(400).json('傳入值出現非預期狀況，請確認後再進行操作!');
             return;
@@ -55,6 +59,10 @@ module.exports = {
                         "( account = ? AND password = ? )";
 
         sql = dbFactory.build_mysql_format(sql,[req.body.data.account,sha256(req.body.data.password)]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
         dbFactory.action_db(sql, statusData, res);
     },
     register: function(req, res){

@@ -49,10 +49,16 @@
                             <td>{{book.callnumber}}</td>
                             <td style="float: right">
                                 <button v-if="!book.borrow" type="button" class="blue_button" @click="borrow_book(book)">借閱</button>
+<<<<<<< HEAD
                                 <button v-else-if="book.borrow && !reserve_book_id.includes(String(book.id))" type="button" class="green_button" @click="reserve_book(book)">預約</button>
 
                                 <button v-if="!collectArray.includes(String(book.id))" @click="add_to_collect(book)" type="button" class="red_button">收藏</button>
                                 <button v-else-if="collectArray.includes(String(book.id))" @click="add_to_collect(book)" type="button" class="red_button">取消收藏</button>
+=======
+                                <button v-else-if="book.borrow" type="button" class="green_button" @click="reserve_book(book)">預約</button>
+                                <button  @click="add_to_collect(book)" type="button" class="red_button">收藏</button>
+                                <!-- <b-icon  v-if="book.collect" @click="add_to_collect(book)" icon="heart-fill" class="collect_heart"></b-icon> -->
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                             </td>
                         </tr>
                     </tbody>
@@ -106,7 +112,10 @@ import { flagSet } from '@coreui/icons';
                 showDetailModal: false,
                 allBooks: [],
                 reserveBooks: [],
+<<<<<<< HEAD
                 reserve_book_id: [],
+=======
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 collectArray: [],
                 item: '',
                 bookName: '',
@@ -152,7 +161,10 @@ import { flagSet } from '@coreui/icons';
                         var result = res.data[i];
                         this.allBooks.push(result);
                     }
+<<<<<<< HEAD
                     console.log("allbooks",this.allBooks);
+=======
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 })
                 .catch(err => {
                     alert('發生錯誤');
@@ -171,11 +183,19 @@ import { flagSet } from '@coreui/icons';
                     .post('/api/books/show_collect_books', {data:data})
                     .then(res => {
 
+<<<<<<< HEAD
                         if(res.data.length === 0){
+=======
+                        if(res.data.length !== 0){
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                             return;
                         }
 
                         this.collectArray = res.data[0].collect_books.split(",");
+<<<<<<< HEAD
+=======
+                        // console.log(this.collectArray);
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                     })
                     .catch(err => {
                         alert('發生錯誤');
@@ -184,9 +204,14 @@ import { flagSet } from '@coreui/icons';
                 }
 
             },
+<<<<<<< HEAD
             async show_reserve_books() {
                 this.reserveBooks = [];
                 this.reserve_book_id = [];
+=======
+            show_reserve_books() {
+                this.reserveBooks = [];
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 let data = {
                     account: sessionStorage.getItem('ACCOUNT')
                 };
@@ -196,9 +221,12 @@ import { flagSet } from '@coreui/icons';
                     for (let i = 0 ; i < res.data.length ; ++i){
                         var result = res.data[i];
                         this.reserveBooks.push(result);
+<<<<<<< HEAD
                         console.log("result.book_id = ", i,result.book_id); 
                         this.reserve_book_id.push(result.book_id);
                         console.log("id:",this.reserve_book_id);
+=======
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                     }
                 })
                 .catch(err => {
@@ -221,7 +249,11 @@ import { flagSet } from '@coreui/icons';
                     this.collectArray.splice(index, 1);
                     toastBody = "已取消收藏";
                 }
+<<<<<<< HEAD
                 // console.log("1111",this.collectArray.length);
+=======
+                console.log(this.collectArray);
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 for(let i = 0; i < this.collectArray.length; ++i){
                     array += this.collectArray[i].toString();
 
@@ -235,7 +267,11 @@ import { flagSet } from '@coreui/icons';
                     collect: array,
                     account: sessionStorage.getItem('ACCOUNT'),
                 };
+<<<<<<< HEAD
                 console.log(this.collectArray);
+=======
+                console.log();
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                 this.$http
                     .patch('/api/books/add_to_collect', {data:data})
                     .then(res => {
@@ -314,10 +350,16 @@ import { flagSet } from '@coreui/icons';
                     alert('請先登入！');
                     return;
                 }
+<<<<<<< HEAD
                 // this.show_reserve_books();
 
                 for (let i = 0 ; i < this.reserveBooks.length ; ++i){
                     console.log(this.reserveBooks[i].book_id,"0000",item.id);
+=======
+                this.show_reserve_books();
+
+                for (let i = 0 ; i < this.reserveBooks.length ; ++i){
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                     if(this.reserveBooks[i].book_id === item.id){
                         this.reserved = true;
                         number = this.reserveBooks[i].number;
@@ -350,7 +392,10 @@ import { flagSet } from '@coreui/icons';
                                 variant: 'success',
                                 autoHideDelay: 300,
                             });
+<<<<<<< HEAD
                             // this.show_reserve_books();
+=======
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
                         }
                         else
                         {
@@ -362,7 +407,10 @@ import { flagSet } from '@coreui/icons';
                         alert('發生錯誤');
                         console.log(err.message);
                     });
+<<<<<<< HEAD
                 
+=======
+>>>>>>> b1d0251962a764da3029a4f964128e7288272946
             },
             search_by_name() {
                 let books = [];
