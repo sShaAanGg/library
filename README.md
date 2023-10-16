@@ -21,3 +21,6 @@ npm run serve
 ```
 
 - 開啟 http://localhost:8080/
+
+### 資料庫schema
+[Dump20231016.sql](https://github.com/fangci221/library/blob/origin/Dump20231016.sql)https://github.com/fangci221/library/blob/origin/Dump20231016.sql
