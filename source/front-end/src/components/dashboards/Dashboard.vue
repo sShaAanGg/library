@@ -270,19 +270,12 @@ export default {
                 account:    this.account,
                 password:   this.password,
             };
-<<<<<<< HEAD
             console.log(data);
-=======
->>>>>>> b1d0251962a764da3029a4f964128e7288272946
             this.$http
                 .post('/api/accounts/login', {data:data})
                 .then(async res =>
                 {
-<<<<<<< HEAD
-                    console.log(data);
-=======
                     // console.log(res);
->>>>>>> b1d0251962a764da3029a4f964128e7288272946
                     if (res.status !== 200)
                     {
                         alert('傳入值出現非預期狀況，請確認後再進行操作!');
@@ -291,23 +284,13 @@ export default {
                     }
                     // alert('login!');
                     var result = res.data[0];
-<<<<<<< HEAD
-                    
-                    console.log(res.data[0]);
-=======
-
->>>>>>> b1d0251962a764da3029a4f964128e7288272946
                     if (res.data.length !== 0)
                     {
                         sessionStorage.setItem('ACCOUNT', result.account);
                         sessionStorage.setItem('ROLE', result.role);
                         sessionStorage.setItem('USER_NAME', result.name);
                         sessionStorage.setItem('AUTH', 'true');
-<<<<<<< HEAD
-                        location.reload(); 
-=======
                         location.reload();
->>>>>>> b1d0251962a764da3029a4f964128e7288272946
                         // await this.sessionStorge_setItemem('AUTH');
                     }
                     else

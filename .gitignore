@@ -1,21 +1,12 @@
-<<<<<<< HEAD
-/node_modules
-=======
-*~
 
-**/.DS_Store
-<<<<<<< HEAD
-**/.env
-=======
->>>>>>> 4eac3de14f7afe8a1bf07b1c891e3895efc7d964
-**/bin/
-**/obj/
-**/cova/
-**/testobj/
-**/testbin/
-**/lib/
-**/archive/
-**/stage/
+/bin/
+/obj/
+/cova/
+/testobj/
+/testbin/
+/lib/
+/archive/
+/stage/
 
 .DS_Store
 node_modules
@@ -27,12 +18,9 @@ selenium-debug.log
 chromedriver.log
 
 # local env files
-<<<<<<< HEAD
-.env
-=======
->>>>>>> 4eac3de14f7afe8a1bf07b1c891e3895efc7d964
-.env.local
-.env.*.local
+# .env
+# .env.local
+# .env.*.local
 
 # Log files
 npm-debug.log*
