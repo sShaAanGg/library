@@ -1,5 +1,22 @@
-containers/thesidebar.vue 側邊工具列
-components/dashboards/dashboard 儀表板
 
-https://codertw.com/%E8%B3%87%E6%96%99%E5%BA%AB/16148/#outline__1_0_2
-實作登入
+- 安裝nodeJS，版本要求：14.21.3 → 一定要這個版本，可以用nvm切換NodeJS版本
+
+### back-end
+
+```json
+**Terminal**
+npm install
+安裝完
+npm run start
+```
+
+### front-end
+
+```json
+**Terminal**
+npm install
+安裝完
+npm run serve
+```
+
+- 開啟 http://localhost:8080/
