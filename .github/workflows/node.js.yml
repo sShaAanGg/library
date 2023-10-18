@@ -14,9 +14,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: ['14.21.3']
@@ -42,10 +40,7 @@ jobs:
     # - run: npm ci
     # - run: npm run build --if-present
     # - run: npm test
-  test:
-    timeout-minutes: 300
-    runs-on: ubuntu-latest
-    steps:
+    # steps:
     - uses: actions/checkout@v3
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -60,5 +55,5 @@ jobs:
     - name: Ensure browsers are installed
       run: python -m playwright install --with-deps
     - name: Run your tests
-      run: pytest
+      run: python -m pytest
 
