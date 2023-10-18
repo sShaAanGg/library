@@ -29,12 +29,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Install dependencies and start building and running
+    - name: Install dependencies of back-end and start building and running
+      working-directory: ./back-end
       run: |
-        cd back-end
         npm install
         npm run start
-        cd ../front-end
+    - name: Install dependencies of front-end and start building and running
+      working-directory: ./front-end
         npm install 
         npm run serve
     # - run: npm ci
