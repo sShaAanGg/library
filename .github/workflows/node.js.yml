@@ -1,15 +1,16 @@
-name: Node.js CI
+name: Node.js CI and Playwright Tests
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 on:
-  push:
-    branches: [ "origin" ]
-  pull_request:
-    branches: [ "origin" ]
-  schedule:
-    # Test 3 times a day
-    - cron: '0 */8 * * *'
+  # push:
+  #   branches: [ "origin" ]
+  # pull_request:
+  #   branches: [ "origin" ]
+  workflow_dispatch:
+  # schedule:
+  #   # Test 3 times a day
+  #   - cron: '0 */8 * * *'
 
 jobs:
   build:
@@ -32,13 +33,32 @@ jobs:
       working-directory: source/back-end
       run: |
         npm install
-        npm run start
+        npm run start &
     - name: Install dependencies of front-end and start building and running
       working-directory: source/front-end
       run: |
         npm install 
-        npm run serve
+        npm run serve &
     # - run: npm ci
     # - run: npm run build --if-present
     # - run: npm test
-    
+  test:
+    timeout-minutes: 300
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pytest
+        python -m pip install pytest-playwright
+        # pip install -r requirements.txt
+    - name: Ensure browsers are installed
+      run: python -m playwright install --with-deps
+    - name: Run your tests
+      run: pytest
+

@@ -9,7 +9,7 @@
 /stage/
 
 .DS_Store
-source/back-end/node_modules/*
+./source/back-end/node_modules/*
 /dist
 /coverage
 
