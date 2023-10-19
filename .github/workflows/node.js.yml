@@ -1,0 +1,70 @@
+name: Node.js CI and Playwright Tests
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Test 3 times a day
+    - cron: '0 */8 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['14.21.3']
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: mirromutth/mysql-action@v1.1
+      with:
+        host port: 3800 # Optional, default value is 3306. The port of host
+        container port: 3307 # Optional, default value is 3306. The port of container
+        character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+        collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+        mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+        mysql database: 'library' # Optional, default value is "test". The specified database which will be create
+        mysql root password: ${{ secrets.DB_PASS }} # Required if "mysql user" is empty, default is empty. The root superuser password
+        # mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+        # mysql password: ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
+    - uses: actions/checkout@v3
+    - name: Import .sql file
+      run: |
+      
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Install dependencies of back-end and start building and running
+      working-directory: source/back-end
+      run: |
+        npm install
+        npm run start &
+    - name: Install dependencies of front-end and start building and running
+      working-directory: source/front-end
+      run: |
+        npm install 
+        npm run serve &
+    # - run: npm ci
+    # - run: npm run build --if-present
+    # - run: npm test
+    # steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pytest
+        python -m pip install pytest-playwright
+        # pip install -r requirements.txt
+    - name: Ensure browsers are installed
+      run: python -m playwright install --with-deps
+    - name: Run your tests
+      run: python -m pytest
+
