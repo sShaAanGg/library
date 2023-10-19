@@ -6,12 +6,12 @@ from dotenv import load_dotenv
 def connect_mysql():
 
     # Load environment variables from .env
-    load_dotenv()
+    load_dotenv(dotenv_path="source/back-end/.env")
 
     # Set connection parameters
     config = {
         'user': os.getenv('DB_USER'),
-        'passwd': os.getenv('DB_PASSWD'),
+        'passwd': os.getenv('DB_PASS'),
         'host': os.getenv('DB_HOST'),
         'port': int(os.getenv('DB_PORT')),
         'db': os.getenv('DB_NAME')
