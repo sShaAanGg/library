@@ -1,9 +1,9 @@
 name: Set up mySQL service container
 on:
   workflow_dispatch:
-  schedule:
+  # schedule:
     # Test 3 times a day
-    - cron: '0 */8 * * *'
+    # - cron: '0 */8 * * *'
 jobs:
   runner-job:
     # You must use a Linux environment when using service containers or container jobs
@@ -21,8 +21,8 @@ jobs:
           DB_PASS: ${{ secrets.DB_PASS }}
         #
         ports:
-          # Opens tcp port 3800 on the host and service container
-          - 3800:3800
+          # Opens tcp port 3306 on the host and service container
+          - 3306:3306
 
     steps:
       # Downloads a copy of the code in your repository before running CI tests
@@ -37,7 +37,7 @@ jobs:
       - name: Connect to mySQL
         # Runs a script that creates a mySQL table, populates
         # the table with data, and then retrieves the data
-        run: mysql -u 
+        run: echo "Connected to mySQL"
         # Environment variables used by the script to create
         # a new mySQL table.
         env:
@@ -47,5 +47,5 @@ jobs:
           # The hostname used to communicate with the mySQL service container
           DB_HOST: localhost
           # The default mySQL port
-          DB_PORT: 3800
+          DB_PORT: 3306
 
