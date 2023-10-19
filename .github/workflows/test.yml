@@ -1,0 +1,25 @@
+name: 'MySQL'
+description: 'Set up MySQL service.'
+on:
+  workflow_dispatch:
+  schedule:
+    # Test 3 times a day
+    - cron: '0 */8 * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Start MySQL service
+        run: |
+          sudo systemctl start mysql.service
+      - name: Install dependencies
+        run: |
+          pip install pytest
+          pip install pymysql
+          pip install cryptography
+          pip install python-dotenv
+      - name: Run tests
+        run: |
+          pytest
