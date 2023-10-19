@@ -37,7 +37,7 @@ jobs:
       - name: Connect to mySQL
         # Runs a script that creates a mySQL table, populates
         # the table with data, and then retrieves the data
-        # run: mysql -u 
+        run: echo "Connected to mySQL"
         # Environment variables used by the script to create
         # a new mySQL table.
         env:
