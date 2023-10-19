@@ -170,3 +170,5 @@ output
 
 /green-harrison/src/source/tool-chain/tools.mk
 >>>>>>> b1d0251962a764da3029a4f964128e7288272946
+.coverage
+*.pyc

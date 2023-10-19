@@ -1,0 +1,5 @@
+pytest
+pytest-playwright
+ymysql
+cryptography
+python-dotenv
