@@ -18,7 +18,7 @@ selenium-debug.log
 chromedriver.log
 
 # local env files
-.env
+# .env
 # .env.local
 # .env.*.local
 
