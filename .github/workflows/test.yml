@@ -1,5 +1,4 @@
-name: 'MySQL'
-description: 'Set up MySQL service.'
+name: 'Set up MySQL service.'
 on:
   workflow_dispatch:
   schedule:
