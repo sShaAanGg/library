@@ -1,4 +1,4 @@
-name: 'Set up MySQL service.'
+name: 'Test Node.js CI and Playwright Tests'
 on:
   workflow_dispatch:
   schedule:
@@ -7,18 +7,43 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: ['14.21.3']
     steps:
+      # Downloads a copy of the code in your repository before running CI tests
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Start MySQL service
         run: |
           sudo systemctl start mysql.service
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
       - name: Install dependencies
         run: |
-          pip install pytest
-          pip install pymysql
-          pip install cryptography
-          pip install python-dotenv
-      - name: Run tests
+          pip install -r requirements.txt
+      - name: Run MySQL database tests
         run: |
           pytest
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install dependencies of back-end and start building and running
+        working-directory: source/back-end
+        run: |
+          npm install
+          npm run start &
+      - name: Install dependencies of front-end and start building and running
+        working-directory: source/front-end
+        run: |
+          npm install
+          npm run serve &
+      - name: Ensure browsers are installed
+        run: playwright install --with-deps
+      - name: Run your tests
+        run: pytest
