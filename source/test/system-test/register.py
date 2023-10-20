@@ -1,5 +1,6 @@
 from playwright.sync_api import Playwright, sync_playwright, expect
 
+
 def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context()
@@ -19,11 +20,13 @@ def run(playwright: Playwright) -> None:
     page.get_by_label("Phone:").click()
     page.get_by_label("Phone:").fill("0912345678")
     page.get_by_role("button", name="Submit").click()
-    page.wait_for_timeout(5000)
+    page.wait_for_timeout(1000)
     # ---------------------
     context.close()
     browser.close()
 
-with sync_playwright() as playwright:
-    browser = playwright.chromium.launch(headless=True)
-    run(playwright)
+
+def start():
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        run(playwright)
