@@ -1,4 +1,4 @@
-name: 'Test Node.js CI and Playwright Tests'
+name: 'Node.js CI and Playwright Tests'
 on:
   workflow_dispatch:
   schedule:
@@ -26,8 +26,9 @@ jobs:
         run: |
           pip install -r requirements.txt
       - name: Run MySQL database tests
+        working-directory: source/test
         run: |
-          pytest
+          pytest test_import_sql.py test_mysql_login.py
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
