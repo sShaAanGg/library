@@ -1,5 +1,6 @@
 import pytest
 import database
+from pathlib import Path
 
 
 class TestMySQL:
@@ -16,7 +17,8 @@ class TestMySQL:
         cursor = cnx.cursor()
 
         # Open the .sql file and read the content
-        with open("./Dump20231016.sql", "r") as f:
+        p = Path(__file__).parent.parent.parent
+        with open(p.joinpath("./Dump20231016.sql"), "r") as f:
             sql_content = f.read()
             sql_list = sql_content.split(";")
 

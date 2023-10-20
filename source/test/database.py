@@ -1,12 +1,17 @@
 import os
 import pymysql
 from dotenv import load_dotenv
+from pathlib import Path
 
 
 def connect_mysql():
-
+    """Connect to MySQL database and return connection object"""
     # Load environment variables from .env
-    load_dotenv(dotenv_path="source/back-end/.env")
+    # test/database.py is in source/test
+    p = Path(__file__).parent
+    dotenv_path = p.parent.joinpath("back-end/.env")
+    if load_dotenv(dotenv_path=dotenv_path) == False:
+        raise Exception("Can't load .env file")
 
     # Set connection parameters
     config = {
