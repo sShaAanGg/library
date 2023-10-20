@@ -11,7 +11,7 @@ def test_register():
     cursor = cnx.cursor()
 
     # Act
-    register.sync_playwright().start()
+    register.main()
 
     # Assert
     # Check if the account is created

@@ -11,7 +11,7 @@ def test_login():
     cursor = cnx.cursor()
 
     # Act
-    login.sync_playwright().start()
+    login.main()
 
     # Assert
     # Check if the account is created
