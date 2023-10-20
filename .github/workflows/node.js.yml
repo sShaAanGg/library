@@ -41,9 +41,9 @@ jobs:
         env:
           DB_NAME: 'library'
           DB_USER: 'root'
-          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_PASS: 123456
           # The hostname used to communicate with the mySQL service container
-          DB_HOST: localhost
+          DB_HOST: 127.0.0.1
           # The default mySQL port
           DB_PORT: 3306
 
