@@ -1,8 +1,10 @@
 import register
 import database
 import asyncio
-# import pytest
+import pytest
 
+
+@pytest.mark.dependency()
 def test_register():
     # Arrange
     # Connect to the database

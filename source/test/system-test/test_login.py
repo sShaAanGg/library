@@ -1,7 +1,9 @@
 import login
 import database
-# import pytest
+import pytest
 
+
+@pytest.mark.dependency(depends=["test_register"])
 def test_login():
     # Arrange
     # Connect to the database

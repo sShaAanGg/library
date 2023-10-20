@@ -8,3 +8,4 @@ pytest-asyncio
 pytest-trio
 pytest-twisted
 twisted
+pytest-dependency
