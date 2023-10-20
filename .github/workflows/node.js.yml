@@ -54,31 +54,7 @@ jobs:
         node-version: ['14.21.3']
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-    steps:
-      # Downloads a copy of the code in your repository before running CI tests
-      # - name: Check out repository code
-      #   uses: actions/checkout@v4
-
-      # Performs a clean installation of all dependencies in the `package.json` file
-      # For more information, see https://docs.npmjs.com/cli/ci.html
-      # - name: Install dependencies
-        # run: npm ci
-
-      # - uses: mirromutth/mysql-action@v1.1
-      #   with:
-      #     host port: 3800 # Optional, default value is 3306. The port of host
-      #     container port: 3307 # Optional, default value is 3306. The port of container
-      #     character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
-      #     collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
-      #     mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
-      #     mysql database: 'library' # Optional, default value is "test". The specified database which will be create
-      #     mysql root password: ${{ secrets.DB_PASS }} # Required if "mysql user" is empty, default is empty. The root superuser password
-      #     # mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-      #     # mysql password: ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
-      # - uses: actions/checkout@v3
-      # - name: Import .sql file
-      #   run: |
-      
+    steps:      
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -95,10 +71,6 @@ jobs:
         run: |
           npm install 
           npm run serve &
-      # - run: npm ci
-      # - run: npm run build --if-present
-      # - run: npm test
-      # steps:
       - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
