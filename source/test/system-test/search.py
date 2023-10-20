@@ -9,6 +9,12 @@ def run(playwright: Playwright) -> None:
     page.get_by_role("link", name="館藏查詢").click()
     page.get_by_placeholder("Search").click()
     page.get_by_placeholder("Search").fill("hi2")
+    
+    ### hi should not be found
+    # get_by_role("main")
+    # get_by_role("rowheader", name="hi2")
+    # get_by_role("rowheader", name="hi", exact=True)
+
 
     # ---------------------
     context.close()

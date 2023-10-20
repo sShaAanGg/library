@@ -1,6 +1,6 @@
-from playwright.async_api import Playwright, async_playwright, expect
+from playwright.sync_api import Playwright, sync_playwright, expect
 
-async def run(playwright: Playwright) -> None:
+def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context()
     page = context.new_page()
@@ -24,7 +24,6 @@ async def run(playwright: Playwright) -> None:
     context.close()
     browser.close()
 
-async def main():
-    async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=True)
-        await run(playwright)
+with sync_playwright() as playwright:
+    browser = playwright.chromium.launch(headless=True)
+    run(playwright)

@@ -1,5 +1,6 @@
 import register
 import database
+import asyncio
 # import pytest
 
 def test_register():
@@ -11,7 +12,10 @@ def test_register():
     cursor = cnx.cursor()
 
     # Act
-    register.main()
+    # await register.main()
+    # asyncio.run(register.main())
+    register.sync_playwright().start()
+    # await register.async_playwright().start()
 
     # Assert
     # Check if the account is created
