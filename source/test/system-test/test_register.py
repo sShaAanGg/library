@@ -16,7 +16,7 @@ def test_register():
     # Act
     # await register.main()
     # asyncio.run(register.main())
-    register.sync_playwright().start()
+    register.start()
     # await register.async_playwright().start()
 
     # Assert
