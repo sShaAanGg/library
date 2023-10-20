@@ -7,7 +7,7 @@ from pathlib import Path
 def connect_mysql():
     """Connect to MySQL database and return connection object"""
     # Load environment variables from .env
-    # test/database.py is in source/test
+    # Get the test directory
     p = Path(__file__).parent
     dotenv_path = p.parent.joinpath("back-end/.env")
     if load_dotenv(dotenv_path=dotenv_path) == False:

@@ -6,7 +6,7 @@ from pathlib import Path
 class TestMySQL:
 
     # Define a fixture to import the .sql file
-    @pytest.fixture(scope="class")
+    @pytest.fixture(scope="session")
     def setup(self):
 
         # Connect to the database
