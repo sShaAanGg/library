@@ -45,5 +45,8 @@ jobs:
           npm run serve &
       - name: Ensure browsers are installed
         run: playwright install --with-deps
-      - name: Run your tests
+      # Run the registration test first
+      - name: Run the registration test
+        run: pytest source/test/system-test/test_register.py
+      - name: Run all tests
         run: pytest source/test/system-test/*.py
