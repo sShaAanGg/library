@@ -50,4 +50,11 @@ jobs:
       #   run: pytest source/test/system-test/test_register.py
       - name: Run all tests
       #   run: pytest source/test/system-test/*.py
-        run: pytest
+        run: |
+          pytest --tracing on
+          ls
+      - name: Upload trace files as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-trace
+          path: test-results/
