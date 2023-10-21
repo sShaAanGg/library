@@ -1,11 +1,12 @@
 import pytest
 import database
+from pathlib import Path
 
 
 class TestMySQL:
 
     # Define a fixture to import the .sql file
-    @pytest.fixture(scope="class")
+    @pytest.fixture(scope="session")
     def setup(self):
 
         # Connect to the database
@@ -16,7 +17,8 @@ class TestMySQL:
         cursor = cnx.cursor()
 
         # Open the .sql file and read the content
-        with open("./Dump20231016.sql", "r") as f:
+        p = Path(__file__).parent.parent.parent
+        with open(p.joinpath("./init.sql"), "r") as f:
             sql_content = f.read()
             sql_list = sql_content.split(";")
 
