@@ -54,6 +54,7 @@ jobs:
           pytest --tracing on
           ls
       - name: Upload trace files as artifact
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: playwright-trace
