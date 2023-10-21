@@ -18,5 +18,5 @@ def run(playwright: Playwright) -> None:
 
 
 with sync_playwright() as playwright:
-    browser = playwright.chromium.launch(headless=True)
+    # browser = playwright.chromium.launch(headless=True)
     run(playwright)
