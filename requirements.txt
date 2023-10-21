@@ -3,8 +3,3 @@ pytest-playwright
 pymysql
 cryptography
 python-dotenv
-anyio
-pytest-asyncio
-pytest-trio
-pytest-twisted
-twisted
