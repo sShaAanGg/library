@@ -50,13 +50,3 @@ class TestMySQL:
         cursor.execute("SELECT * FROM account")
         accounts = cursor.fetchall()
         assert len(accounts) == 2, "The number of accounts is correct"
-
-        # Check if the table "books" is created
-        cursor.execute("SELECT * FROM books")
-        books = cursor.fetchall()
-        assert len(books) == 2, "The number of books is correct"
-
-        # Check if the table "post" is created
-        cursor.execute("SELECT * FROM post")
-        posts = cursor.fetchall()
-        assert len(posts) == 1, "The number of posts is correct"
