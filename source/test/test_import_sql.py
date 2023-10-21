@@ -18,7 +18,7 @@ class TestMySQL:
 
         # Open the .sql file and read the content
         p = Path(__file__).parent.parent.parent
-        with open(p.joinpath("./Dump20231016.sql"), "r") as f:
+        with open(p.joinpath("./init.sql"), "r") as f:
             sql_content = f.read()
             sql_list = sql_content.split(";")
 

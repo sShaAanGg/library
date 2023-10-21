@@ -7,9 +7,12 @@ def run(playwright: Playwright) -> None:
     page = context.new_page()
     page.goto("http://localhost:8080/#/dashboard")
     page.get_by_label("帳號").click()
-    page.get_by_label("帳號").fill("shang112522105")
+    # page.get_by_label("帳號").fill("shang112522105")
+    # page.get_by_label("帳號").press("Tab")
+    # page.locator("#password").fill("112522105")
+    page.get_by_label("帳號").fill("user1")
     page.get_by_label("帳號").press("Tab")
-    page.locator("#password").fill("112522105")
+    page.locator("#password").fill("12345678")
     page.get_by_role("button", name="登入").click()
 
     # ---------------------
@@ -17,6 +20,6 @@ def run(playwright: Playwright) -> None:
     browser.close()
 
 
-with sync_playwright() as playwright:
-    browser = playwright.chromium.launch(headless=True)
-    run(playwright)
+def main():
+    with sync_playwright() as playwright:
+        run(playwright)

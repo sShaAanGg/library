@@ -52,7 +52,6 @@ jobs:
       #   run: pytest source/test/system-test/*.py
         run: |
           pytest --tracing on
-          ls
       - name: Upload trace files as artifact
         if: always()
         uses: actions/upload-artifact@v3

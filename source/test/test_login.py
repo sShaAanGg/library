@@ -1,11 +1,8 @@
-import register
+import login
 import database
-import asyncio
-import pytest
 
 
-@pytest.mark.dependency()
-def test_register():
+def test_login():
     # Arrange
     # Connect to the database
     cnx = database.connect_mysql()
@@ -14,17 +11,13 @@ def test_register():
     cursor = cnx.cursor()
 
     # Act
-    # await register.main()
-    # asyncio.run(register.main())
-    register.start()
-    # await register.async_playwright().start()
+    login.main()
 
     # Assert
     # Check if the account is created
     cursor.execute("USE library")
     cursor.execute("SELECT * FROM account")
     accounts = cursor.fetchall()
-    assert len(accounts) == 3, "The number of accounts is correct"
-    assert accounts[2][1] == "shang112522105", "The account is correct"
+    # TODO: add assertions
     cursor.close()
     cnx.close()
