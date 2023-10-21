@@ -3,7 +3,7 @@ import database
 import pytest
 
 
-@pytest.mark.dependency(depends=["test_register"])
+@pytest.mark.dependency(depends=["test_register"], scope='session')
 def test_login():
     # Arrange
     # Connect to the database
