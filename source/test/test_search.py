@@ -1,5 +1,5 @@
-import login, database
-from playwright.sync_api import expect
+import search
+import database
 
 
 def test_login():
@@ -11,12 +11,12 @@ def test_login():
     cursor = cnx.cursor()
 
     # Act & Assert
-    login.main()
+    search.main()
 
-    # The following elements should show up
-    # get_by_role("main").get_by_text("Hi! shang")
-    # get_by_text("帳號： shang112522105")
-    # get_by_role("button", name="登出")
+    ### hi should not be found
+    # get_by_role("main")
+    # get_by_role("rowheader", name="hi2")
+    # get_by_role("rowheader", name="hi", exact=True)
 
     cursor.close()
     cnx.close()

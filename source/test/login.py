@@ -1,6 +1,5 @@
 from playwright.sync_api import Playwright, sync_playwright, expect
 
-
 def run(playwright: Playwright) -> None:
     browser = playwright.chromium.launch(headless=True)
     context = browser.new_context()
@@ -14,7 +13,12 @@ def run(playwright: Playwright) -> None:
     page.get_by_label("帳號").press("Tab")
     page.locator("#password").fill("12345678")
     page.get_by_role("button", name="登入").click()
-
+    # ---------------------
+    # Assert
+    expect(page.get_by_role("main").get_by_text("Hi! user1")).to_be_enabled()
+    expect(page.get_by_role("main").get_by_text("Hi! user1")).to_be_visible()
+    expect(page.get_by_text("帳號： user1")).to_be_visible()
+    expect(page.get_by_role("button", name="登出")).to_be_visible()
     # ---------------------
     context.close()
     browser.close()
