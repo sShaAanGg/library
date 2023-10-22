@@ -1,7 +1,6 @@
 import search
 import database
 
-
 def test_login():
     # Arrange
     # Connect to the database

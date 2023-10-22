@@ -15,9 +15,9 @@ def run(playwright: Playwright) -> None:
     page.get_by_role("button", name="登入").click()
     # ---------------------
     # Assert
-    expect(page.get_by_role("main").get_by_text("Hi! user1")).to_be_enabled()
     expect(page.get_by_role("main").get_by_text("Hi! user1")).to_be_visible()
     expect(page.get_by_text("帳號： user1")).to_be_visible()
+    expect(page.get_by_role("button", name="登出")).to_be_enabled()
     expect(page.get_by_role("button", name="登出")).to_be_visible()
     # ---------------------
     context.close()
