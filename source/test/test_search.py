@@ -1,13 +1,8 @@
 import search
-import database
 
-def test_login():
+def test_search():
     # Arrange
-    # Connect to the database
-    cnx = database.connect_mysql()
-    assert cnx is not None, "Connection is OK"
-    # Create a cursor object, which is used to execute SQL statements
-    cursor = cnx.cursor()
+    # Not needed
 
     # Act & Assert
     search.main()
@@ -16,6 +11,3 @@ def test_login():
     # get_by_role("main")
     # get_by_role("rowheader", name="hi2")
     # get_by_role("rowheader", name="hi", exact=True)
-
-    cursor.close()
-    cnx.close()

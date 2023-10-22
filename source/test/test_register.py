@@ -1,7 +1,4 @@
-import register
-import database
-import asyncio
-
+import register, database
 
 def test_register():
     # Arrange
@@ -12,10 +9,7 @@ def test_register():
     cursor = cnx.cursor()
 
     # Act
-    # await register.main()
-    # asyncio.run(register.main())
     register.main()
-    # await register.async_playwright().start()
 
     # Assert
     # Check if the account is created
