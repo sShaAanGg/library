@@ -10,16 +10,23 @@ def run(playwright: Playwright) -> None:
     page.get_by_label("帳號").press("Tab")
     page.locator("#password").fill("12345678")
     page.get_by_role("button", name="登入").click()
+    page.get_by_role("link", name="館藏查詢").click()
+    page.get_by_role("button", name="借閱").nth(1).click()
+    page.get_by_role("button", name="預約").click()
+    page.goto("http://localhost:8080/#/my-books")
+    page.get_by_role("tab", name="預約書籍").click()
     # ---------------------
     # Assert
-    expect(page.get_by_role("main").get_by_text("Hi! user1")).to_be_visible()
-    expect(page.get_by_text("帳號： user1")).to_be_visible()
-    expect(page.get_by_role("button", name="登出")).to_be_enabled()
-    expect(page.get_by_role("button", name="登出")).to_be_visible()
+    page.set_default_timeout(timeout=10000)
+    expect(page.get_by_role("button", name="取消預約")).to_be_visible()
+    expect(page.get_by_role("rowheader", name="hi2")).to_be_visible()
     # ---------------------
+    page.get_by_role("button", name="取消預約").click()
+    page.reload()
+    page.goto("http://localhost:8080/#/my-books")
+    page.get_by_role("button", name="還書").click()
     context.close()
     browser.close()
-
 
 def main():
     with sync_playwright() as playwright:
