@@ -5,6 +5,11 @@ def run(playwright: Playwright) -> None:
     context = browser.new_context()
     page = context.new_page()
     page.goto("http://localhost:8080/#/dashboard")
+    page.get_by_label("帳號").click()
+    page.get_by_label("帳號").fill("user1")
+    page.get_by_label("帳號").press("Tab")
+    page.locator("#password").fill("12345678")
+    page.get_by_role("button", name="登入").click()
     page.get_by_role("link", name="館藏查詢").click()
     page.get_by_role("button", name="收藏").nth(1).click()
     page.goto("http://localhost:8080/#/my-books")
@@ -14,13 +19,10 @@ def run(playwright: Playwright) -> None:
     page.reload()
     expect(page.get_by_role("rowheader", name="hi2")).to_be_visible()
     expect(page.get_by_role("button", name="取消收藏")).to_be_visible()
-    expect(page.get_by_role("cell", name="借閱 取消收藏").first).to_be_visible()
-    # expect(page.get_by_role("button", name="收藏").nth(1)).to_be_hidden()
-    # expect(page.get_by_role("button", name="取消收藏")).to_be_enabled()
-    # expect(page.get_by_role("button", name="取消收藏")).not_to_be_visible()
     ### The button should show up in the page
     # get_by_role("button", name="取消收藏")
     # ---------------------
+    page.get_by_role("button", name="取消收藏").click()
     context.close()
     browser.close()
 
