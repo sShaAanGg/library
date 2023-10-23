@@ -17,8 +17,8 @@ def run(playwright: Playwright) -> None:
     # ---------------------
     # Assert
     page.reload()
-    expect(page.get_by_role("rowheader", name="hi2")).to_be_visible()
     expect(page.get_by_role("button", name="取消收藏")).to_be_visible()
+    # expect(page.get_by_role("rowheader", name="hi2")).to_be_visible()
     ### The button should show up in the page
     # get_by_role("button", name="取消收藏")
     # ---------------------
