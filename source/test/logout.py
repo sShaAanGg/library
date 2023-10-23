@@ -9,9 +9,6 @@ def run(playwright: Playwright) -> None:
     page.get_by_label("帳號").fill("user1")
     page.get_by_label("帳號").press("Tab")
     page.locator("#password").fill("12345678")
-    # page.get_by_label("帳號").fill("shang112522105")
-    # page.locator("#password").click()
-    # page.locator("#password").fill("112522105")
     page.get_by_role("button", name="登入").click()
     page.get_by_role("button", name="登出").click()
     # ---------------------

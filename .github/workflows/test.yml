@@ -25,9 +25,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      # - name: Run MySQL database tests
-      #   run: |
-      #     pytest source/test/test_import_sql.py source/test/test_mysql_login.py
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -48,6 +45,9 @@ jobs:
       # # Run the registration test first
       # - name: Run the registration test
       #   run: pytest source/test/system-test/test_register.py
+      - name: Run MySQL database tests first
+        run: |
+          pytest source/test/test_import_sql.py source/test/test_mysql_login.py
       - name: Run all tests
       #   run: pytest source/test/system-test/*.py
         run: |
