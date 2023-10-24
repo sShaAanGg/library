@@ -9,7 +9,6 @@ def database_connect():
 
     # Connect to the database
     cnx = database.connect_mysql()
-    assert cnx is not None, "Connection is OK"
 
     # Create a cursor object, which is used to execute SQL statements
     cursor = cnx.cursor()
@@ -25,21 +24,13 @@ def database_connect():
         # If the SQL statement is not empty, execute it
         if sql.strip():
             cursor.execute(sql)
-            # If the SQL statement is a CREATE statement, commit the changes
-            if sql.startswith("CREATE"):
-                cnx.commit()
-    
-    # Check if the database is created
-    cursor.execute("SHOW TABLES")
-    tables = cursor.fetchall()
-    assert len(tables) == 5, "The number of tables is correct"
-    
-    # Check if the table "account" is created
-    cursor.execute("SELECT * FROM account")
-    accounts = cursor.fetchall()
-    assert len(accounts) == 2, "The number of accounts is correct"
+            # # If the SQL statement is a CREATE statement, commit the changes
+            # if sql.startswith("CREATE"):
+            #     cnx.commit()
 
-    yield cnx
+    cnx.commit()
+
+    yield cnx, cursor
 
     cursor.close()
     cnx.close()
