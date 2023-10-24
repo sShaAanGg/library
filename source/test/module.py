@@ -7,7 +7,7 @@ class Module:
         self._context = None
         self._browser = None
         self._page = None
-        self.headless = False
+        self.headless = True
 
     @property
     def page(self):
