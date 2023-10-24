@@ -64,11 +64,3 @@ class Module:
         self.page.close()
         self.context.close()
         self.browser.close()
-
-# def main():
-#     with sync_playwright() as playwright:
-#         module = Module(playwright)
-#         module.open_browser()
-#         module.login("username", "password")
-#         # Do something after login
-#         module.close_browser()
