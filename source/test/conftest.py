@@ -39,7 +39,7 @@ def database_connect():
     accounts = cursor.fetchall()
     assert len(accounts) == 2, "The number of accounts is correct"
 
-    yield cnx, cursor
+    yield cnx
 
     cursor.close()
     cnx.close()
