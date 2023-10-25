@@ -1,13 +1,21 @@
-import login
+from module import Module
+from playwright.sync_api import expect, sync_playwright
 
-def test_login():
-    # Arrange
-    # Not needed
 
-    # Act & Assert
-    login.main()
+def test_login(database_connect):
 
-    # The following elements should show up
-    # get_by_role("main").get_by_text("Hi! shang")
-    # get_by_text("帳號： shang112522105")
-    # get_by_role("button", name="登出")
+    with sync_playwright() as playwright:
+
+        # Arrange
+        module = Module(playwright)
+        module.open_browser()
+
+        # Act
+        module.login("user1", "12345678")
+        page = module.page
+        
+        # Assert
+        expect(page.get_by_role("main").get_by_text("Hi! user1")).to_be_visible()
+        expect(page.get_by_text("帳號： user1")).to_be_visible()
+        expect(page.get_by_role("button", name="登出")).to_be_enabled()
+        expect(page.get_by_role("button", name="登出")).to_be_visible()
