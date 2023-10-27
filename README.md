@@ -13,7 +13,6 @@ Note: You can install and run MySQL DB server through Docker.
 ```
 **Terminal**
 npm install
-安裝完
 npm run start
 ```
 
@@ -22,11 +21,10 @@ npm run start
 ```
 **Terminal**
 npm install
-安裝完
 npm run serve
 ```
 
 - 開啟 http://localhost:8080/
 
 ### 資料庫schema
-[Dump20231016.sql](https://github.com/fangci221/library/blob/origin/Dump20231016.sql)
+[init.sql](https://github.com/fangci221/library/blob/origin/init.sql)
