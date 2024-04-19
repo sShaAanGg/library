@@ -11,7 +11,7 @@ Note: You can install and run MySQL DB server through Docker.
 ### back-end
 
 ```
-**Terminal**
+# **Terminal**
 npm install
 npm run start
 ```
@@ -19,7 +19,7 @@ npm run start
 ### front-end
 
 ```
-**Terminal**
+# **Terminal**
 npm install
 npm run serve
 ```
